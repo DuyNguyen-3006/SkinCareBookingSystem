@@ -10,6 +10,9 @@ public enum ErrorCode {
     BLANK_FIELD(1005, "Field cannot be blank"),
     USER_NOT_EXISTED(1006, "User not exists"),
     UNAUTHENTICATION(1007, "Username or password is incorrect"),
+    PRICE_INVALID(1008, "Price must be at least 0"),
+    SERVICE_EXIST(1009, "Service exist"),
+    SERVICE_NOT_FOUND(1010, "Service not found")
     ;
 
     private int code;
