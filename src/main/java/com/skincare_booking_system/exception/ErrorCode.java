@@ -1,31 +1,36 @@
 package com.skincare_booking_system.exception;
 
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error"),
-    KEY_INVALID(1000, "Key is invalid"),
-    USER_EXISTED(1001, "User already exists"),
-    USERNAME_INVALID(1002, "Username must be at least 3 characters"),
-    PASSWORD_INVALID(1003, "Your password must be at least 8 characters"),
-    EMAIL_INVALID(1004, "Your email is not corret"),
-    BLANK_FIELD(1005, "Field cannot be blank"),
-    USER_NOT_EXISTED(1006, "User not exists"),
-    UNAUTHENTICATION(1007, "Username or password is incorrect"),
-    PRICE_INVALID(1008, "Price must be at least 0"),
-    SERVICE_EXIST(1009, "Service exist"),
-    SERVICE_NOT_FOUND(1010, "Service not found")
+    UNCATEGORIZED_EXCEPTION("Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
+    KEY_INVALID( "Key is invalid",HttpStatus.BAD_REQUEST),
+    USER_EXISTED( "User already exists",HttpStatus.BAD_REQUEST),
+    USERNAME_INVALID("Username must be at least 3 characters",HttpStatus.BAD_REQUEST),
+    PASSWORD_INVALID( "Your password must be at least 8 characters",HttpStatus.BAD_REQUEST),
+    EMAIL_INVALID( "Your email is not corret",HttpStatus.BAD_REQUEST),
+    BLANK_FIELD( "Field cannot be blank",HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED( "User not exists",HttpStatus.NOT_FOUND),
+    UNAUTHENTICATION( "Username or password is incorrect",HttpStatus.UNAUTHORIZED),
+    PRICE_INVALID("Price must be at least 0",HttpStatus.BAD_REQUEST),
+    SERVICE_EXIST( "Service exist",HttpStatus.BAD_REQUEST),
+    SERVICE_NOT_FOUND("Service not found",HttpStatus.BAD_REQUEST),
+    DESCRIPTION_INVALID("Description is not more than 150",HttpStatus.BAD_REQUEST),
+    CATEGORY_INVALID( "Category is not more 50",HttpStatus.BAD_REQUEST),
     ;
 
-    private int code;
     private String message;
+    private HttpStatusCode httpStatusCode;
 
+    ErrorCode(String message,HttpStatusCode httpStatusCode) {
 
-    ErrorCode(int code, String message) {
-        this.code = code;
         this.message = message;
+        this.httpStatusCode=httpStatusCode;
     }
-
-    public int getCode() {
-        return code;
+    public HttpStatusCode getHttpStatusCode() {
+        return httpStatusCode;
     }
 
     public String getMessage() {
