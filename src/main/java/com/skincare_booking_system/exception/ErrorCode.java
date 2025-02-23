@@ -19,6 +19,11 @@ public enum ErrorCode {
     PHONENUMBER_EXISTED("Your phone number already used", HttpStatus.BAD_REQUEST),
     PHONENUMBER_INVALID("Your phone number is not valid", HttpStatus.BAD_REQUEST),
     GENDER_INVALID("Invalid {gender} selection", HttpStatus.BAD_REQUEST),
+    PRICE_INVALID("Price must be at least 0",HttpStatus.BAD_REQUEST),
+    SERVICE_EXIST( "Service exist",HttpStatus.BAD_REQUEST),
+    SERVICE_NOT_FOUND("Service not found",HttpStatus.BAD_REQUEST),
+    DESCRIPTION_INVALID("Description is not more than 150",HttpStatus.BAD_REQUEST),
+    CATEGORY_INVALID( "Category is not more 50",HttpStatus.BAD_REQUEST),
     ;
 
     private String message;

@@ -19,14 +19,14 @@ import java.util.List;
 public class ServicesController {
     ServicesService servicesService;
 
-    @PostMapping("")
+    @PostMapping
     ApiResponse<Services> createRequest(@RequestBody @Valid ServicesRequest request) {
         ApiResponse<Services> response = new ApiResponse<>();
         response.setResult(servicesService.createServices(request));
         return response;
     }
 
-    @GetMapping("")
+    @GetMapping
     List<Services> getAllUsers() {
         return servicesService.getAllServices();
     }
