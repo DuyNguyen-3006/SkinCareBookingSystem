@@ -22,14 +22,14 @@ public class UserController {
     UserService userService;
 
     @PostMapping()
-    ApiResponse<User> registerUser(@RequestBody @Valid UserRegisterRequest request) {
-        ApiResponse<User> response = new ApiResponse<>();
-        response.setResult(userService.registerUser(request));
-        return response;
+    ApiResponse<UserResponse> registerUser(@RequestBody @Valid UserRegisterRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.registerUser(request))
+                .build();
     }
 
     @GetMapping()
-    ApiResponse <List<UserResponse>> getUserList() {
+    ApiResponse<List<UserResponse>> getUserList() {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -42,22 +42,24 @@ public class UserController {
     }
 
     @GetMapping("/{phoneNumber}")
-    ApiResponse <UserResponse> getUser(@PathVariable ("phoneNumber") String phoneNumber) {
+    ApiResponse<UserResponse> getUser(@PathVariable("phoneNumber") String phone) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.getUserByPhoneNumber(phoneNumber))
+                .result(userService.getUserByPhoneNumber(phone))
                 .build();
     }
 
     @GetMapping("/myInfo")
-    ApiResponse <UserResponse> getMyInfo() {
+    ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.getMyInfo())
                 .build();
     }
 
-    @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
-        return userService.updateUser(userId, request);
+    @PutMapping("/update/{userId}")
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateUser(userId, request))
+                .build();
     }
 
     @DeleteMapping("/{phoneNumber}")

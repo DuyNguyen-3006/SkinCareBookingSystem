@@ -14,9 +14,11 @@ public enum ErrorCode {
     EMAIL_INVALID("Your email is not corret", HttpStatus.BAD_REQUEST),
     BLANK_FIELD("Field cannot be blank", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED("User not exists", HttpStatus.NOT_FOUND),
-    UNAUTHENTICATION("Username or password is incorrect", HttpStatus.UNAUTHORIZED),
+    UNAUTHENTICATION("Unthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("You do not have permission", HttpStatus.FORBIDDEN),
-
+    PHONENUMBER_EXISTED("Your phone number already used", HttpStatus.BAD_REQUEST),
+    PHONENUMBER_INVALID("Your phone number is not valid", HttpStatus.BAD_REQUEST),
+    GENDER_INVALID("Invalid {gender} selection", HttpStatus.BAD_REQUEST),
     ;
 
     private String message;
@@ -27,5 +29,6 @@ public enum ErrorCode {
         this.message = message;
         this.httpStatusCode = httpStatusCode;
     }
+
 
 }

@@ -1,8 +1,8 @@
 package com.skincare_booking_system.dto.response;
 
+import com.skincare_booking_system.entity.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public class UserResponse {
     String phone;
     String address;
     String gender;
-    boolean active;
     LocalDate birthDate;
-    Set<String> roles;
+
+    Set<RoleResponse> roles;
 }

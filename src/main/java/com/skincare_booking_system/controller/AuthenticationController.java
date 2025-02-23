@@ -1,9 +1,7 @@
 package com.skincare_booking_system.controller;
 
 import com.nimbusds.jose.JOSEException;
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.AuthenticationRequest;
-import com.skincare_booking_system.dto.request.IntrospectRequest;
+import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.AuthenticationResponse;
 import com.skincare_booking_system.dto.response.IntrospectResponse;
 import com.skincare_booking_system.service.AuthenticationService;
@@ -37,6 +35,26 @@ public class AuthenticationController {
         var result = authenticationService.introspect(request);
 
         return ApiResponse.<IntrospectResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+            throws JOSEException, ParseException {
+        authenticationService.logout(request);
+
+        return ApiResponse.<Void>builder()
+                .message("Successfully logged out")
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshRequest request)
+            throws JOSEException, ParseException {
+       var result = authenticationService.refreshToken(request);
+
+        return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
     }
