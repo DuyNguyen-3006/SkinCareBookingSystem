@@ -1,14 +1,15 @@
 package com.skincare_booking_system.controller;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
+import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entity.User;
 import com.skincare_booking_system.service.UserService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,4 +68,14 @@ public class UserController {
         userService.deleteUser(phoneNumber);
         return "User has been deleted";
     }
+
+    @PutMapping("/change-password")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ApiResponse.<String>builder()
+                .result("Password has been changed")
+                .build();
+    }
+
 }

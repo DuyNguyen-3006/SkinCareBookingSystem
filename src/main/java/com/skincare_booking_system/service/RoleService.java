@@ -2,9 +2,7 @@ package com.skincare_booking_system.service;
 
 
 import com.skincare_booking_system.dto.request.RoleRequest;
-import com.skincare_booking_system.dto.response.PermissionResponse;
 import com.skincare_booking_system.dto.response.RoleResponse;
-import com.skincare_booking_system.entity.Role;
 import com.skincare_booking_system.mapper.RoleMapper;
 import com.skincare_booking_system.repository.PermissionRepository;
 import com.skincare_booking_system.repository.RoleRepository;
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

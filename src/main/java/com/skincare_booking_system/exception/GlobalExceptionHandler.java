@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
 
     private static final String GENDER_ATTRIBUTE = "gender";
 
+
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception) {
 
