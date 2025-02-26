@@ -108,6 +108,13 @@
 				<version>12.4.2.jre11</version> <!-- Kiểm tra phiên bản mới nhất -->
 			</dependency>
 
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
