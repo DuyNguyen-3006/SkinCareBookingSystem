@@ -2,6 +2,7 @@ package com.skincare_booking_system.controller;
 
 import com.skincare_booking_system.dto.request.ServicesRequest;
 import com.skincare_booking_system.dto.request.ApiResponse;
+import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
 import com.skincare_booking_system.entity.Services;
 import com.skincare_booking_system.service.ServicesService;
@@ -20,30 +21,45 @@ public class ServicesController {
     ServicesService servicesService;
 
     @PostMapping
-    ApiResponse<Services> createRequest(@RequestBody @Valid ServicesRequest request) {
-        ApiResponse<Services> response = new ApiResponse<>();
+    ApiResponse<ServicesResponse> createRequest(@RequestBody @Valid ServicesRequest request) {
+        ApiResponse<ServicesResponse> response = new ApiResponse<>();
         response.setResult(servicesService.createServices(request));
         return response;
     }
 
-    @GetMapping
-    List<Services> getAllUsers() {
-        return servicesService.getAllServices();
+    @GetMapping("/true")
+    ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getAllServicesIsActiveTrue()).build();
+    }
+    @GetMapping("/false")
+    ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getAllServicesIsActiveFalse()).build();
     }
 
     @GetMapping("/{serviceName}")
-    ServicesResponse getServicesByServciesName(@PathVariable String serviceName) {
-        return servicesService.getServicesByServicesName(serviceName);
+    ApiResponse<ServicesResponse> getServicesByServciesName(@PathVariable String serviceName) {
+        return ApiResponse.<ServicesResponse>builder()
+                .result(servicesService.getServicesByServicesName(serviceName)).build();
     }
 
-    @PutMapping("/{serviceName}")
-    ServicesResponse updateServices(@PathVariable String serviceName,@Valid @RequestBody ServicesRequest servicesRequest) {
-        return servicesService.updateServices(serviceName, servicesRequest);
+    @PutMapping("/update/{serviceName}")
+    ApiResponse<ServicesResponse> updateServices(@PathVariable String serviceName,@Valid @RequestBody ServicesUpdateRequest servicesUpdateRequest) {
+        return ApiResponse.<ServicesResponse>builder()
+                .result(servicesService.updateServices(serviceName,servicesUpdateRequest)).build();
     }
 
-    @DeleteMapping("/{serviceName}")
-    void deleteUser(@PathVariable String serviceName) {
-        servicesService.deleteServices(serviceName);
+    @PutMapping("/deactive/{serviceName}")
+    ApiResponse<String> deactivateService(@PathVariable String serviceName) {
+        return ApiResponse.<String>builder()
+                .result(servicesService.deactivateServices(serviceName)).build();
     }
+    @PutMapping("/active/{serviceName}")
+    ApiResponse<String> activateService(@PathVariable String serviceName) {
+        return ApiResponse.<String>builder()
+                .result(servicesService.activateServices(serviceName)).build();
+    }
+
 
 }

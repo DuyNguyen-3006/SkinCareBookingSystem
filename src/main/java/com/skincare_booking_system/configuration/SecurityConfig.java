@@ -26,7 +26,7 @@ import java.util.List;
 @EnableMethodSecurity //dung de phan quyen
 public class SecurityConfig {
 
-    public final String[] PUBLIC_ENDPOINTS = {"/users",
+    public final String[] PUBLIC_ENDPOINTS = {"/users","/services",
             "/authentication/log-in", "/authentication/introspect", "authentication/logout",
             "authentication/refresh"
     };

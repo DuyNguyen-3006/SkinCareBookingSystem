@@ -1,6 +1,7 @@
 package com.skincare_booking_system.service;
 
 import com.skincare_booking_system.dto.request.ServicesRequest;
+import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
 import com.skincare_booking_system.entity.Services;
 import com.skincare_booking_system.exception.AppException;
@@ -9,6 +10,7 @@ import com.skincare_booking_system.mapper.ServicesMapper;
 import com.skincare_booking_system.repository.ServicesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,28 +22,53 @@ public class ServicesService {
   ServicesRepository servicesRepository;
   ServicesMapper servicesMapper;
 
-
-     public Services createServices(ServicesRequest servicesRequest) {
+    @PreAuthorize("hasRole('ADMIN')")
+     public ServicesResponse createServices(ServicesRequest servicesRequest) {
          if(servicesRepository.existsByServiceName(servicesRequest.getServiceName())){
              throw new AppException(ErrorCode.SERVICE_EXIST);
          }
          Services services = servicesMapper.toServices(servicesRequest);
-         return servicesRepository.save(services);
+         return servicesMapper.toServicesResponse(servicesRepository.save(services));
      }
-      public List<Services> getAllServices() {
-          return servicesRepository.findAll();
+
+      public List<ServicesResponse> getAllServicesIsActiveTrue() {
+          List<Services> activeServices = servicesRepository.findByIsActiveTrue();
+          return activeServices.stream()
+                  .map(servicesMapper::toServicesResponse)
+                  .toList();
       }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServicesResponse> getAllServicesIsActiveFalse() {
+        List<Services> activeServices = servicesRepository.findByIsActiveFalse();
+        return activeServices.stream()
+                .map(servicesMapper::toServicesResponse)
+                .toList();
+    }
+
+
       public ServicesResponse getServicesByServicesName(String serviceName) {
           return servicesMapper.toServicesResponse(servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND)));
       }
-      public ServicesResponse updateServices(String serviceName, ServicesRequest servicesRequest) {
+    @PreAuthorize("hasRole('ADMIN')")
+      public ServicesResponse updateServices(String serviceName, ServicesUpdateRequest servicesUpdateRequest) {
           Services services = servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
-          servicesMapper.updateServices(services, servicesRequest);
+          servicesMapper.updateServices(services, servicesUpdateRequest);
           return servicesMapper.toServicesResponse(servicesRepository.save(services));
       }
-      public String deleteServices(String serviceName) {
+    @PreAuthorize("hasRole('ADMIN')")
+      public String deactivateServices(String serviceName) {
           Services services = servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
-          servicesRepository.deleteByServiceName(serviceName);
-          return "Services deleted successfully";
+          services.setIsActive(false);
+        servicesRepository.save(services);
+          return "Services deactivated successfully";
       }
+    @PreAuthorize("hasRole('ADMIN')")
+    public String activateServices(String serviceName) {
+        Services services = servicesRepository.findByServiceName(serviceName)
+                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
+        services.setIsActive(true);
+        servicesRepository.save(services);
+        return "Service activated successfully";
+    }
+
 }
