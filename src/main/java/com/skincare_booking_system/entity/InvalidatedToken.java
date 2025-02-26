@@ -1,11 +1,12 @@
 package com.skincare_booking_system.entity;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Data
 @Entity
@@ -16,5 +17,6 @@ import java.util.Date;
 public class InvalidatedToken {
     @Id
     String id;
+
     Date expiryTime;
 }

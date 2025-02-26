@@ -1,19 +1,21 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.service.UserService;
-import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -34,7 +36,6 @@ public class UserController {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        log.info("Username: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
         return ApiResponse.<List<UserResponse>>builder()
@@ -70,12 +71,9 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    //  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
-        return ApiResponse.<String>builder()
-                .result("Password has been changed")
-                .build();
+        return ApiResponse.<String>builder().result("Password has been changed").build();
     }
-
 }

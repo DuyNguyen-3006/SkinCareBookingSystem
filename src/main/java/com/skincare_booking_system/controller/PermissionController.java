@@ -1,14 +1,16 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.PermissionRequest;
 import com.skincare_booking_system.dto.response.PermissionResponse;
 import com.skincare_booking_system.service.PermissionService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -34,8 +36,6 @@ public class PermissionController {
     @DeleteMapping("/{permission}")
     ApiResponse<Void> deletePermission(@PathVariable("permission") String permission) {
         permissionService.deletePermission(permission);
-        return ApiResponse.<Void>builder()
-                .message("Permission deleted")
-                .build();
+        return ApiResponse.<Void>builder().message("Permission deleted").build();
     }
 }

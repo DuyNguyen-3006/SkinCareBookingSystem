@@ -1,10 +1,11 @@
 package com.skincare_booking_system.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class GenderValidator implements ConstraintValidator<GenderConstraint, String> {
 

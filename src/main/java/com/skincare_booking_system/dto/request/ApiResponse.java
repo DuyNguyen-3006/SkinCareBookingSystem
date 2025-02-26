@@ -1,6 +1,7 @@
 package com.skincare_booking_system.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,5 +14,4 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse<T> {
     String message;
     T result;
-
 }

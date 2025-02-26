@@ -1,14 +1,16 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.RoleRequest;
 import com.skincare_booking_system.dto.response.RoleResponse;
 import com.skincare_booking_system.service.RoleService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -36,5 +38,4 @@ public class RoleController {
         roleService.deleteRole(roleName);
         return "Role deleted";
     }
-
 }

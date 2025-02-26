@@ -1,10 +1,9 @@
 package com.skincare_booking_system.entity;
 
-import java.util.Set;
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,12 +14,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role {
+public class Therapist {
     @Id
-    String name;
-
-    String description;
-
-    @ManyToMany
-    Set<Permission> permissions;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 }

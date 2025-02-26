@@ -1,10 +1,10 @@
 package com.skincare_booking_system.dto.response;
 
-import com.skincare_booking_system.entity.Role;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.Set;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor

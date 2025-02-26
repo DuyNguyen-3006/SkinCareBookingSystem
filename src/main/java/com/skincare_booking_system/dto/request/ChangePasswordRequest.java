@@ -2,6 +2,7 @@ package com.skincare_booking_system.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,9 +14,11 @@ import lombok.experimental.FieldDefaults;
 public class ChangePasswordRequest {
     @NotBlank(message = "BLANK_FIELD")
     String oldPassword;
+
     @NotBlank(message = "BLANK_FIELD")
     @Size(min = 8, message = "PASSWORD_INVALID")
     String newPassword;
+
     @Size(min = 8, message = "PASSWORD_INVALID")
     String confirmPassword;
 }

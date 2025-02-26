@@ -1,6 +1,5 @@
 package com.skincare_booking_system.dto.response;
 
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
