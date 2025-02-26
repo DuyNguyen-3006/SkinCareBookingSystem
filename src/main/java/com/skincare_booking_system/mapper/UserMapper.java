@@ -1,7 +1,5 @@
 package com.skincare_booking_system.mapper;
 
-import com.skincare_booking_system.exception.AppException;
-import com.skincare_booking_system.exception.ErrorCode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -12,6 +10,8 @@ import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.exception.AppException;
+import com.skincare_booking_system.exception.ErrorCode;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

@@ -30,7 +30,7 @@ public class User {
     String address;
     Gender gender;
     LocalDate birthDate;
-
+    Boolean status;
     @ManyToMany
     Set<Role> roles;
 }

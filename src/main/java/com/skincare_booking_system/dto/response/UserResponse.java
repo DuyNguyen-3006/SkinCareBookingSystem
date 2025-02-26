@@ -21,6 +21,8 @@ public class UserResponse {
     String address;
     String gender;
     LocalDate birthDate;
+    Boolean status = true;
+
 
     Set<RoleResponse> roles;
 }

@@ -20,7 +20,7 @@ public class GenderValidator implements ConstraintValidator<GenderConstraint, St
     @Override
     public boolean isValid(String gender, ConstraintValidatorContext context) {
         if (gender == null) {
-            return true; // Allow null (use @NotNull separately if needed)
+            return true;
         }
         return validGenders.contains(gender);
     }

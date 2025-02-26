@@ -1,5 +1,19 @@
 package com.skincare_booking_system.service;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
@@ -12,30 +26,21 @@ import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.UserMapper;
 import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -49,9 +54,9 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword())); // ma hoa password
-
-        Set<Role> roles = new HashSet<>();
-        roleRepository.findById(Roles.CUSTOMER.name()).ifPresent(roles::add);
+        user.setStatus(request.getStatus());
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -64,7 +69,8 @@ public class UserService {
 
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserByPhoneNumber(String phoneNumber) {
-        return userMapper.toUserResponse(userRepository.findByPhone(phoneNumber)
+        return userMapper.toUserResponse(userRepository
+                .findByPhone(phoneNumber)
                 .orElseThrow(() -> new RuntimeException("User with phone number " + phoneNumber + " not found")));
     }
 
@@ -82,14 +88,16 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByUsername(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
 
     public void deleteUser(String phoneNumber) {
-        User user = userRepository.findByPhone(phoneNumber).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with phone number " + phoneNumber + " not found"));
+        User user = userRepository
+                .findByPhone(phoneNumber)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User with phone number " + phoneNumber + " not found"));
         userRepository.delete(user);
     }
 
@@ -97,8 +105,8 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user =
+                userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.PASSWORD_WRONG);

@@ -100,15 +100,13 @@ public class AuthenticationService {
     }
 
     private String buildScope(User user) {
-        StringJoiner stringJoiner = new StringJoiner(" "); // de khi 1 user co nhieu role
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
-            });
+        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+        if (!CollectionUtils.isEmpty(user.getRoles())) {
+            user.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+        }
         return stringJoiner.toString();
     }
+
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());

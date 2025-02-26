@@ -1,17 +1,17 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.ServicesRequest;
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
-import com.skincare_booking_system.dto.response.ServicesResponse;
-import com.skincare_booking_system.entity.Services;
-import com.skincare_booking_system.service.ServicesService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.ApiResponse;
+import com.skincare_booking_system.dto.request.ServicesRequest;
+import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
+import com.skincare_booking_system.dto.response.ServicesResponse;
+import com.skincare_booking_system.service.ServicesService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 @RestController
 @RequestMapping("/services")
@@ -27,39 +27,43 @@ public class ServicesController {
         return response;
     }
 
-//    @GetMapping("/true")
-//    ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
-//        return ApiResponse.<List<ServicesResponse>>builder()
-//                .result(servicesService.getAllServicesIsActiveTrue()).build();
-//    }
-//    @GetMapping("/false")
-//    ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
-//        return ApiResponse.<List<ServicesResponse>>builder()
-//                .result(servicesService.getAllServicesIsActiveFalse()).build();
-//    }
+    //    @GetMapping("/true")
+    //    ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
+    //        return ApiResponse.<List<ServicesResponse>>builder()
+    //                .result(servicesService.getAllServicesIsActiveTrue()).build();
+    //    }
+    //    @GetMapping("/false")
+    //    ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
+    //        return ApiResponse.<List<ServicesResponse>>builder()
+    //                .result(servicesService.getAllServicesIsActiveFalse()).build();
+    //    }
 
     @GetMapping("/{serviceName}")
     ApiResponse<ServicesResponse> getServicesByServciesName(@PathVariable String serviceName) {
         return ApiResponse.<ServicesResponse>builder()
-                .result(servicesService.getServicesByServicesName(serviceName)).build();
+                .result(servicesService.getServicesByServicesName(serviceName))
+                .build();
     }
 
     @PutMapping("/update/{serviceName}")
-    ApiResponse<ServicesResponse> updateServices(@PathVariable String serviceName,@Valid @RequestBody ServicesUpdateRequest servicesUpdateRequest) {
+    ApiResponse<ServicesResponse> updateServices(
+            @PathVariable String serviceName, @Valid @RequestBody ServicesUpdateRequest servicesUpdateRequest) {
         return ApiResponse.<ServicesResponse>builder()
-                .result(servicesService.updateServices(serviceName,servicesUpdateRequest)).build();
+                .result(servicesService.updateServices(serviceName, servicesUpdateRequest))
+                .build();
     }
 
     @PutMapping("/deactive/{serviceName}")
     ApiResponse<String> deactivateService(@PathVariable String serviceName) {
         return ApiResponse.<String>builder()
-                .result(servicesService.deactivateServices(serviceName)).build();
+                .result(servicesService.deactivateServices(serviceName))
+                .build();
     }
+
     @PutMapping("/active/{serviceName}")
     ApiResponse<String> activateService(@PathVariable String serviceName) {
         return ApiResponse.<String>builder()
-                .result(servicesService.activateServices(serviceName)).build();
+                .result(servicesService.activateServices(serviceName))
+                .build();
     }
-
-
 }

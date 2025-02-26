@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.skincare_booking_system.dto.request.RoleRequest;
 import com.skincare_booking_system.dto.response.RoleResponse;
 import com.skincare_booking_system.mapper.RoleMapper;
-import com.skincare_booking_system.repository.PermissionRepository;
 import com.skincare_booking_system.repository.RoleRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +22,10 @@ public class RoleService {
     @Autowired
     private RoleMapper roleMapper;
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+
 
     public RoleResponse createRole(RoleRequest request) {
         var role = roleMapper.toRole(request);
-        var permissions = permissionRepository.findAllById(request.getPermissions());
-        role.setPermissions(new HashSet<>(permissions));
         roleRepository.save(role);
         return roleMapper.toRoleResponse(role);
     }
