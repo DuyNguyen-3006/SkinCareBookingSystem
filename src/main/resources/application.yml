@@ -24,13 +24,5 @@ spring:
 #      ddl-auto: update
 #    show-sql: true
 
-#security:
-#  oauth2:
-#    client:
-#      registration:
-#        google:
-#          client-id: 348838482034-3p28r69r06nvosbvua6junmjlhbjk6vu.apps.googleusercontent.com
-#          client-secret: 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
-
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"
