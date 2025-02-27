@@ -1,17 +1,19 @@
 package com.skincare_booking_system.exception;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
+import java.util.Map;
+import java.util.Objects;
+
 import jakarta.validation.ConstraintViolation;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import com.skincare_booking_system.dto.request.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice // cho biet day la noi de create exception
 @Slf4j
@@ -32,26 +34,20 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
 
-
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setMessage(errorCode.getMessage());
 
-        return ResponseEntity.status(errorCode.getHttpStatusCode())
-                .body(apiResponse);
+        return ResponseEntity.status(errorCode.getHttpStatusCode()).body(apiResponse);
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
 
-        return ResponseEntity.status(errorCode.getHttpStatusCode()).body(
-                ApiResponse.builder()
-                        .message(errorCode.getMessage())
-                        .build()
-        );
+        return ResponseEntity.status(errorCode.getHttpStatusCode())
+                .body(ApiResponse.builder().message(errorCode.getMessage()).build());
     }
-
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handlingValidationException(MethodArgumentNotValidException exception) {
@@ -63,10 +59,14 @@ public class GlobalExceptionHandler {
         try {
             errorCode = ErrorCode.valueOf(enumKey);
 
-            var constrainViolation = exception.getBindingResult()
-                    .getAllErrors().getFirst().unwrap(ConstraintViolation.class);
+            var constraintViolation = exception.getBindingResult()
+                    .getAllErrors()
+                    .stream()
+                    .findFirst()
+                    .map(error -> error.unwrap(ConstraintViolation.class))
+                    .orElse(null);
 
-             attributes = constrainViolation.getConstraintDescriptor().getAttributes();
+            attributes = constraintViolation.getConstraintDescriptor().getAttributes();
 
             log.info(attributes.toString());
         } catch (IllegalArgumentException e) {
@@ -74,14 +74,15 @@ public class GlobalExceptionHandler {
         }
         ApiResponse apiResponse = new ApiResponse();
 
-
-        apiResponse.setMessage(Objects.nonNull(attributes) ?
-                mapAttributes(errorCode.getMessage(), attributes)
-                : errorCode.getMessage());
+        apiResponse.setMessage(
+                Objects.nonNull(attributes)
+                        ? mapAttributes(errorCode.getMessage(), attributes)
+                        : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
-    private String mapAttributes(String message,  Map<String, Object> attributes) {
+
+    private String mapAttributes(String message, Map<String, Object> attributes) {
         String genderValue = attributes.get(GENDER_ATTRIBUTE).toString();
 
         return message.replace("{" + GENDER_ATTRIBUTE + "}", genderValue);

@@ -1,5 +1,6 @@
 package com.skincare_booking_system.configuration;
 
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,16 +19,18 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity //dung de phan quyen
+@EnableMethodSecurity // dung de phan quyen
 public class SecurityConfig {
 
-    public final String[] PUBLIC_ENDPOINTS = {"/users",
-            "/authentication/log-in", "/authentication/introspect", "authentication/logout",
-            "authentication/refresh"
+    public final String[] PUBLIC_ENDPOINTS = {
+        "/users",
+        "/services",
+        "/authentication/log-in",
+        "/authentication/introspect",
+        "authentication/logout",
+        "authentication/refresh"
     };
 
     @Autowired
@@ -38,19 +41,22 @@ public class SecurityConfig {
         httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .csrf(AbstractHttpConfigurer::disable) //  Tắt CSRF nếu không dùng session
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //  Cho phép OPTIONS request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer ->
-                        jwtConfigurer.decoder(customJwtDecoder).jwtAuthenticationConverter(jwtConverter()))
-                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                );
+                .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll() //  Cho phép OPTIONS request
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .oauth2ResourceServer(
+                        oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                                        .decoder(customJwtDecoder)
+                                        .jwtAuthenticationConverter(jwtConverter()))
+                                .authenticationEntryPoint(
+                                        new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
+                        );
 
         return httpSecurity.build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -65,7 +71,6 @@ public class SecurityConfig {
         return source;
     }
 
-
     @Bean
     JwtAuthenticationConverter jwtConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
@@ -75,7 +80,6 @@ public class SecurityConfig {
         converter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return converter;
     }
-
 
     @Bean
     PasswordEncoder passwordEncoder() {

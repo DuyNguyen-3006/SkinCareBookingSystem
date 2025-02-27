@@ -1,9 +1,9 @@
 package com.skincare_booking_system.dto.request;
 
+import java.util.Set;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +12,4 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleRequest {
     String name;
-    String description;
-    Set<String> permissions;
 }

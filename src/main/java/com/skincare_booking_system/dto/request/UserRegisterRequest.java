@@ -1,13 +1,16 @@
 package com.skincare_booking_system.dto.request;
 
-import com.skincare_booking_system.validator.GenderConstraint;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import com.skincare_booking_system.validator.GenderConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +31,10 @@ public class UserRegisterRequest {
     @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
     String address;
-
-    @GenderConstraint( message = "GENDER_INVALID")
+    @GenderConstraint(message = "GENDER_INVALID")
     String gender;
     LocalDate birthDate;
+    Boolean status;
+
 
 }

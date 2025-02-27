@@ -1,11 +1,12 @@
 package com.skincare_booking_system.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
@@ -17,6 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String username;
     String password;
     String firstName;
@@ -26,8 +28,7 @@ public class User {
     String address;
     String gender;
     LocalDate birthDate;
-
+    Boolean status;
     @ManyToMany
     Set<Role> roles;
-
 }

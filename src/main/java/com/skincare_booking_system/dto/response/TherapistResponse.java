@@ -1,17 +1,18 @@
 package com.skincare_booking_system.dto.response;
 
-import java.time.LocalDate;
-import java.util.Set;
-
+import com.skincare_booking_system.entity.Role;
+import jakarta.persistence.ManyToMany;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
+public class TherapistResponse {
     String id;
     String username;
     String firstName;
@@ -22,7 +23,7 @@ public class UserResponse {
     String gender;
     LocalDate birthDate;
     Boolean status;
-
-
-    Set<RoleResponse> roles;
+    Integer yearExperience;
+    @ManyToMany
+    Set<Role> roles;
 }

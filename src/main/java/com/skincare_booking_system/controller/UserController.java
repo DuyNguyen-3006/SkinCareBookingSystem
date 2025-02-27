@@ -1,18 +1,21 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.UserRegisterRequest;
-import com.skincare_booking_system.dto.request.UserUpdateRequest;
-import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entity.User;
-import com.skincare_booking_system.service.UserService;
+import java.util.List;
+
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.ApiResponse;
+import com.skincare_booking_system.dto.request.ChangePasswordRequest;
+import com.skincare_booking_system.dto.request.UserRegisterRequest;
+import com.skincare_booking_system.dto.request.UserUpdateRequest;
+import com.skincare_booking_system.dto.response.UserResponse;
+import com.skincare_booking_system.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -33,7 +36,6 @@ public class UserController {
 
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        log.info("Username: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
         return ApiResponse.<List<UserResponse>>builder()
@@ -66,5 +68,12 @@ public class UserController {
     String deleteUser(@PathVariable String phoneNumber) {
         userService.deleteUser(phoneNumber);
         return "User has been deleted";
+    }
+
+    @PutMapping("/change-password")
+    //  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 }

@@ -4,13 +4,11 @@ import com.skincare_booking_system.dto.request.RoleRequest;
 import com.skincare_booking_system.dto.response.RoleResponse;
 import com.skincare_booking_system.entity.Role;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
+    Role toRole(RoleRequest request);
 
-    @Mapping(target = "permissions", ignore = true)
-   Role toRole(RoleRequest request);
-
-   RoleResponse toRoleResponse(Role role);
+    RoleResponse toRoleResponse(Role role);
 }
