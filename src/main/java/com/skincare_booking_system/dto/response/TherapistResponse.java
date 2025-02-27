@@ -15,8 +15,7 @@ import java.util.Set;
 public class TherapistResponse {
     String id;
     String username;
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
     String address;

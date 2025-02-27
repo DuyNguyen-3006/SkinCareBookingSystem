@@ -3,6 +3,7 @@ package com.skincare_booking_system.service;
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.TherapistRequest;
 import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.entity.Role;
 import com.skincare_booking_system.entity.Therapist;
 import com.skincare_booking_system.exception.AppException;
@@ -12,11 +13,14 @@ import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -43,4 +47,54 @@ public class TherapistService {
         therapist.setStatus(true);
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
+
+    public List<TherapistResponse> getAllTherapists() {
+        return therapistRepository.findByStatusTrue().stream()
+                .map(therapistMapper::toTherapistResponse)
+                .toList();
+    }
+
+    public List<TherapistResponse> getAllTherapistsActive() {
+        return therapistRepository.findByStatusTrue().stream()
+                .map(therapistMapper::toTherapistResponse)
+                .toList();
+    }
+
+    public List<TherapistResponse> getAllTherapistsInactive() {
+        return therapistRepository.findByStatusFalse().stream()
+                .map(therapistMapper::toTherapistResponse)
+                .toList();
+    }
+
+    public TherapistResponse getTherapistbyPhone(String phone) {
+        return therapistMapper.toTherapistResponse(therapistRepository
+                .findByPhone(phone)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+    }
+
+    public List<TherapistResponse> searchTherapistsByName(String name) {
+        List<Therapist> therapists = therapistRepository.findByFullNameContainingIgnoreCase(name);
+
+        if (therapists.isEmpty()) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+        return therapists.stream()
+                .map(therapistMapper::toTherapistResponse)
+                .toList();
+    }
+
+    public void deleteTherapistbyPhone(String phone) {
+        Therapist therapist = therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        therapist.setStatus(false);
+        therapistRepository.save(therapist);
+    }
+
+    public void restoreTherapistByPhone(String phone) {
+        Therapist therapist = therapistRepository.findByPhone(phone)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        therapist.setStatus(true);
+        therapistRepository.save(therapist);
+    }
+
+
 }

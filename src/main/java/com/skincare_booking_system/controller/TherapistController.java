@@ -3,17 +3,18 @@ package com.skincare_booking_system.controller;
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.TherapistRequest;
 import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.service.TherapistService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("therapists")
+@RequestMapping("/therapists")
 public class TherapistController {
     @Autowired
     private TherapistService therapistService;
@@ -24,4 +25,54 @@ public class TherapistController {
                 .result(therapistService.createTherapist(therapistRequest))
                 .build();
     }
+    @GetMapping()
+    ApiResponse<List<TherapistResponse>> getTherapists() {
+        return ApiResponse.<List<TherapistResponse>>builder()
+                .result(therapistService.getAllTherapists())
+                .build();
+    }
+
+    @GetMapping("/activeTherapists")
+    ApiResponse<List<TherapistResponse>> getActiveTherapists() {
+        return ApiResponse.<List<TherapistResponse>>builder()
+                .result(therapistService.getAllTherapistsActive())
+                .build();
+    }
+
+    @GetMapping("/inactiveTherapists")
+    ApiResponse<List<TherapistResponse>> getInactiveTherapists() {
+        return ApiResponse.<List<TherapistResponse>>builder()
+                .result(therapistService.getAllTherapistsInactive())
+                .build();
+    }
+
+    @GetMapping("/{phoneNumber}")
+    ApiResponse<TherapistResponse> getUser(@PathVariable("phoneNumber") String phone) {
+        return ApiResponse.<TherapistResponse>builder()
+                .result(therapistService.getTherapistbyPhone(phone))
+                .build();
+    }
+
+    @GetMapping("/searchByName")
+    public ApiResponse<List<TherapistResponse>> searchTherapists(@RequestParam String name) {
+        return ApiResponse.<List<TherapistResponse>>builder()
+                .result(therapistService.searchTherapistsByName(name))
+                .build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteTherapist(@RequestParam String phoneNumber) {
+        therapistService.deleteTherapistbyPhone(phoneNumber);
+        return ResponseEntity.ok("Therapist has been deleted");
+    }
+
+    @PutMapping("/restore")
+    public ResponseEntity<String> restoreTherapist(@RequestParam String phone) {
+        therapistService.restoreTherapistByPhone(phone);
+        return ResponseEntity.ok("Therapist restored successfully");
+    }
+
+
+
+
 }

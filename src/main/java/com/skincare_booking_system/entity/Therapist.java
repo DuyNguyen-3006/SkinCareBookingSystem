@@ -21,8 +21,7 @@ public class Therapist {
 
     String username;
     String password;
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
     String address;

@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    //  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//      @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.<String>builder().result("Password has been changed").build();

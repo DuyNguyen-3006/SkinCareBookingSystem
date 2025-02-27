@@ -62,7 +62,6 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        log.info("In method getAllUsers");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
@@ -94,7 +93,8 @@ public class UserService {
                 .findByPhone(phoneNumber)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with phone number " + phoneNumber + " not found"));
-        userRepository.delete(user);
+        user.setStatus(false);
+        userRepository.save(user);
     }
 
     public void changePassword(ChangePasswordRequest request) {
