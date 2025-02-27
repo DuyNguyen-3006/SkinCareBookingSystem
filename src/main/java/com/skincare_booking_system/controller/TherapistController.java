@@ -67,8 +67,8 @@ public class TherapistController {
     }
 
     @PutMapping("/restore")
-    public ResponseEntity<String> restoreTherapist(@RequestParam String phone) {
-        therapistService.restoreTherapistByPhone(phone);
+    public ResponseEntity<String> restoreTherapist(@RequestParam String phoneNumber) {
+        therapistService.restoreTherapistByPhone(phoneNumber);
         return ResponseEntity.ok("Therapist restored successfully");
     }
 
