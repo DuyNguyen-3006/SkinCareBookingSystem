@@ -1,5 +1,6 @@
 package com.skincare_booking_system.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.transaction.Transactional;
@@ -15,4 +16,8 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
 
     @Transactional
     void deleteByServiceName(String serviceName);
+
+    List<Services> findByIsActiveFalse();
+
+    List<Services> findByIsActiveTrue();
 }
