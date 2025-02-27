@@ -5,8 +5,6 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 
-import com.skincare_booking_system.constant.Gender;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -28,7 +26,7 @@ public class User {
     String email;
     String phone;
     String address;
-    Gender gender;
+    String gender;
     LocalDate birthDate;
     Boolean status;
     @ManyToMany

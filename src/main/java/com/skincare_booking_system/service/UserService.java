@@ -2,7 +2,6 @@ package com.skincare_booking_system.service;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,11 +52,11 @@ public class UserService {
         }
 
         User user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword())); // ma hoa password
-        user.setStatus(request.getStatus());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
+        user.setStatus(true);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -77,9 +76,6 @@ public class UserService {
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.toUpdateUser(user, request);
-
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }

@@ -13,7 +13,6 @@ public class GenderValidator implements ConstraintValidator<GenderConstraint, St
 
     @Override
     public void initialize(GenderConstraint constraintAnnotation) {
-        // Convert the annotation's values into a Set for quick lookup
         validGenders = new HashSet<>(Arrays.asList(constraintAnnotation.value()));
     }
 

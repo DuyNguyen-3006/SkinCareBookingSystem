@@ -4,4 +4,5 @@ public enum Roles {
     CUSTOMER,
     ADMIN,
     STAFF,
+    THERAPIST
 }

@@ -1,19 +1,15 @@
-package com.skincare_booking_system.dto.response;
-
-import java.time.LocalDate;
-import java.util.Set;
+package com.skincare_booking_system.dto.request;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
-    String id;
-    String username;
+public class TherapistUpdate {
     String firstName;
     String lastName;
     String email;
@@ -22,7 +18,5 @@ public class UserResponse {
     String gender;
     LocalDate birthDate;
     Boolean status;
-
-
-    Set<RoleResponse> roles;
+    Integer yearExperience;
 }

@@ -1,7 +1,10 @@
 package com.skincare_booking_system.configuration;
 
 import java.util.HashSet;
+import java.util.Set;
 
+import com.skincare_booking_system.entity.Role;
+import com.skincare_booking_system.repository.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -22,16 +25,26 @@ public class ApplicationInitConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RoleRepository roleRepository;
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
-                var roles = new HashSet<String>();
-                roles.add(Roles.ADMIN.name());
+            if (userRepository.findByUsername("ADMIN").isEmpty()) {
+                Role adminRole = roleRepository.findById(Roles.ADMIN.name())
+                        .orElseGet(() -> {
+                            Role newRole = new Role();
+                            newRole.setName(Roles.ADMIN.name());
+                            return roleRepository.save(newRole);
+                        });
+
+                Set<Role> roles = new HashSet<>();
+                roles.add(adminRole);
+
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        // .roles(roles)
+                        .roles(roles)
                         .build();
 
                 userRepository.save(user);
@@ -39,4 +52,5 @@ public class ApplicationInitConfig {
             }
         };
     }
+
 }
