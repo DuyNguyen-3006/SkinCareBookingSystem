@@ -3,8 +3,12 @@ package com.skincare_booking_system.service;
 import java.util.HashSet;
 import java.util.List;
 
+import org.hibernate.validator.cfg.defs.EmailDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -43,6 +47,9 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
     public UserResponse registerUser(UserRegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -57,7 +64,13 @@ public class UserService {
         roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
         user.setStatus(true);
-        return userMapper.toUserResponse(userRepository.save(user));
+
+
+        User savedUser = userRepository.save(user);
+
+        sendEmail(savedUser.getEmail());
+
+        return userMapper.toUserResponse(savedUser);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -72,8 +85,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with phone number " + phoneNumber + " not found")));
     }
 
-    public UserResponse updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse updateUser(String phone, UserUpdateRequest request) {
+        User user = userRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.toUpdateUser(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -114,5 +127,20 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public void sendEmail(String toEmail) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("bambospa.skincare@gmail.com");
+            message.setTo(toEmail);
+            message.setSubject("Chào mừng bạn đến với Bamboo Spa!");
+            message.setText("Cảm ơn bạn đã đăng ký tài khoản tại Bamboo Spa. Chúc bạn có trải nghiệm tuyệt vời!");
+
+            mailSender.send(message);
+            log.info("Email sent successfully to {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send email to {}: {}", toEmail, e.getMessage());
+        }
     }
 }

@@ -1,16 +1,19 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.TherapistRequest;
-import com.skincare_booking_system.dto.response.TherapistResponse;
+import java.util.List;
+
+import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.service.TherapistService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.ApiResponse;
+import com.skincare_booking_system.dto.request.TherapistRequest;
+import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.service.TherapistService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -20,11 +23,12 @@ public class TherapistController {
     private TherapistService therapistService;
 
     @PostMapping()
-     ApiResponse<TherapistResponse> createTherapist(@RequestBody TherapistRequest therapistRequest) {
+    ApiResponse<TherapistResponse> createTherapist(@RequestBody TherapistRequest therapistRequest) {
         return ApiResponse.<TherapistResponse>builder()
                 .result(therapistService.createTherapist(therapistRequest))
                 .build();
     }
+
     @GetMapping()
     ApiResponse<List<TherapistResponse>> getTherapists() {
         return ApiResponse.<List<TherapistResponse>>builder()
@@ -72,7 +76,10 @@ public class TherapistController {
         return ResponseEntity.ok("Therapist restored successfully");
     }
 
-
-
-
+    @GetMapping("/therapistProfile")
+    ApiResponse<InfoTherapistResponse> getMyInfo() {
+        return ApiResponse.<InfoTherapistResponse>builder()
+                .result(therapistService.getMyInfo())
+                .build();
+    }
 }

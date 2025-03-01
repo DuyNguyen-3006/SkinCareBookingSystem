@@ -1,10 +1,12 @@
 package com.skincare_booking_system.dto.request;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +15,10 @@ import java.time.LocalDate;
 public class TherapistUpdate {
     String fullName;
     String email;
+
     @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
+
     String address;
     String gender;
     LocalDate birthDate;

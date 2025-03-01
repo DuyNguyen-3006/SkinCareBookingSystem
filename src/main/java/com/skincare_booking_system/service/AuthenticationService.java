@@ -107,7 +107,6 @@ public class AuthenticationService {
         return stringJoiner.toString();
     }
 
-
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
 

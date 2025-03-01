@@ -1,7 +1,5 @@
 package com.skincare_booking_system.dto.response;
 
-import java.util.Set;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

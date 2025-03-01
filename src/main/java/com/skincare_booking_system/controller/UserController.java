@@ -57,10 +57,10 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/update/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    @PutMapping("/update/{phone}")
+    ApiResponse<UserResponse> updateUser(@PathVariable String phoneNumber, @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.updateUser(userId, request))
+                .result(userService.updateUser(phoneNumber, request))
                 .build();
     }
 
@@ -71,7 +71,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-//      @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    //      @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.<String>builder().result("Password has been changed").build();

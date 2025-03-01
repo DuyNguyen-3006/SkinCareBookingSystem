@@ -1,5 +1,7 @@
 package com.skincare_booking_system.service;
 
+import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +16,6 @@ import com.skincare_booking_system.repository.ServicesRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,19 +33,16 @@ public class ServicesService {
         return servicesMapper.toServicesResponse(servicesRepository.save(services));
     }
 
-          public List<ServicesResponse> getAllServicesIsActiveTrue() {
-              List<Services> activeServices = servicesRepository.findByIsActiveTrue();
-              return activeServices.stream()
-                      .map(servicesMapper::toServicesResponse)
-                      .toList();
-          }
-        @PreAuthorize("hasRole('ADMIN')")
-        public List<ServicesResponse> getAllServicesIsActiveFalse() {
-            List<Services> activeServices = servicesRepository.findByIsActiveFalse();
-            return activeServices.stream()
-                    .map(servicesMapper::toServicesResponse)
-                    .toList();
-        }
+    public List<ServicesResponse> getAllServicesIsActiveTrue() {
+        List<Services> activeServices = servicesRepository.findByIsActiveTrue();
+        return activeServices.stream().map(servicesMapper::toServicesResponse).toList();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServicesResponse> getAllServicesIsActiveFalse() {
+        List<Services> activeServices = servicesRepository.findByIsActiveFalse();
+        return activeServices.stream().map(servicesMapper::toServicesResponse).toList();
+    }
 
     public ServicesResponse getServicesByServicesName(String serviceName) {
         return servicesMapper.toServicesResponse(servicesRepository

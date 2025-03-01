@@ -7,7 +7,6 @@ import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.entity.User;
 
-
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -17,5 +16,4 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void toUpdateUser(@MappingTarget User user, UserUpdateRequest request);
-
 }

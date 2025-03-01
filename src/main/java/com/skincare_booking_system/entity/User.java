@@ -29,6 +29,7 @@ public class User {
     String gender;
     LocalDate birthDate;
     Boolean status;
+
     @ManyToMany
     Set<Role> roles;
 }
