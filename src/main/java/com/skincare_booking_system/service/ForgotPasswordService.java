@@ -1,6 +1,13 @@
 package com.skincare_booking_system.service;
 
-import com.skincare_booking_system.dto.request.ChangePasswordRequest;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Random;
+
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.skincare_booking_system.dto.request.ForgotPasswordRequest;
 import com.skincare_booking_system.dto.request.MailBody;
 import com.skincare_booking_system.dto.response.ForgotPasswordResponse;
@@ -10,13 +17,6 @@ import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.ForgotPasswordRepository;
 import com.skincare_booking_system.repository.UserRepository;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.Date;
-import java.util.Random;
 
 @Service
 public class ForgotPasswordService {
@@ -26,7 +26,12 @@ public class ForgotPasswordService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public ForgotPasswordService(JavaMailSender mailSender, UserRepository userRepository, ForgotPasswordRepository forgotPasswordRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public ForgotPasswordService(
+            JavaMailSender mailSender,
+            UserRepository userRepository,
+            ForgotPasswordRepository forgotPasswordRepository,
+            EmailService emailService,
+            PasswordEncoder passwordEncoder) {
         this.mailSender = mailSender;
         this.userRepository = userRepository;
         this.forgotPasswordRepository = forgotPasswordRepository;
@@ -35,10 +40,9 @@ public class ForgotPasswordService {
     }
 
     public ForgotPasswordResponse verifyEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         ForgotPassword checkUser = forgotPasswordRepository.findForgotPasswordByUser(user);
-        if(checkUser != null) {
+        if (checkUser != null) {
             forgotPasswordRepository.deleteById(checkUser.getFpId());
         }
         int otp = optGenerate();
@@ -54,28 +58,23 @@ public class ForgotPasswordService {
                 .build();
         emailService.sendSimpleMessage(mailBody);
         forgotPasswordRepository.save(fp);
-        return ForgotPasswordResponse.builder()
-                .message("Email sent verify!")
-                .build();
-        }
-
-    public ForgotPasswordResponse verifyOTP(Integer otp, String email){
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
-        ForgotPassword fp = forgotPasswordRepository.findForgotPasswordByOtpAndUser(otp,user);
-        if(fp == null){
-            throw new AppException(ErrorCode.INVALID_OTP);
-        }
-        if(fp.getExpirationTime().before(Date.from(Instant.now()))){
-            throw new AppException(ErrorCode.OTP_HAS_EXPIRED);
-        }
-        return ForgotPasswordResponse.builder()
-                .message("OTP is verified")
-                .build();
+        return ForgotPasswordResponse.builder().message("Email sent verify!").build();
     }
 
-    public ForgotPasswordResponse changeForgotPassword(String email, ForgotPasswordRequest request){
-        if(!request.getPassword().equals(request.getRepassword())){
+    public ForgotPasswordResponse verifyOTP(Integer otp, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        ForgotPassword fp = forgotPasswordRepository.findForgotPasswordByOtpAndUser(otp, user);
+        if (fp == null) {
+            throw new AppException(ErrorCode.INVALID_OTP);
+        }
+        if (fp.getExpirationTime().before(Date.from(Instant.now()))) {
+            throw new AppException(ErrorCode.OTP_HAS_EXPIRED);
+        }
+        return ForgotPasswordResponse.builder().message("OTP is verified").build();
+    }
+
+    public ForgotPasswordResponse changeForgotPassword(String email, ForgotPasswordRequest request) {
+        if (!request.getPassword().equals(request.getRepassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
         }
         User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
@@ -88,10 +87,9 @@ public class ForgotPasswordService {
                 .message("Change password successfully")
                 .build();
     }
-    private Integer optGenerate(){
+
+    private Integer optGenerate() {
         Random random = new Random();
         return random.nextInt(100_000, 999_999);
     }
-    }
-
-
+}

@@ -30,7 +30,6 @@ public enum ErrorCode {
     SERVICE_NOT_FOUND("Service not found", HttpStatus.BAD_REQUEST),
     DESCRIPTION_INVALID("Description is not more than 150", HttpStatus.BAD_REQUEST),
     CATEGORY_INVALID("Category is not more 50", HttpStatus.BAD_REQUEST),
-
     ;
 
     private final String message;

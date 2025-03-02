@@ -1,11 +1,11 @@
 package com.skincare_booking_system.entities;
 
+import java.util.Date;
 
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Data
 @Entity

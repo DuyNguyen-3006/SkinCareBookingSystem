@@ -25,13 +25,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
-            "/users",
-            "/services",
-            "/authentication/log-in",
-            "/authentication/introspect",
-            "/authentication/logout",
-            "/authentication/refresh",
-            "/forgot-password/**",
+        "/users",
+        "/services",
+        "/authentication/log-in",
+        "/authentication/introspect",
+        "/authentication/logout",
+        "/authentication/refresh",
+        "/forgot-password/**",
     };
 
     @Autowired
@@ -54,7 +54,7 @@ public class SecurityConfig {
                                         .jwtAuthenticationConverter(jwtConverter()))
                                 .authenticationEntryPoint(
                                         new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                );
+                        );
 
         return httpSecurity.build();
     }

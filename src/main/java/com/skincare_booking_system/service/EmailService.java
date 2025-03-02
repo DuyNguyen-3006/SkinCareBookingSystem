@@ -1,9 +1,8 @@
 package com.skincare_booking_system.service;
 
-import com.skincare_booking_system.dto.request.MailBody;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -11,12 +10,17 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.skincare_booking_system.dto.request.MailBody;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class EmailService {
 
-    private  final JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
     private TemplateEngine templateEngine;
+
     public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
@@ -37,20 +41,20 @@ public class EmailService {
         }
     }
 
-    public void sendSimpleMessage(MailBody mailBody){
+    public void sendSimpleMessage(MailBody mailBody) {
         try {
             Context context = new Context();
-            context.setVariable("name",mailBody.getTo());
-            context.setVariable("otp",mailBody.getOtp());
-            String template = templateEngine.process("OTP-ForgotPassword",context);
+            context.setVariable("name", mailBody.getTo());
+            context.setVariable("otp", mailBody.getOtp());
+            String template = templateEngine.process("OTP-ForgotPassword", context);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
             mimeMessageHelper.setFrom("fsalon391@gmail.com");
             mimeMessageHelper.setTo(mailBody.getTo());
-            mimeMessageHelper.setText(template,true);
+            mimeMessageHelper.setText(template, true);
             mimeMessageHelper.setSubject(mailBody.getSubject());
             mailSender.send(mimeMessage);
-        }catch (MessagingException exception){
+        } catch (MessagingException exception) {
             System.out.println("Can't not send email");
         }
     }

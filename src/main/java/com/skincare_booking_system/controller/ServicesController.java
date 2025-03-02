@@ -1,5 +1,7 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -12,8 +14,6 @@ import com.skincare_booking_system.service.ServicesService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/services")
@@ -29,16 +29,19 @@ public class ServicesController {
         return response;
     }
 
-        @GetMapping("/true")
-        ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
-            return ApiResponse.<List<ServicesResponse>>builder()
-                    .result(servicesService.getAllServicesIsActiveTrue()).build();
-        }
-        @GetMapping("/false")
-        ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
-            return ApiResponse.<List<ServicesResponse>>builder()
-                    .result(servicesService.getAllServicesIsActiveFalse()).build();
-        }
+    @GetMapping("/true")
+    ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getAllServicesIsActiveTrue())
+                .build();
+    }
+
+    @GetMapping("/false")
+    ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getAllServicesIsActiveFalse())
+                .build();
+    }
 
     @GetMapping("/{serviceName}")
     ApiResponse<ServicesResponse> getServicesByServciesName(@PathVariable String serviceName) {

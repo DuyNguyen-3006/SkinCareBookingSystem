@@ -1,10 +1,11 @@
 package com.skincare_booking_system.dto.response;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor

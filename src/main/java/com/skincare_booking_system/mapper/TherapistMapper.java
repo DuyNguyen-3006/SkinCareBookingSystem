@@ -1,12 +1,12 @@
 package com.skincare_booking_system.mapper;
 
-import com.skincare_booking_system.dto.response.InfoTherapistResponse;
-import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import org.mapstruct.*;
 
 import com.skincare_booking_system.dto.request.TherapistRequest;
 import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
+import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.entities.Therapist;
 
 @Mapper(componentModel = "spring")

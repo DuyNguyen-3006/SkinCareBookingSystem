@@ -2,18 +2,16 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
-import com.skincare_booking_system.dto.request.UserUpdateRequest;
-import com.skincare_booking_system.dto.response.InfoTherapistResponse;
-import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
-import com.skincare_booking_system.dto.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.TherapistRequest;
+import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
+import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.service.TherapistService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +59,8 @@ public class TherapistController {
     }
 
     @PutMapping("/updateTherapist/{phone}")
-    ApiResponse<TherapistUpdateResponse> updateUser(@PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
+    ApiResponse<TherapistUpdateResponse> updateUser(
+            @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
         return ApiResponse.<TherapistUpdateResponse>builder()
                 .result(therapistService.updateTherapist(phoneNumber, request))
                 .build();

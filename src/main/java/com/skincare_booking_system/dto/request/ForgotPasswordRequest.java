@@ -1,6 +1,7 @@
 package com.skincare_booking_system.dto.request;
 
 import jakarta.validation.constraints.Size;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class ForgotPasswordRequest {
     @Size(min = 8, message = "PASSWORD_INVALID")
     String password;
+
     String repassword;
 }
-
