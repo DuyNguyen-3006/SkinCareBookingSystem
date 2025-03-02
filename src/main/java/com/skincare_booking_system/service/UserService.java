@@ -3,10 +3,8 @@ package com.skincare_booking_system.service;
 import java.util.HashSet;
 import java.util.List;
 
-import org.hibernate.validator.cfg.defs.EmailDef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -22,8 +20,8 @@ import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entity.Role;
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.Role;
+import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.UserMapper;
@@ -48,7 +46,7 @@ public class UserService {
     private RoleRepository roleRepository;
 
     @Autowired
-    private JavaMailSender mailSender;
+    private EmailService emailService;
 
     public UserResponse registerUser(UserRegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -65,12 +63,9 @@ public class UserService {
         user.setRoles(roles);
         user.setStatus(true);
 
+        emailService.sendWelcomeEmail(user.getEmail());
 
-        User savedUser = userRepository.save(user);
-
-        sendEmail(savedUser.getEmail());
-
-        return userMapper.toUserResponse(savedUser);
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -129,18 +124,5 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void sendEmail(String toEmail) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("bambospa.skincare@gmail.com");
-            message.setTo(toEmail);
-            message.setSubject("Chào mừng bạn đến với Bamboo Spa!");
-            message.setText("Cảm ơn bạn đã đăng ký tài khoản tại Bamboo Spa. Chúc bạn có trải nghiệm tuyệt vời!");
 
-            mailSender.send(message);
-            log.info("Email sent successfully to {}", toEmail);
-        } catch (Exception e) {
-            log.error("Failed to send email to {}: {}", toEmail, e.getMessage());
-        }
-    }
 }

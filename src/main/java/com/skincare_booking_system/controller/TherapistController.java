@@ -2,7 +2,10 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
+import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
+import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.dto.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +57,13 @@ public class TherapistController {
     ApiResponse<TherapistResponse> getUser(@PathVariable("phoneNumber") String phone) {
         return ApiResponse.<TherapistResponse>builder()
                 .result(therapistService.getTherapistbyPhone(phone))
+                .build();
+    }
+
+    @PutMapping("/updateTherapist/{phone}")
+    ApiResponse<TherapistUpdateResponse> updateUser(@PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
+        return ApiResponse.<TherapistUpdateResponse>builder()
+                .result(therapistService.updateTherapist(phoneNumber, request))
                 .build();
     }
 

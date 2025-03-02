@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByPhone(String phone);
 
     Optional<User> findByUsername(String username);
+
+    Optional<User> findByEmail(String email);
 }

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import jakarta.persistence.ManyToMany;
 
-import com.skincare_booking_system.entity.Role;
+import com.skincare_booking_system.entities.Role;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

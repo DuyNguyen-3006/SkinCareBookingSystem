@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 
 import com.skincare_booking_system.dto.request.RoleRequest;
 import com.skincare_booking_system.dto.response.RoleResponse;
-import com.skincare_booking_system.entity.Role;
+import com.skincare_booking_system.entities.Role;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {

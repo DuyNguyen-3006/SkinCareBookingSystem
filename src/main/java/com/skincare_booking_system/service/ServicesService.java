@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.skincare_booking_system.dto.request.ServicesRequest;
 import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
-import com.skincare_booking_system.entity.Services;
+import com.skincare_booking_system.entities.Services;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.ServicesMapper;

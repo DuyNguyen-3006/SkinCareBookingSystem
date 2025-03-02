@@ -5,7 +5,7 @@ import org.mapstruct.*;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

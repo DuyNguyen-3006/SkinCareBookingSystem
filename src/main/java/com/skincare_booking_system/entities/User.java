@@ -1,4 +1,4 @@
-package com.skincare_booking_system.entity;
+package com.skincare_booking_system.entities;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -30,6 +30,8 @@ public class User {
     LocalDate birthDate;
     Boolean status;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ForgotPassword forgotPassword;
     @ManyToMany
     Set<Role> roles;
 }

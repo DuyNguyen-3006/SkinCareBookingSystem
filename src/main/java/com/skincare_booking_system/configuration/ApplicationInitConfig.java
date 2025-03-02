@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.skincare_booking_system.constant.Roles;
-import com.skincare_booking_system.entity.Role;
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.Role;
+import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.UserRepository;
 

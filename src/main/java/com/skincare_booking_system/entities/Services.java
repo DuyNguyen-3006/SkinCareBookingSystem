@@ -1,4 +1,4 @@
-package com.skincare_booking_system.entity;
+package com.skincare_booking_system.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -1,4 +1,6 @@
-package com.skincare_booking_system.entity;
+package com.skincare_booking_system.entities;
+
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -6,13 +8,15 @@ import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Entity
 @Data
-@AllArgsConstructor
+@Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role {
+public class InvalidatedToken {
     @Id
-    String name;
+    String id;
+
+    Date expiryTime;
 }

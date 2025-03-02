@@ -1,27 +1,35 @@
-package com.skincare_booking_system.dto.request;
+package com.skincare_booking_system.entities;
 
 import java.time.LocalDate;
+import java.util.Set;
 
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TherapistUpdate {
+public class Therapist {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    String username;
+    String password;
     String fullName;
     String email;
-
-    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
-
     String address;
     String gender;
     LocalDate birthDate;
     Boolean status;
     Integer yearExperience;
+
+    @ManyToMany
+    Set<Role> roles;
 }
