@@ -23,9 +23,7 @@ public class AuthenticationController {
     ApiResponse<AuthenticationResponse> logIn(@RequestBody AuthenticationRequest request) {
         var result = authenticationService.login(request);
 
-        return ApiResponse.<AuthenticationResponse>builder()
-                .result(result)
-                .build();
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
     @GetMapping("/log-in-google")

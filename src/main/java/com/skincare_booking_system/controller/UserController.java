@@ -2,7 +2,6 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.request.*;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.service.UserService;
 
@@ -71,18 +71,14 @@ public class UserController {
     @PutMapping("/change-password")
     public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
-        return ApiResponse.<String>builder()
-                .result("Password has been changed")
-                .build();
+        return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 
     @PutMapping("/reset-password/{phoneNumber}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> resetPassword(@PathVariable String phoneNumber,
-                                             @RequestBody ResetPasswordRequest request) {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
+    public ApiResponse<String> resetPassword(
+            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
         userService.resetPassword(request, phoneNumber);
-        return ApiResponse.<String>builder()
-                .result("Password has been reset")
-                .build();
+        return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }
