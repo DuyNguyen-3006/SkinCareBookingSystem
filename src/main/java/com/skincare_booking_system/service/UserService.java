@@ -3,6 +3,7 @@ package com.skincare_booking_system.service;
 import java.util.HashSet;
 import java.util.List;
 
+import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -48,7 +49,7 @@ public class UserService {
 
     public UserResponse registerUser(UserRegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
         if (userRepository.existsByPhone(request.getPhone())) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
@@ -121,4 +122,15 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
+public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+    User user =
+            userRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+    if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+        throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+    }
+
+    user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+    userRepository.save(user);
+}
 }
