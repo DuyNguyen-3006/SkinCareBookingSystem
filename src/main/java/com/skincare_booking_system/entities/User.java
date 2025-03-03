@@ -18,6 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
     String username;
     String password;
     String firstName;
@@ -28,9 +29,6 @@ public class User {
     String gender;
     LocalDate birthDate;
     Boolean status;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private ForgotPassword forgotPassword;
 
     @ManyToMany
     Set<Role> roles;
