@@ -8,6 +8,8 @@ spring:
 #    url: jdbc:mysql://localhost:3306/SkincareBooking
 #    username: root
 #    password: root
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+
     url: jdbc:mysql://5vpsce.stackhero-network.com:7666/dd62um1g91bup1w
     username: root
     password: jAEH7iIUpNvI7QBi8i4fIajFfymlBATk
@@ -18,7 +20,26 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+    properties:
+      hibernate:
+        format_sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: bamboospa.skincare@gmail.com
+    password: pkklofhredozhdqn
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    cache: false
 
 
 jwt:

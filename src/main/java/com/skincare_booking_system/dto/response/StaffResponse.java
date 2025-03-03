@@ -1,26 +1,21 @@
-package com.skincare_booking_system.entities;
+package com.skincare_booking_system.dto.response;
+
+import com.skincare_booking_system.entities.Role;
+import jakarta.persistence.ManyToMany;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-import jakarta.persistence.*;
-
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-@Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class StaffResponse {
     String id;
-
     String username;
-    String password;
     String firstName;
     String lastName;
     String email;
