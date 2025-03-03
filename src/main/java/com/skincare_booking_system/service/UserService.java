@@ -54,6 +54,9 @@ public class UserService {
         if (userRepository.existsByPhone(request.getPhone())) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

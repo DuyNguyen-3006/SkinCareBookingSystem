@@ -32,6 +32,7 @@ public enum ErrorCode {
     DESCRIPTION_INVALID("Description is not more than 150", HttpStatus.BAD_REQUEST),
     CATEGORY_INVALID("Category is not more 50", HttpStatus.BAD_REQUEST),
     SLOT_ID_EXISTED("Slot id existed", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED("Your email already used", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;
