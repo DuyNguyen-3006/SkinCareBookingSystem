@@ -5,13 +5,11 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.ChangePasswordRequest;
-import com.skincare_booking_system.dto.request.UserRegisterRequest;
-import com.skincare_booking_system.dto.request.UserUpdateRequest;
+import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.UserResponse;
 import com.skincare_booking_system.service.UserService;
 
@@ -57,23 +55,31 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/update/{userId}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    @PutMapping("/update/{phone}")
+    ApiResponse<UserResponse> updateUser(@PathVariable String phoneNumber, @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.updateUser(userId, request))
+                .result(userService.updateUser(phoneNumber, request))
                 .build();
     }
 
     @DeleteMapping("/{phoneNumber}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     String deleteUser(@PathVariable String phoneNumber) {
         userService.deleteUser(phoneNumber);
         return "User has been deleted";
     }
 
     @PutMapping("/change-password")
-    //  @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.<String>builder().result("Password has been changed").build();
+    }
+
+    @PutMapping("/reset-password/{phoneNumber}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
+    public ApiResponse<String> resetPassword(
+            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request, phoneNumber);
+        return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }

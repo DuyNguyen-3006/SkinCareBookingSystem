@@ -29,8 +29,10 @@ public class SecurityConfig {
         "/services",
         "/authentication/log-in",
         "/authentication/introspect",
-        "authentication/logout",
-        "authentication/refresh"
+        "/authentication/logout",
+        "/authentication/refresh",
+        "/forgot-password/**",
+        "/feedback/**",
     };
 
     @Autowired

@@ -15,11 +15,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
+import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entity.Role;
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.Role;
+import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.UserMapper;
@@ -43,9 +44,12 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public UserResponse registerUser(UserRegisterRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
         if (userRepository.existsByPhone(request.getPhone())) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
@@ -57,12 +61,14 @@ public class UserService {
         roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
         user.setStatus(true);
+
+        emailService.sendWelcomeEmail(user.getEmail());
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        log.info("In method getAllUsers");
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
@@ -73,8 +79,8 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with phone number " + phoneNumber + " not found")));
     }
 
-    public UserResponse updateUser(String userId, UserUpdateRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse updateUser(String phone, UserUpdateRequest request) {
+        User user = userRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.toUpdateUser(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -94,7 +100,8 @@ public class UserService {
                 .findByPhone(phoneNumber)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User with phone number " + phoneNumber + " not found"));
-        userRepository.delete(user);
+        user.setStatus(false);
+        userRepository.save(user);
     }
 
     public void changePassword(ChangePasswordRequest request) {
@@ -107,6 +114,18 @@ public class UserService {
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.PASSWORD_WRONG);
         }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+        User user =
+                userRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);

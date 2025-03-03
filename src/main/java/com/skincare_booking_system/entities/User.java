@@ -1,12 +1,12 @@
-package com.skincare_booking_system.entity;
+package com.skincare_booking_system.entities;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Entity
 @Data
@@ -14,11 +14,10 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Therapist {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-
     String username;
     String password;
     String firstName;
@@ -29,9 +28,10 @@ public class Therapist {
     String gender;
     LocalDate birthDate;
     Boolean status;
-    Integer yearExperience;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ForgotPassword forgotPassword;
+
     @ManyToMany
     Set<Role> roles;
-
-
 }

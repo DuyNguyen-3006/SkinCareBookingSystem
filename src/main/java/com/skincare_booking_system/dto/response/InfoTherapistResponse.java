@@ -1,8 +1,6 @@
-package com.skincare_booking_system.dto.request;
+package com.skincare_booking_system.dto.response;
 
 import java.time.LocalDate;
-
-import jakarta.validation.constraints.Pattern;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,15 +10,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TherapistRequest {
+public class InfoTherapistResponse {
     String username;
-    String password;
     String fullName;
     String email;
-
-    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
-
     String address;
     String gender;
     LocalDate birthDate;

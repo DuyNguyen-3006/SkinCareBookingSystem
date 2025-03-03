@@ -7,7 +7,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.skincare_booking_system.entity.Services;
+import com.skincare_booking_system.entities.Services;
 
 public interface ServicesRepository extends JpaRepository<Services, Long> {
     boolean existsByServiceName(String serviceName);

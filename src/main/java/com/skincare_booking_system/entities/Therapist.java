@@ -1,4 +1,4 @@
-package com.skincare_booking_system.entity;
+package com.skincare_booking_system.entities;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -14,21 +14,22 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class Therapist {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     String username;
     String password;
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
     String address;
     String gender;
     LocalDate birthDate;
     Boolean status;
+    Integer yearExperience;
+
     @ManyToMany
     Set<Role> roles;
 }

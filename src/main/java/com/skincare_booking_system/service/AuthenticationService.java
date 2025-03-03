@@ -25,8 +25,8 @@ import com.skincare_booking_system.dto.request.LogoutRequest;
 import com.skincare_booking_system.dto.request.RefreshRequest;
 import com.skincare_booking_system.dto.response.AuthenticationResponse;
 import com.skincare_booking_system.dto.response.IntrospectResponse;
-import com.skincare_booking_system.entity.InvalidatedToken;
-import com.skincare_booking_system.entity.User;
+import com.skincare_booking_system.entities.InvalidatedToken;
+import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.InvalidatedTokenRepository;
@@ -106,7 +106,6 @@ public class AuthenticationService {
         }
         return stringJoiner.toString();
     }
-
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());

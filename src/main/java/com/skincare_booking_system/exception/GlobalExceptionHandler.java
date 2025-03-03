@@ -59,9 +59,7 @@ public class GlobalExceptionHandler {
         try {
             errorCode = ErrorCode.valueOf(enumKey);
 
-            var constraintViolation = exception.getBindingResult()
-                    .getAllErrors()
-                    .stream()
+            var constraintViolation = exception.getBindingResult().getAllErrors().stream()
                     .findFirst()
                     .map(error -> error.unwrap(ConstraintViolation.class))
                     .orElse(null);

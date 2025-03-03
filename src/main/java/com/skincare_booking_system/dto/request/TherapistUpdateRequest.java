@@ -12,9 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TherapistRequest {
-    String username;
-    String password;
+public class TherapistUpdateRequest {
     String fullName;
     String email;
 
@@ -24,5 +22,6 @@ public class TherapistRequest {
     String address;
     String gender;
     LocalDate birthDate;
+    Boolean status;
     Integer yearExperience;
 }

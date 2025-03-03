@@ -6,7 +6,7 @@ import org.mapstruct.MappingTarget;
 import com.skincare_booking_system.dto.request.ServicesRequest;
 import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
-import com.skincare_booking_system.entity.Services;
+import com.skincare_booking_system.entities.Services;
 
 @Mapper(componentModel = "spring")
 public interface ServicesMapper {

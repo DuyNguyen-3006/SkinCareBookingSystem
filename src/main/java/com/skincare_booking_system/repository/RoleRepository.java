@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.skincare_booking_system.entity.Role;
+import com.skincare_booking_system.entities.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, String> {

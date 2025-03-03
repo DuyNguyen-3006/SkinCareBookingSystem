@@ -23,6 +23,5 @@ public class UserResponse {
     LocalDate birthDate;
     Boolean status;
 
-
     Set<RoleResponse> roles;
 }

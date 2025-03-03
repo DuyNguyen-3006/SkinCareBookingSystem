@@ -21,8 +21,6 @@ public class RoleService {
     @Autowired
     private RoleMapper roleMapper;
 
-
-
     public RoleResponse createRole(RoleRequest request) {
         var role = roleMapper.toRole(request);
         roleRepository.save(role);
