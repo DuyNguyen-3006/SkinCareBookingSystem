@@ -70,7 +70,7 @@ public class StaffService {
     }
     @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> searchStaffsByName(String name) {
-        List<Staff> staff = staffRepository.findByFullNameContainingIgnoreCase(name);
+        List<Staff> staff = staffRepository.findByFullnameContainingIgnoreCase(name);
 
         if (staff.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);

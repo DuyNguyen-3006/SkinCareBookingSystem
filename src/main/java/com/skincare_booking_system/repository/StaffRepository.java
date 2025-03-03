@@ -13,6 +13,6 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
 
     Optional<Staff> findByPhone(String phone);
 
-    List<Staff> findByFullNameContainingIgnoreCase(String fullName);
+    List<Staff> findByFullnameContainingIgnoreCase(String fullName);
     Optional<Staff> findByUsername(String username);
 }
