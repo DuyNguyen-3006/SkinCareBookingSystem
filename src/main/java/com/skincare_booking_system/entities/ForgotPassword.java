@@ -24,6 +24,7 @@ public class ForgotPassword {
     @Column(nullable = false)
     private Date expirationTime;
 
+    @ToString.Exclude
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User user;

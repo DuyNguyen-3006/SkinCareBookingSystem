@@ -40,7 +40,8 @@ public class ForgotPasswordService {
     }
 
     public ForgotPasswordResponse verifyEmail(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         ForgotPassword checkUser = forgotPasswordRepository.findForgotPasswordByUser(user);
         if (checkUser != null) {
             forgotPasswordRepository.deleteById(checkUser.getFpId());
@@ -83,6 +84,7 @@ public class ForgotPasswordService {
         userRepository.save(user);
         ForgotPassword fp = forgotPasswordRepository.findForgotPasswordByUser(user);
         forgotPasswordRepository.deleteById(fp.getFpId());
+        System.out.println("Deleting ForgotPassword with ID: " + fp.getFpId());
         return ForgotPasswordResponse.builder()
                 .message("Change password successfully")
                 .build();
