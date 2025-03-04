@@ -33,6 +33,7 @@ public enum ErrorCode {
     CATEGORY_INVALID("Category is not more 50", HttpStatus.BAD_REQUEST),
     SLOT_ID_EXISTED("Slot id existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED("Your email already used", HttpStatus.BAD_REQUEST),
+    SLOT_NOT_FOUND("Slot not found", HttpStatus.NOT_FOUND),
     ;
 
     private final String message;
