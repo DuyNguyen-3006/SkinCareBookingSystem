@@ -34,6 +34,10 @@ public enum ErrorCode {
     SLOT_ID_EXISTED("Slot id existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED("Your email already used", HttpStatus.BAD_REQUEST),
     SLOT_NOT_FOUND("Slot not found", HttpStatus.NOT_FOUND),
+    SERVICES_INVALID("No services found with the provided names.",HttpStatus.BAD_REQUEST),
+    SERVICES_FAILED("Some services are not active. Please check again.",HttpStatus.BAD_REQUEST),
+    PACKAGE_NOT_FOUND("Package not found",HttpStatus.NOT_FOUND),
+    PACKAGE_EXIST("Package exist",HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;
