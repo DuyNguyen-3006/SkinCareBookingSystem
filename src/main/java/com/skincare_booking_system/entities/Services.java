@@ -1,12 +1,11 @@
 package com.skincare_booking_system.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -15,13 +14,18 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Services {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String serviceId;
-
     String serviceName;
     String description;
     Double price;
     String category;
     Boolean isActive;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "services")
+    List<Package> packages;
+
 }
