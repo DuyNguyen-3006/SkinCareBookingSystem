@@ -45,6 +45,7 @@ public class ServicesService {
                   .map(servicesMapper::toServicesResponse)
                   .toList();
       }
+
     @PreAuthorize("hasRole('ADMIN')")
     public List<ServicesResponse> getAllServicesIsActiveFalse() {
 
@@ -56,7 +57,6 @@ public class ServicesService {
                 .map(servicesMapper::toServicesResponse)
                 .toList();
     }
-
 
       public ServicesResponse getServicesByServicesName(String serviceName) {
           return servicesMapper.toServicesResponse(servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND)));
@@ -79,6 +79,7 @@ public class ServicesService {
         }
           return "Services deactivated successfully";
       }
+
     @PreAuthorize("hasRole('ADMIN')")
     public String activateServices(String serviceName) {
         Services services = servicesRepository.findByServiceName(serviceName)

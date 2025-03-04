@@ -26,6 +26,6 @@ public class Package {
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     List<Services> services;
-    List<String>servicesNames;
+    List<String> servicesNames;
 
 }

@@ -1,6 +1,7 @@
 package com.skincare_booking_system.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.openid.connect.sdk.assurance.evidences.Voucher;
 import com.skincare_booking_system.constant.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,6 +43,10 @@ public class Booking {
     @JoinColumn(name = "slot_id")
     Slot slot;
 
+//    @ManyToOne
+//    @JoinColumn(name = "voucher_id")
+//    Voucher voucher;
+
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 
@@ -53,4 +58,18 @@ public class Booking {
     @JsonIgnore
     Set<Services> services;
 
+    @ManyToMany
+    @JoinTable(name = "booking_package",
+            joinColumns = @JoinColumn(name = "booking_id"),
+            inverseJoinColumns = @JoinColumn(name = "package_id")
+    )
+    private Set<Package> packages;
+
+    @OneToOne(mappedBy = "booking")
+    @JsonIgnore
+    Feedback feedback;
+
+//    @OneToOne(mappedBy = "booking")
+//    @JsonIgnore
+//    Payment payment;
 }
