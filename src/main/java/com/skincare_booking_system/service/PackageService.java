@@ -4,8 +4,8 @@ package com.skincare_booking_system.service;
 import com.skincare_booking_system.dto.request.PackageRequest;
 import com.skincare_booking_system.dto.request.PackageUpdateRequest;
 import com.skincare_booking_system.dto.response.PackageResponse;
-import com.skincare_booking_system.entities.Package;
 import com.skincare_booking_system.entities.Services;
+import com.skincare_booking_system.entities.Package;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.PackageMapper;
@@ -16,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -41,10 +42,15 @@ public class PackageService {
         if (!allActive) {
             throw new AppException(ErrorCode.SERVICES_FAILED);
         }
+        LocalTime totalDuration = services.stream()
+                .map(Services::getDuration) // Lấy duration của mỗi service
+                .reduce(LocalTime.MIDNIGHT, (acc, dur) -> acc.plusHours(dur.getHour())
+                        .plusMinutes(dur.getMinute())
+                        .plusSeconds(dur.getSecond()));
         Package p = packageMapper.toPackage(packageRequest);
         p.setPackageActive(true);
-        p.setServicesNames(servicesNames);
         p.setServices(services);
+        p.setDuration(totalDuration);
         return packageMapper.toPackageResponse(packageRepository.save(p));
     }
 
@@ -54,7 +60,7 @@ public class PackageService {
 
     public List<PackageResponse> getPackagesActive() {
         List<Package> activePackages = packageRepository.findByPackageActiveTrue();
-        if(activePackages.isEmpty()) {
+        if (activePackages.isEmpty()) {
             throw new AppException(ErrorCode.PACKAGE_NOT_FOUND);
         }
         return activePackages.stream().map(packageMapper::toPackageResponse).toList();
@@ -63,7 +69,7 @@ public class PackageService {
     @PreAuthorize("hasRole('ADMIN')")
     public List<PackageResponse> getPackagesDeactive() {
         List<Package> deActivePackages = packageRepository.findByPackageActiveFalse();
-        if(deActivePackages.isEmpty()) {
+        if (deActivePackages.isEmpty()) {
             throw new AppException(ErrorCode.PACKAGE_NOT_FOUND);
         }
         return deActivePackages.stream().map(packageMapper::toPackageResponse).toList();

@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -21,11 +24,15 @@ public class Services {
     String serviceName;
     String description;
     Double price;
-    String category;
     Boolean isActive;
+    LocalTime duration;
+    String imgUrl;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "services")
     List<Package> packages;
 
+    @ManyToMany(mappedBy = "services")
+    @JsonIgnore
+    Set<Booking> bookings;
 }

@@ -1,16 +1,12 @@
 package com.skincare_booking_system.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.openid.connect.sdk.assurance.evidences.Voucher;
 import com.skincare_booking_system.constant.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -43,9 +39,9 @@ public class Booking {
     @JoinColumn(name = "slot_id")
     Slot slot;
 
-//    @ManyToOne
-//    @JoinColumn(name = "voucher_id")
-//    Voucher voucher;
+    @ManyToOne
+    @JoinColumn(name = "voucher_id")
+    Voucher voucher;
 
     @Enumerated(EnumType.STRING)
     BookingStatus status;
