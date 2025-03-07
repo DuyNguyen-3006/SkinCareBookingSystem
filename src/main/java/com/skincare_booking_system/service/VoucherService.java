@@ -43,7 +43,13 @@ public class VoucherService {
         voucher.setIsActive(true);
         return voucherMapper.toVoucherResponse(voucherRepository.save(voucher));
     }
-
+    public List<VoucherResponse> getVoucherOutOfStock() {
+        List <Voucher> vouchers = voucherRepository.findByQuantity(0);
+        if (vouchers.isEmpty()) {
+            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
+        }
+        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
+    }
     public VoucherResponse getVoucherByCode(String voucherCode) {
         Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
