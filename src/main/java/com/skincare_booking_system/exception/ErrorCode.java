@@ -33,7 +33,29 @@ public enum ErrorCode {
     CATEGORY_INVALID("Category is not more 50", HttpStatus.BAD_REQUEST),
     SLOT_ID_EXISTED("Slot id existed", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED("Your email already used", HttpStatus.BAD_REQUEST),
-    ;
+    SLOT_NOT_FOUND("Slot not found", HttpStatus.NOT_FOUND),
+    BOOKING_NOT_FOUND("Booking not found", HttpStatus.NOT_FOUND),
+    SERVICES_INVALID("No services found with the provided names.",HttpStatus.BAD_REQUEST),
+    SERVICES_FAILED("Some services are not active. Please check again.",HttpStatus.BAD_REQUEST),
+    PACKAGE_NOT_FOUND("Package not found",HttpStatus.NOT_FOUND),
+    PACKAGE_EXIST("Package exist",HttpStatus.BAD_REQUEST),
+    VOUCHER_CODE_EXISTS("Voucher code already exists",HttpStatus.BAD_REQUEST),
+    VOUCHER_NAME_EXISTS("Voucher name already exists",HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_FOUND("Voucher not found",HttpStatus.NOT_FOUND),
+    EXPIRY_DATE_REQUIRED("Expiry date is required",HttpStatus.BAD_REQUEST),
+    QUANTITY_REQUIRED("Quantity is required",HttpStatus.BAD_REQUEST),
+    QUANTITY_MIN("Quantity must be greater than or equal to 0",HttpStatus.BAD_REQUEST),
+    VOUCHER_EXPIRED("Voucher has expired",HttpStatus.BAD_REQUEST),
+    VOUCHER_OUT_OF_STOCK( "Voucher is out of stock",HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_ACTIVE("Voucher is already active",HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_INACTIVE( "Voucher is already inactive",HttpStatus.BAD_REQUEST),
+    VOUCHER_EXPIRY_DATE_INVALID( "Expiry date must be in the future",HttpStatus.BAD_REQUEST),
+    VOUCHER_QUANTITY_INVALID("Quantity must be greater than 0",HttpStatus.BAD_REQUEST),
+    VOUCHER_ALREADY_USED("Voucher has already been used",HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_ACTIVE( "Voucher is not active",HttpStatus.BAD_REQUEST),
+    IMG_URL_REQUIRED("Image URL is required",HttpStatus.BAD_REQUEST),
+    IMG_URL_TOO_LONG("Image URL must not exceed 500 characters",HttpStatus.BAD_REQUEST),
+    IMG_URL_INVALID("Invalid image URL. Only accepted formats: jpg, jpeg, png, gif",HttpStatus.BAD_REQUEST),;
 
     private final String message;
     private final HttpStatusCode httpStatusCode;

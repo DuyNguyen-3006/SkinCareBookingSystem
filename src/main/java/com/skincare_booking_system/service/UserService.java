@@ -63,7 +63,6 @@ public class UserService {
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
-        user.setStatus(true);
 
         emailService.sendWelcomeEmail(user.getEmail());
 

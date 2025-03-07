@@ -3,19 +3,19 @@ package com.skincare_booking_system.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ServicesResponse {
+public class VoucherResponse {
 
-    String serviceName;
-    String description;
-    Double price;
+    String voucherName;
+    String voucherCode;
+    Double percentDiscount;
     Boolean isActive;
-    LocalTime duration;
-    String imgUrl;
+    LocalDate expiryDate;
+    Integer quantity;
 }

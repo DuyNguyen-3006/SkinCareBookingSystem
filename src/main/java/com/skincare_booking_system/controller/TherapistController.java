@@ -52,7 +52,7 @@ public class TherapistController {
     }
 
     @GetMapping("/{phoneNumber}")
-    ApiResponse<TherapistResponse> getUser(@PathVariable("phoneNumber") String phone) {
+    ApiResponse<TherapistResponse> getTherapist(@PathVariable("phoneNumber") String phone) {
         return ApiResponse.<TherapistResponse>builder()
                 .result(therapistService.getTherapistbyPhone(phone))
                 .build();

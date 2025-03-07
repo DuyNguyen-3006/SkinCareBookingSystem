@@ -28,6 +28,8 @@ public class SecurityConfig {
         "/users",
         "/services",
         "/staffs",
+        "/packages",
+        "/therapists",
         "/authentication/log-in",
         "/authentication/introspect",
         "/authentication/logout",

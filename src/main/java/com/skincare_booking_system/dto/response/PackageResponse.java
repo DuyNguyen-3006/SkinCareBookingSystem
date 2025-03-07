@@ -4,18 +4,18 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ServicesResponse {
+public class PackageResponse {
 
-    String serviceName;
-    String description;
-    Double price;
-    Boolean isActive;
+    String packageName;
+    Double packageFinalPrice;
+    Boolean packageActive;
     LocalTime duration;
-    String imgUrl;
+    List<ServicesResponse> services;
 }
