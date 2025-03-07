@@ -56,9 +56,9 @@ public class UserController {
     }
 
     @PutMapping("/update/{phone}")
-    ApiResponse<UserResponse> updateUser(@PathVariable String phoneNumber, @RequestBody UserUpdateRequest request) {
+    ApiResponse<UserResponse> updateUser(@PathVariable String phone, @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.updateUser(phoneNumber, request))
+                .result(userService.updateUser(phone, request))
                 .build();
     }
 
