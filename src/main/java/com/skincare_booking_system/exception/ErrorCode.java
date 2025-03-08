@@ -22,6 +22,7 @@ public enum ErrorCode {
     USER_NOT_EXISTED("User not found", HttpStatus.NOT_FOUND),
     EMAIL_NOT_EXISTED("Email not found", HttpStatus.NOT_FOUND),
     UNAUTHENTICATION("Unauthenticated", HttpStatus.UNAUTHORIZED),
+    LOGIN_FAILED("Wrong username or password", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("You do not have permission", HttpStatus.FORBIDDEN),
     PHONENUMBER_EXISTED("Your phone number already used", HttpStatus.BAD_REQUEST),
     PHONENUMBER_INVALID("Your phone number is not valid", HttpStatus.BAD_REQUEST),
@@ -55,7 +56,10 @@ public enum ErrorCode {
     VOUCHER_NOT_ACTIVE( "Voucher is not active",HttpStatus.BAD_REQUEST),
     IMG_URL_REQUIRED("Image URL is required",HttpStatus.BAD_REQUEST),
     IMG_URL_TOO_LONG("Image URL must not exceed 500 characters",HttpStatus.BAD_REQUEST),
-    IMG_URL_INVALID("Invalid image URL. Only accepted formats: jpg, jpeg, png, gif",HttpStatus.BAD_REQUEST),;
+    IMG_URL_INVALID("Invalid image URL. Only accepted formats: jpg, jpeg, png, gif",HttpStatus.BAD_REQUEST),
+    STYLIST_SCHEDULE_EXIST("Stylist already have schedule in this day",HttpStatus.BAD_REQUEST),
+    SLOT_TIME_ALREADY_EXISTS("Slot time already exists",HttpStatus.BAD_REQUEST),
+    ;
 
     private final String message;
     private final HttpStatusCode httpStatusCode;
