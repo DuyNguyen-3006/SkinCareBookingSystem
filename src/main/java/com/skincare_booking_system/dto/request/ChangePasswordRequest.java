@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChangePasswordRequest {
-    @NotBlank(message = "BLANK_FIELD")
+
     String oldPassword;
 
     @NotBlank(message = "BLANK_FIELD")
