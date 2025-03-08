@@ -7,6 +7,7 @@ import jakarta.validation.ConstraintViolation;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,36 +50,36 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.builder().message(errorCode.getMessage()).build());
     }
 
-    @ExceptionHandler(value = MethodArgumentNotValidException.class)
-    ResponseEntity<ApiResponse> handlingValidationException(MethodArgumentNotValidException exception) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse> handlingValidation(MethodArgumentNotValidException exception) {
+        // Lấy lỗi đầu tiên từ danh sách FieldErrors
+        FieldError fieldError = exception.getBindingResult().getFieldError();
 
-        String enumKey = exception.getFieldError().getDefaultMessage();
-
-        ErrorCode errorCode = ErrorCode.KEY_INVALID;
-        Map<String, Object> attributes = null;
-        try {
-            errorCode = ErrorCode.valueOf(enumKey);
-
-            var constraintViolation = exception.getBindingResult().getAllErrors().stream()
-                    .findFirst()
-                    .map(error -> error.unwrap(ConstraintViolation.class))
-                    .orElse(null);
-
-            attributes = constraintViolation.getConstraintDescriptor().getAttributes();
-
-            log.info(attributes.toString());
-        } catch (IllegalArgumentException e) {
-            log.error(enumKey + " is not a valid key");
+        if (fieldError == null) {
+            return ResponseEntity.badRequest().body(new ApiResponse<>("Validation error occurred", null, false));
         }
-        ApiResponse apiResponse = new ApiResponse();
 
-        apiResponse.setMessage(
-                Objects.nonNull(attributes)
-                        ? mapAttributes(errorCode.getMessage(), attributes)
-                        : errorCode.getMessage());
+        // Lấy enum key từ DefaultMessage
+        String enumKey = fieldError.getDefaultMessage();
+
+        ErrorCode errorCode = ErrorCode.KEY_INVALID; // Default error code
+
+        // Kiểm tra xem enumKey có trong ErrorCode không
+        if (enumKey != null) {
+            try {
+                errorCode = ErrorCode.valueOf(enumKey);
+            } catch (IllegalArgumentException e) {
+                log.error(enumKey + " is not a valid ErrorCode");
+            }
+        }
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setMessage(errorCode.getMessage());
+
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
 
     private String mapAttributes(String message, Map<String, Object> attributes) {
         String genderValue = attributes.get(GENDER_ATTRIBUTE).toString();
