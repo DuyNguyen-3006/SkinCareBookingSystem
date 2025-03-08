@@ -5,6 +5,7 @@ import com.skincare_booking_system.entities.Voucher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, String> {
     List<Voucher> findByIsActiveTrue();
 
     List<Voucher> findByIsActiveFalse();
+    List<Voucher>findByExpiryDateBefore(LocalDate localDate);
 }

@@ -59,6 +59,12 @@ public enum ErrorCode {
     IMG_URL_INVALID("Invalid image URL. Only accepted formats: jpg, jpeg, png, gif",HttpStatus.BAD_REQUEST),
     STYLIST_SCHEDULE_EXIST("Stylist already have schedule in this day",HttpStatus.BAD_REQUEST),
     SLOT_TIME_ALREADY_EXISTS("Slot time already exists",HttpStatus.BAD_REQUEST),
+    TITLE_NOT_EMPTY("Title cannot be empty",HttpStatus.BAD_REQUEST),
+    TITLE_INVALID("Title must be between 10 and 200 characters",HttpStatus.BAD_REQUEST),
+    CONTENT_NOT_EMPTY("Content cannot be empty",HttpStatus.BAD_REQUEST),
+    CONTENT_INVALID("Content must have at least 100 characters",HttpStatus.BAD_REQUEST),
+    BLOG_ALREADY_USED("Blog already used",HttpStatus.BAD_REQUEST),
+    BLOG_NOT_FOUND("Blog not found",HttpStatus.NOT_FOUND),
     ;
 
     private final String message;

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,10 +54,32 @@ public class PackageService {
         p.setDuration(totalDuration);
         return packageMapper.toPackageResponse(packageRepository.save(p));
     }
-
-    public PackageResponse getPackagesByPackagesName(String packageName) {
-        return packageMapper.toPackageResponse(packageRepository.findByPackageName(packageName).orElseThrow(() -> new AppException(ErrorCode.PACKAGE_NOT_FOUND)));
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<PackageResponse> getAllPackages() {
+        List<Package>  packages = packageRepository.findAll();
+        if(packages.isEmpty()){
+            throw new AppException(ErrorCode.PACKAGE_NOT_FOUND);
+        }
+        return packages.stream().map(packageMapper::toPackageResponse).collect(Collectors.toList());
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<PackageResponse> getPackagesByPackagesName(String packageName) {
+        List<Package> packages = packageRepository.findPackageByPackageNameContainsIgnoreCase(packageName);
+        if(packages.isEmpty()){
+            throw new AppException(ErrorCode.PACKAGE_NOT_FOUND);
+        }
+
+        return packages.stream().map(packageMapper::toPackageResponse).collect(Collectors.toList());
+    }
+    public List<PackageResponse> getPackagesByPackagesNameCUS(String packageName) {
+        List<Package> packages = packageRepository.findPackageByPackageNameContainsIgnoreCaseAndPackageActiveTrue(packageName);
+        if(packages.isEmpty()){
+            throw new AppException(ErrorCode.PACKAGE_NOT_FOUND);
+        }
+
+        return packages.stream().map(packageMapper::toPackageResponse).collect(Collectors.toList());
+    }
+
 
     public List<PackageResponse> getPackagesActive() {
         List<Package> activePackages = packageRepository.findByPackageActiveTrue();

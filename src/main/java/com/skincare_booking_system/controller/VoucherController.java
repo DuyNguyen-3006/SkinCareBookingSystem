@@ -25,7 +25,12 @@ public class VoucherController {
                 .result(voucherService.createVoucher(request))
                 .build();
     }
-
+    @GetMapping
+    ApiResponse <List<VoucherResponse>> getAllVouchers() {
+        return ApiResponse.<List<VoucherResponse>>builder()
+                .result(voucherService.getAllVouchers())
+                .build();
+    }
     @GetMapping("/{voucherCode}")
     ApiResponse<VoucherResponse> getVoucherByCode(@PathVariable String voucherCode) {
         return ApiResponse.<VoucherResponse>builder()
@@ -40,7 +45,7 @@ public class VoucherController {
                 .build();
     }
 
-    @GetMapping("/inactive")
+    @GetMapping("/deactive")
     ApiResponse<List<VoucherResponse>> getInactiveVouchers() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .result(voucherService.getInactiveVouchers())
@@ -50,6 +55,12 @@ public class VoucherController {
     ApiResponse<List<VoucherResponse>> getOutOfStockVouchers() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .result(voucherService.getVoucherOutOfStock())
+                .build();
+    }
+    @GetMapping("/expirydate")
+    ApiResponse<List<VoucherResponse>> getExpiryDateVouchers() {
+        return ApiResponse.<List<VoucherResponse>>builder()
+                .result(voucherService.getVoucherExpired())
                 .build();
     }
 
