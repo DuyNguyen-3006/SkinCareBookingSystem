@@ -44,7 +44,7 @@ public class PackageController {
     }
 
     @PutMapping("/update/{packageName}")
-    ApiResponse<PackageResponse> updateServices(@PathVariable String packageName, @Valid @RequestBody PackageUpdateRequest packageUpdateRequest) {
+    ApiResponse<PackageResponse> updatePackages(@PathVariable String packageName, @Valid @RequestBody PackageUpdateRequest packageUpdateRequest) {
         return ApiResponse.<PackageResponse>builder()
                 .result(packageService.updatePackage(packageName,packageUpdateRequest)).build();
     }
