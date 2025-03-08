@@ -67,7 +67,7 @@ public class AuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
         if (!authenticated) {
-            throw new AppException(ErrorCode.UNAUTHENTICATION);
+            throw new AppException(ErrorCode.LOGIN_FAILED);
         }
 
         var token = generateToken(user);
@@ -82,7 +82,7 @@ public class AuthenticationService {
                 .subject(user.getUsername())
                 .issuer("SkinCareBooking")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(2, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
