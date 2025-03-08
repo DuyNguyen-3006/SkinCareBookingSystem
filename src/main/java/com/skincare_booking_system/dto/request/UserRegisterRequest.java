@@ -18,10 +18,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class UserRegisterRequest {
-    @Size(min = 3, max = 20, message = "Your username must be between 3 and 20 characters")
+    @Size(min = 3, max = 20, message = "USERNAME_INVALID")
     String username;
 
-    @Size(min = 8, max = 20, message = "Your password must be between 8 and 20 characters")
+    @Size(min = 8, max = 20, message = "PASSWORD_INVALID")
     String password;
 
     @NotBlank(message = "BLANK_FIELD")

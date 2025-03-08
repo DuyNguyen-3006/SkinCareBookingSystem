@@ -70,7 +70,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    public ApiResponse<String> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         userService.changePassword(request);
         return ApiResponse.<String>builder().result("Password has been changed").build();
     }
