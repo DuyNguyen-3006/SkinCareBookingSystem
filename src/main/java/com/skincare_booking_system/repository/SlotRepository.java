@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.skincare_booking_system.entities.Slot;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
     Slot findSlotBySlotid(Long slotid);
 
@@ -18,11 +20,15 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     @Query(value = "select * from slot", nativeQuery = true)
     Set<Slot> getAllSlot();
 
-    //get slot avtice trong khung gio hoat dong cua spa
+
     @Query(value = "SELECT * FROM slot s WHERE s.deleted = false " +
-            "AND s.slottime BETWEEN '09:00:00' AND '19:00:00' " +
+            "AND s.slottime AND s.slottime != '23:00:00'\n " +
             "ORDER BY s.slottime ASC", nativeQuery = true)
     List<Slot> getAllSlotActive();
+
+    @Query(value = "select * from slot where slot.slottime >= ?1 and slot.slottime <= ?2 and slot.deleted = false\n" +
+            "order by slottime asc ",nativeQuery = true)
+    List<Slot> getSlotToRemove(LocalTime time, LocalTime timeFinishBooking);
 
     @Query(value = "select * from slot s where minute(s.slottime) = 0", nativeQuery = true)
     List<Slot> getSlotsWithoutMinute();
@@ -40,4 +46,13 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     Slot slotEndActive();
 
     Slot findBySlottime(LocalTime time);
+
+    @Query(value = "SELECT DISTINCT s.*\n" +
+            "FROM slot s\n" +
+            "JOIN specific_therapist_schedule sss ON sss.shift_id = ?1\n" +
+            "JOIN shift sh ON sss.shift_id = sh.shift_id\n" +
+            "WHERE s.slottime >= sh.start_time AND s.deleted = false and s.slottime < sh.end_time;",nativeQuery = true)
+    List<Slot> getSlotsInShift(long id);
+
+    boolean existsBySlottime(LocalTime slottime);
 }

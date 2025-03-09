@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,15 @@ public class VoucherService {
         voucher.setIsActive(true);
         return voucherMapper.toVoucherResponse(voucherRepository.save(voucher));
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<VoucherResponse> getAllVouchers() {
+        List<Voucher> vouchers = voucherRepository.findAll();
+        if(vouchers.isEmpty()){
+            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
+        }
+        return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
+    }
+    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getVoucherOutOfStock() {
         List <Voucher> vouchers = voucherRepository.findByQuantity(0);
         if (vouchers.isEmpty()) {
@@ -50,6 +60,17 @@ public class VoucherService {
         }
         return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<VoucherResponse> getVoucherExpired() {
+        List <Voucher> vouchers = voucherRepository.findByExpiryDateBefore(LocalDate.now());
+        if (vouchers.isEmpty()) {
+            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
+        }
+        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
+    }
+
+
+    @PreAuthorize("hasRole('ADMIN')")
     public VoucherResponse getVoucherByCode(String voucherCode) {
         Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
@@ -68,7 +89,7 @@ public class VoucherService {
 
         return voucherMapper.toVoucherResponse(voucher);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getActiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveTrue();
         if (vouchers.isEmpty()) {

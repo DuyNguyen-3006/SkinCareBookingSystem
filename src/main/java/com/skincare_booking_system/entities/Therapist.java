@@ -3,6 +3,7 @@ package com.skincare_booking_system.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -16,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Therapist {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     String username;
     String password;
@@ -26,9 +27,18 @@ public class Therapist {
     String phone;
     String address;
     String gender;
+    String image;
     LocalDate birthDate;
     Boolean status;
     Integer yearExperience;
+
+    @OneToMany(mappedBy = "therapist")
+    @JsonIgnore
+    Set<TherapistSchedule> therapistSchedules;
+
+    @OneToMany(mappedBy = "therapist")
+    @JsonIgnore
+    Set<Booking> bookings;
 
     @ManyToMany
     Set<Role> roles;

@@ -28,25 +28,36 @@ public class ServicesController {
         response.setResult(servicesService.createServices(request));
         return response;
     }
-
-    @GetMapping("/true")
-    ApiResponse<List<ServicesResponse>> getAllServicesTrue() {
+    @GetMapping
+    ApiResponse<List<ServicesResponse>> getAllServices() {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getAllServices())
+                .build();
+    }
+    @GetMapping("/active")
+    ApiResponse<List<ServicesResponse>> getAllServicesActive() {
         return ApiResponse.<List<ServicesResponse>>builder()
                 .result(servicesService.getAllServicesIsActiveTrue())
                 .build();
     }
 
-    @GetMapping("/false")
-    ApiResponse<List<ServicesResponse>> getAllServicesFalse() {
+    @GetMapping("/deactive")
+    ApiResponse<List<ServicesResponse>> getAllServicesDeactive() {
         return ApiResponse.<List<ServicesResponse>>builder()
                 .result(servicesService.getAllServicesIsActiveFalse())
                 .build();
     }
 
-    @GetMapping("/{serviceName}")
-    ApiResponse<ServicesResponse> getServicesByServciesName(@PathVariable String serviceName) {
-        return ApiResponse.<ServicesResponse>builder()
+    @GetMapping("/searchByName")
+    ApiResponse<List<ServicesResponse>> getServicesByServciesName(@RequestParam String serviceName) {
+        return ApiResponse.<List<ServicesResponse>>builder()
                 .result(servicesService.getServicesByServicesName(serviceName))
+                .build();
+    }
+    @GetMapping("/searchByNameCUS")
+    ApiResponse<List<ServicesResponse>> getServicesByServciesNameCUS(@RequestParam String serviceName) {
+        return ApiResponse.<List<ServicesResponse>>builder()
+                .result(servicesService.getServicesByServicesNameCUS(serviceName))
                 .build();
     }
 

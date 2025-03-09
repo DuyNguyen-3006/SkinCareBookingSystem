@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.skincare_booking_system.entities.Slot;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
-import com.skincare_booking_system.repository.ServicesRepository;
 import com.skincare_booking_system.repository.SlotRepository;
 
 import java.time.LocalDate;
@@ -24,18 +23,16 @@ import java.util.stream.Collectors;
 @Service
 public class SlotService {
     private final SlotRepository slotRepository;
-    private final ServicesRepository servicesRepository;
     private final ShiftRepository shiftRepository;
 
-    public SlotService(SlotRepository slotRepository, ServicesRepository servicesRepository, ShiftRepository shiftRepository) {
+    public SlotService(SlotRepository slotRepository, ShiftRepository shiftRepository) {
         this.slotRepository = slotRepository;
-        this.servicesRepository = servicesRepository;
         this.shiftRepository = shiftRepository;
     }
 
     public SlotResponse createSlot(Slot slot) {
-        if (slot.getSlotid() != 0 && slotRepository.existsById(slot.getSlotid())) {
-            throw new AppException(ErrorCode.SLOT_ID_EXISTED);
+        if (slotRepository.existsBySlottime(slot.getSlottime())) {
+            throw new AppException(ErrorCode.SLOT_TIME_ALREADY_EXISTS);
         }
         slotRepository.save(slot);
         return SlotResponse.builder()
@@ -58,14 +55,17 @@ public class SlotService {
 
         LocalTime now = LocalTime.now();
         return slots.stream()
-                .filter(slot -> !now.isAfter(slot.getSlottime())) // Chỉ lấy slot chưa qua giờ hiện tại
+                .filter(slot -> !now.isAfter(slot.getSlottime()))
                 .collect(Collectors.toList());
     }
 
     public Slot update(long slotid, Slot slot) {
         Slot updeSlot = slotRepository.findById(slotid)
                 .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
-
+        boolean exists = slotRepository.existsBySlottime(slot.getSlottime());
+        if (exists) {
+            throw new AppException(ErrorCode.SLOT_TIME_ALREADY_EXISTS);
+        }
         updeSlot.setSlottime(slot.getSlottime());
         return slotRepository.save(updeSlot);
     }

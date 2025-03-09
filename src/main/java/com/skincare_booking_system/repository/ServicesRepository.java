@@ -15,4 +15,7 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
     List<Services> findByIsActiveFalse();
 
     List<Services> findServicesByServiceNameIn(Collection<String> serviceNames);
+
+    List<Services> findServicessByServiceNameContainingIgnoreCase(String serviceName);
+    List<Services> findServicessByServiceNameContainingIgnoreCaseAndIsActiveTrue(String serviceName);
 }

@@ -19,8 +19,8 @@ import java.util.Set;
 public class Services {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String serviceId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
     String serviceName;
     String description;
     Double price;
