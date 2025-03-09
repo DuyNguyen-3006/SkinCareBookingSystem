@@ -1,7 +1,9 @@
 package com.skincare_booking_system.entities;
 
 import java.time.LocalTime;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -22,7 +24,7 @@ public class Slot {
 
     boolean deleted = false;
 
-    //    @OneToMany(mappedBy = "slot")
-    //    @JsonIgnore
-    //    Set<Booking> bookings;
+        @OneToMany(mappedBy = "slot")
+        @JsonIgnore
+        Set<Booking> bookings;
 }

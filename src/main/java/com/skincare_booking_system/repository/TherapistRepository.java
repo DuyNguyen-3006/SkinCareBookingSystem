@@ -6,8 +6,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.skincare_booking_system.entities.Therapist;
+import org.springframework.stereotype.Repository;
 
-public interface TherapistRepository extends JpaRepository<Therapist, String> {
+@Repository
+public interface TherapistRepository extends JpaRepository<Therapist, Long> {
     boolean existsByUsername(String username);
 
     List<Therapist> findByStatusTrue();
@@ -19,4 +21,6 @@ public interface TherapistRepository extends JpaRepository<Therapist, String> {
     List<Therapist> findByFullNameContainingIgnoreCase(String fullName);
 
     Optional<Therapist> findByUsername(String username);
+
+    Therapist findTherapistById(Long id);
 }
