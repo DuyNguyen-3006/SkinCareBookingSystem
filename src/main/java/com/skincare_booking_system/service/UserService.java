@@ -103,13 +103,15 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteUser(String phoneNumber) {
-        User user = userRepository
-                .findByPhone(phoneNumber)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "User with phone number " + phoneNumber + " not found"));
+    public void deleteUser(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setStatus(false);
+        userRepository.save(user);
+    }
+
+    public void activeUser(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setStatus(true);
         userRepository.save(user);
     }
 
