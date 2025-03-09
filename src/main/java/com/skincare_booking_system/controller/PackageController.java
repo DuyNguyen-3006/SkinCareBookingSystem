@@ -25,26 +25,35 @@ public class PackageController {
         response.setResult(packageService.createPackage(request));
         return response;
     }
-
-    @GetMapping("/true")
-    ApiResponse<List<PackageResponse>> getAllPackagesTrue() {
+    @GetMapping
+    ApiResponse<List<PackageResponse>> getAllPackages() {
+        return ApiResponse.<List<PackageResponse>>builder()
+                .result(packageService.getAllPackages()).build();
+    }
+    @GetMapping("/active")
+    ApiResponse<List<PackageResponse>> getAllPackagesActive() {
         return ApiResponse.<List<PackageResponse>>builder()
                 .result(packageService.getPackagesActive()).build();
     }
-    @GetMapping("/false")
-    ApiResponse<List<PackageResponse>> getAllPackagesFalse() {
+    @GetMapping("/deactive")
+    ApiResponse<List<PackageResponse>> getAllPackagesDeactive() {
         return ApiResponse.<List<PackageResponse>>builder()
                 .result(packageService.getPackagesDeactive()).build();
     }
 
-    @GetMapping("/{packageName}")
-    ApiResponse<PackageResponse> getPackagesByPackagesName(@PathVariable String packageName) {
-        return ApiResponse.<PackageResponse>builder()
+    @GetMapping("/searchByName")
+    ApiResponse <List<PackageResponse>> getPackagesByPackagesName(@RequestParam String packageName) {
+        return ApiResponse.<List<PackageResponse>>builder()
                 .result(packageService.getPackagesByPackagesName(packageName)).build();
+    }
+    @GetMapping("/searchByNameCUS")
+    ApiResponse <List<PackageResponse>> getPackagesByPackagesNameCUS(@RequestParam String packageName) {
+        return ApiResponse.<List<PackageResponse>>builder()
+                .result(packageService.getPackagesByPackagesNameCUS(packageName)).build();
     }
 
     @PutMapping("/update/{packageName}")
-    ApiResponse<PackageResponse> updateServices(@PathVariable String packageName, @Valid @RequestBody PackageUpdateRequest packageUpdateRequest) {
+    ApiResponse<PackageResponse> updatePackages(@PathVariable String packageName, @Valid @RequestBody PackageUpdateRequest packageUpdateRequest) {
         return ApiResponse.<PackageResponse>builder()
                 .result(packageService.updatePackage(packageName,packageUpdateRequest)).build();
     }

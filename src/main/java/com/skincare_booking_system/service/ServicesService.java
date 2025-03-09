@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +37,17 @@ public class ServicesService {
          return servicesMapper.toServicesResponse(servicesRepository.save(services));
      }
 
-      public List<ServicesResponse> getAllServicesIsActiveTrue() {
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServicesResponse> getAllServices(){
+        List<Services> services = servicesRepository.findAll();
+        if(services.isEmpty()){
+            throw new AppException(ErrorCode.SERVICE_NOT_FOUND);
+        }
+        return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
+    }
+
+
+    public List<ServicesResponse> getAllServicesIsActiveTrue() {
           List<Services> activeServices = servicesRepository.findByIsActiveTrue();
           if(activeServices.isEmpty()){
               throw new  AppException(ErrorCode.SERVICE_NOT_FOUND);
@@ -57,10 +68,21 @@ public class ServicesService {
                 .toList();
     }
 
-
-      public ServicesResponse getServicesByServicesName(String serviceName) {
-          return servicesMapper.toServicesResponse(servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND)));
-      }
+    public List<ServicesResponse> getServicesByServicesNameCUS(String serviceName) {
+        List<Services> services= servicesRepository.findServicessByServiceNameContainingIgnoreCaseAndIsActiveTrue(serviceName);
+        if(services.isEmpty()){
+            throw new  AppException(ErrorCode.SERVICE_NOT_FOUND);
+        }
+        return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
+    }
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<ServicesResponse> getServicesByServicesName(String serviceName) {
+        List<Services> services= servicesRepository.findServicessByServiceNameContainingIgnoreCase(serviceName);
+        if(services.isEmpty()){
+            throw new  AppException(ErrorCode.SERVICE_NOT_FOUND);
+        }
+        return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
+    }
     @PreAuthorize("hasRole('ADMIN')")
       public ServicesResponse updateServices(String serviceName, ServicesUpdateRequest servicesUpdateRequest) {
           Services services = servicesRepository.findByServiceName(serviceName).orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));

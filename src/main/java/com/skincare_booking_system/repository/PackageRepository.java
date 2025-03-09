@@ -22,4 +22,8 @@ public interface PackageRepository extends JpaRepository<Package, String> {
     List<Package> findByServicesIn(Collection<Services> services);
 
     boolean existsByPackageName(String packageName);
+
+    List<Package> findPackageByPackageNameContainsIgnoreCase(String packageName);
+
+    List<Package> findPackageByPackageNameContainsIgnoreCaseAndPackageActiveTrue(String packageName);
 }
