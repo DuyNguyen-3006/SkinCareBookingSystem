@@ -62,11 +62,19 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/{phoneNumber}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
-    String deleteUser(@PathVariable String phoneNumber) {
-        userService.deleteUser(phoneNumber);
+    String deleteUser(@PathVariable String id) {
+        System.out.println("Deleting user with ID: " + id);
+        userService.deleteUser(id);
         return "User has been deleted";
+    }
+
+    @PostMapping("/active/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    String activeUser(@PathVariable String id) {
+        userService.activeUser(id);
+        return "Active user successfully";
     }
 
     @PutMapping("/change-password")
