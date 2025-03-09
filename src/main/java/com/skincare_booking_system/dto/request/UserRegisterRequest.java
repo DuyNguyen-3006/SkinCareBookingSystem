@@ -33,7 +33,7 @@ public class UserRegisterRequest {
     @Email(message = "Your email is not corret")
     String email;
 
-    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "Your phone number is not valid")
+    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
 
     String address;
