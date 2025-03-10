@@ -1,9 +1,6 @@
 package com.skincare_booking_system.exception;
 
 import java.util.Map;
-import java.util.Objects;
-
-import jakarta.validation.ConstraintViolation;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -76,10 +73,8 @@ public class GlobalExceptionHandler {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setMessage(errorCode.getMessage());
 
-
         return ResponseEntity.badRequest().body(apiResponse);
     }
-
 
     private String mapAttributes(String message, Map<String, Object> attributes) {
         String genderValue = attributes.get(GENDER_ATTRIBUTE).toString();

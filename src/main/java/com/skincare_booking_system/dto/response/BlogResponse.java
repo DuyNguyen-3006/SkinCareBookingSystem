@@ -16,5 +16,4 @@ public class BlogResponse {
     String content;
     String imageUrl;
     boolean active;
-
 }

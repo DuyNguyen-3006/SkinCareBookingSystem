@@ -1,12 +1,14 @@
 package com.skincare_booking_system.dto.response;
 
-import com.skincare_booking_system.entities.Role;
-import jakarta.persistence.ManyToMany;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import jakarta.persistence.ManyToMany;
+
+import com.skincare_booking_system.entities.Role;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor

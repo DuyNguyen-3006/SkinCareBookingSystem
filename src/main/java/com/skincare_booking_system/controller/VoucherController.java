@@ -1,15 +1,18 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.VoucherRequest;
 import com.skincare_booking_system.dto.response.VoucherResponse;
 import com.skincare_booking_system.service.VoucherService;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/vouchers")
@@ -25,12 +28,14 @@ public class VoucherController {
                 .result(voucherService.createVoucher(request))
                 .build();
     }
+
     @GetMapping
-    ApiResponse <List<VoucherResponse>> getAllVouchers() {
+    ApiResponse<List<VoucherResponse>> getAllVouchers() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .result(voucherService.getAllVouchers())
                 .build();
     }
+
     @GetMapping("/{voucherCode}")
     ApiResponse<VoucherResponse> getVoucherByCode(@PathVariable String voucherCode) {
         return ApiResponse.<VoucherResponse>builder()
@@ -51,12 +56,14 @@ public class VoucherController {
                 .result(voucherService.getInactiveVouchers())
                 .build();
     }
+
     @GetMapping("/outofstock")
     ApiResponse<List<VoucherResponse>> getOutOfStockVouchers() {
         return ApiResponse.<List<VoucherResponse>>builder()
                 .result(voucherService.getVoucherOutOfStock())
                 .build();
     }
+
     @GetMapping("/expirydate")
     ApiResponse<List<VoucherResponse>> getExpiryDateVouchers() {
         return ApiResponse.<List<VoucherResponse>>builder()

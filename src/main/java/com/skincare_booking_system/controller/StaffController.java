@@ -1,17 +1,19 @@
 package com.skincare_booking_system.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.StaffRequest;
 import com.skincare_booking_system.dto.request.StaffUpdateRequest;
 import com.skincare_booking_system.dto.response.StaffResponse;
 import com.skincare_booking_system.service.StaffService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,6 +29,7 @@ public class StaffController {
                 .result(staffService.createStaff(request))
                 .build();
     }
+
     @GetMapping()
     ApiResponse<List<StaffResponse>> getStaffs() {
         return ApiResponse.<List<StaffResponse>>builder()
@@ -73,17 +76,18 @@ public class StaffController {
         staffService.restoreStaffByPhone(phoneNumber);
         return ResponseEntity.ok("Staff restored successfully");
     }
+
     @PutMapping("/update/{phone}")
     ApiResponse<StaffResponse> updateStaff(@PathVariable String phone, @RequestBody StaffUpdateRequest request) {
         return ApiResponse.<StaffResponse>builder()
                 .result(staffService.updateStaff(phone, request))
                 .build();
     }
+
     @GetMapping("/staffInfo")
     ApiResponse<StaffResponse> getMyInfo() {
         return ApiResponse.<StaffResponse>builder()
                 .result(staffService.getMyInfo())
                 .build();
     }
-
 }

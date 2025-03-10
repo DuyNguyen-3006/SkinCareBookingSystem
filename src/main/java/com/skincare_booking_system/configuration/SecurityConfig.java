@@ -29,7 +29,7 @@ public class SecurityConfig {
         "/services",
         "/staffs",
         "/vouchers",
-         "/blogs",
+        "/blogs",
         "/packages",
         "/therapists",
         "/authentication/log-in",

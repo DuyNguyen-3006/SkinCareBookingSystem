@@ -1,11 +1,12 @@
 package com.skincare_booking_system.entities;
 
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
@@ -27,6 +28,7 @@ public class Staff {
     String gender;
     LocalDate birthDate;
     Boolean status;
+
     @ManyToMany
     Set<Role> roles;
 }

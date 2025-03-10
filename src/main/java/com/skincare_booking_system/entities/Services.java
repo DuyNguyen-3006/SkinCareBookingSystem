@@ -1,14 +1,15 @@
 package com.skincare_booking_system.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
-
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+
+import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Data
@@ -21,6 +22,7 @@ public class Services {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
     String serviceName;
     String description;
     Double price;

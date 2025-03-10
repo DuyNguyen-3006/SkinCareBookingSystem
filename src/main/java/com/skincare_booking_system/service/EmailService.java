@@ -1,5 +1,7 @@
 package com.skincare_booking_system.service;
 
+import com.skincare_booking_system.dto.request.ChangeTherapist;
+import com.skincare_booking_system.dto.request.CreateNewBookingSuccess;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -49,13 +51,55 @@ public class EmailService {
             String template = templateEngine.process("OTP-ForgotPassword", context);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-            mimeMessageHelper.setFrom("fsalon391@gmail.com");
+            mimeMessageHelper.setFrom("bambospa.skincare@gmail.com");
             mimeMessageHelper.setTo(mailBody.getTo());
             mimeMessageHelper.setText(template, true);
             mimeMessageHelper.setSubject(mailBody.getSubject());
             mailSender.send(mimeMessage);
         } catch (MessagingException exception) {
             System.out.println("Can't not send email");
+        }
+    }
+
+    public void sendMailChangeStylist(ChangeTherapist request){
+        try {
+            Context context = new Context();
+            context.setVariable("name",request.getTo());
+            context.setVariable("date",request.getDate());
+            context.setVariable("therapistName",request.getTherapistName());
+            context.setVariable("time",request.getTime());
+            String template = templateEngine.process("ChangeStylist",context);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+            mimeMessageHelper.setFrom("bambospa.skincare@gmail.com");
+            mimeMessageHelper.setTo(request.getTo());
+            mimeMessageHelper.setText(template,true);
+            mimeMessageHelper.setSubject(request.getSubject());
+            mailSender.send(mimeMessage);
+        }catch (MessagingException exception){
+            System.out.println("Can't not send email");
+
+        }
+    }
+
+    public void sendMailInformBookingSuccess(CreateNewBookingSuccess createNewBookingSuccess){
+        try {
+            Context context = new Context();
+            context.setVariable("name",createNewBookingSuccess.getTo());
+            context.setVariable("date",createNewBookingSuccess.getDate());
+            context.setVariable("therapistName",createNewBookingSuccess.getTherapistName());
+            context.setVariable("time",createNewBookingSuccess.getTime());
+            String template = templateEngine.process("CreateNewBooking",context);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+            mimeMessageHelper.setFrom("bambospa.skincare@gmail.com");
+            mimeMessageHelper.setTo(createNewBookingSuccess.getTo());
+            mimeMessageHelper.setText(template,true);
+            mimeMessageHelper.setSubject(createNewBookingSuccess.getSubject());
+            mailSender.send(mimeMessage);
+        }catch (MessagingException exception){
+            System.out.println("Can't not send email");
+
         }
     }
 }

@@ -40,8 +40,8 @@ public class ForgotPasswordService {
     }
 
     public ForgotPasswordResponse verifyEmail(String email) {
-        User user = userRepository.findUserByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user =
+                userRepository.findUserByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         ForgotPassword checkUser = forgotPasswordRepository.findForgotPasswordByUser(user);
         if (checkUser != null) {
             forgotPasswordRepository.deleteById(checkUser.getFpId());

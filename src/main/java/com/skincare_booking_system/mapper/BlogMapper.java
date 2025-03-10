@@ -1,12 +1,12 @@
 package com.skincare_booking_system.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 
 import com.skincare_booking_system.dto.request.BlogRequest;
 import com.skincare_booking_system.dto.request.BlogUpdateRequest;
 import com.skincare_booking_system.dto.response.BlogResponse;
 import com.skincare_booking_system.entities.Blog;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface BlogMapper {

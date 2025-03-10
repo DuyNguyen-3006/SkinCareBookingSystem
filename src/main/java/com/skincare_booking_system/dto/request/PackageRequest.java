@@ -1,14 +1,16 @@
 package com.skincare_booking_system.dto.request;
 
+import java.time.LocalTime;
+import java.util.List;
+
 import jakarta.validation.constraints.Min;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalTime;
-import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,8 +19,10 @@ import java.util.List;
 public class PackageRequest {
     String packageName;
     Boolean packageActive;
+
     @Min(value = 0, message = "PRICE_INVALID")
     Double packageFinalPrice;
+
     LocalTime duration;
     List<String> servicesNames;
 }
