@@ -25,18 +25,7 @@ public class AuthenticationController {
 
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
-    @PostMapping("/log-inThe")
-    ApiResponse<AuthenticationResponse> logInThe(@RequestBody AuthenticationRequest request) {
-        var result = authenticationService.loginThe(request);
 
-        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
-    }
-    @PostMapping("/log-inSta")
-    ApiResponse<AuthenticationResponse> logInStaff(@RequestBody AuthenticationRequest request) {
-        var result = authenticationService.loginStaff(request);
-
-        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
-    }
 
     @GetMapping("/log-in-google")
     public Map<String, Object> signInGoogle(OAuth2AuthenticationToken oAuth2AuthenticationToken) {

@@ -11,10 +11,10 @@ import com.skincare_booking_system.entities.Staff;
 import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.repository.StaffRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -41,15 +41,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 public class AuthenticationService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TherapistRepository therapistRepository;
-    @Autowired
-    private StaffRepository staffRepository;
-    @Autowired
-    private InvalidatedTokenRepository invalidatedTokenRepository;
+UserRepository userRepository;
+TherapistRepository therapistRepository;
+StaffRepository staffRepository;
+InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal // de bien nay khong add vao constructor
     @Value("${jwt.signerKey}") // doc signerKey tu file yaml
@@ -67,20 +65,37 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse login(AuthenticationRequest request) {
-        var user = userRepository
-                .findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        String username = request.getUsername();
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!authenticated) {
-            throw new AppException(ErrorCode.LOGIN_FAILED);
+        if (userRepository.existsByUsername(username)) {
+            User user = userRepository.findUserByUsername(username);
+            if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), user.getPassword())) {
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
+            var token = generateToken(user);
+            return AuthenticationResponse.builder().token(token).success(true).build(); // Trả về ngay sau khi thành công
         }
 
-        var token = generateToken(user);
+        if (therapistRepository.existsByUsername(username)) {
+            Therapist therapist = therapistRepository.findTherapistByUsername(username);
+            if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), therapist.getPassword())) {
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
+            var token = generateTokenThe(therapist);
+            return AuthenticationResponse.builder().token(token).success(true).build();
+        }
 
-        return AuthenticationResponse.builder().token(token).success(true).build();
+        if (staffRepository.existsByUsername(username)) {
+            Staff staff = staffRepository.findStaffByUsername(username);
+            if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), staff.getPassword())) {
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
+            var token = generateTokenSta(staff);
+            return AuthenticationResponse.builder().token(token).success(true).build();
+        }
+        throw new AppException(ErrorCode.USER_NOT_EXISTED); // Không tìm thấy tài khoản nào
     }
+
 
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
@@ -112,21 +127,6 @@ public class AuthenticationService {
             user.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
         }
         return stringJoiner.toString();
-    }
-    public AuthenticationResponse loginThe(AuthenticationRequest request) {
-        var user = therapistRepository
-                .findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!authenticated) {
-            throw new AppException(ErrorCode.LOGIN_FAILED);
-        }
-
-        var token = generateTokenThe(user);
-
-        return AuthenticationResponse.builder().token(token).success(true).build();
     }
 
     private String generateTokenThe(Therapist therapist) {
@@ -160,21 +160,7 @@ public class AuthenticationService {
         }
         return stringJoiner.toString();
     }
-    public AuthenticationResponse loginStaff(AuthenticationRequest request) {
-        var user = staffRepository
-                .findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if (!authenticated) {
-            throw new AppException(ErrorCode.LOGIN_FAILED);
-        }
-
-        var token = generateTokenSta(user);
-
-        return AuthenticationResponse.builder().token(token).success(true).build();
-    }
 
     private String generateTokenSta(Staff staff) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
