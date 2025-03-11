@@ -58,9 +58,9 @@ public class TherapistController {
                 .build();
     }
 
-    @PutMapping("/updateTherapist/{phoneNumber}")
+    @PutMapping("/updateTherapist/{phone}")
     ApiResponse<TherapistUpdateResponse> updateUser(
-            @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
+            @PathVariable("phone") String phoneNumber, @RequestBody TherapistUpdateRequest request) {
         return ApiResponse.<TherapistUpdateResponse>builder()
                 .result(therapistService.updateTherapist(phoneNumber, request))
                 .build();
