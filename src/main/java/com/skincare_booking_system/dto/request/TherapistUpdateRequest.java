@@ -22,6 +22,5 @@ public class TherapistUpdateRequest {
     String address;
     String gender;
     LocalDate birthDate;
-    Boolean status;
     Integer yearExperience;
 }

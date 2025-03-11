@@ -21,7 +21,7 @@ public class Shift {
 
     LocalTime startTime;
     LocalTime endTime;
-    int limitBooking;
+    Integer limitBooking;
 
     @ManyToMany(mappedBy = "shifts")
     Set<TherapistSchedule> therapistSchedules;

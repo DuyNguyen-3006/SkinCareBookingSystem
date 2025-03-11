@@ -1,7 +1,5 @@
 package com.skincare_booking_system.service;
 
-import com.skincare_booking_system.dto.request.ChangeTherapist;
-import com.skincare_booking_system.dto.request.CreateNewBookingSuccess;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -12,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.skincare_booking_system.dto.request.ChangeTherapist;
+import com.skincare_booking_system.dto.request.CreateNewBookingSuccess;
 import com.skincare_booking_system.dto.request.MailBody;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,45 +61,43 @@ public class EmailService {
         }
     }
 
-    public void sendMailChangeStylist(ChangeTherapist request){
+    public void sendMailChangeStylist(ChangeTherapist request) {
         try {
             Context context = new Context();
-            context.setVariable("name",request.getTo());
-            context.setVariable("date",request.getDate());
-            context.setVariable("therapistName",request.getTherapistName());
-            context.setVariable("time",request.getTime());
-            String template = templateEngine.process("ChangeStylist",context);
+            context.setVariable("name", request.getTo());
+            context.setVariable("date", request.getDate());
+            context.setVariable("therapistName", request.getTherapistName());
+            context.setVariable("time", request.getTime());
+            String template = templateEngine.process("ChangeStylist", context);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
             mimeMessageHelper.setFrom("bambospa.skincare@gmail.com");
             mimeMessageHelper.setTo(request.getTo());
-            mimeMessageHelper.setText(template,true);
+            mimeMessageHelper.setText(template, true);
             mimeMessageHelper.setSubject(request.getSubject());
             mailSender.send(mimeMessage);
-        }catch (MessagingException exception){
+        } catch (MessagingException exception) {
             System.out.println("Can't not send email");
-
         }
     }
 
-    public void sendMailInformBookingSuccess(CreateNewBookingSuccess createNewBookingSuccess){
+    public void sendMailInformBookingSuccess(CreateNewBookingSuccess createNewBookingSuccess) {
         try {
             Context context = new Context();
-            context.setVariable("name",createNewBookingSuccess.getTo());
-            context.setVariable("date",createNewBookingSuccess.getDate());
-            context.setVariable("therapistName",createNewBookingSuccess.getTherapistName());
-            context.setVariable("time",createNewBookingSuccess.getTime());
-            String template = templateEngine.process("CreateNewBooking",context);
+            context.setVariable("name", createNewBookingSuccess.getTo());
+            context.setVariable("date", createNewBookingSuccess.getDate());
+            context.setVariable("therapistName", createNewBookingSuccess.getTherapistName());
+            context.setVariable("time", createNewBookingSuccess.getTime());
+            String template = templateEngine.process("CreateNewBooking", context);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
             mimeMessageHelper.setFrom("bambospa.skincare@gmail.com");
             mimeMessageHelper.setTo(createNewBookingSuccess.getTo());
-            mimeMessageHelper.setText(template,true);
+            mimeMessageHelper.setText(template, true);
             mimeMessageHelper.setSubject(createNewBookingSuccess.getSubject());
             mailSender.send(mimeMessage);
-        }catch (MessagingException exception){
+        } catch (MessagingException exception) {
             System.out.println("Can't not send email");
-
         }
     }
 }

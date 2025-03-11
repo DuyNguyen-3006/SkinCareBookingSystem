@@ -15,11 +15,13 @@ import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
+import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.TherapistMapper;
+import com.skincare_booking_system.repository.BookingRepository;
 import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 
@@ -39,6 +41,9 @@ public class TherapistService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     public TherapistResponse createTherapist(TherapistRequest request) {
@@ -116,5 +121,31 @@ public class TherapistService {
                 therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapistMapper.toUpdateTherapist(therapist, request);
         return therapistMapper.toTherapistUpdateResponse(therapistRepository.save(therapist));
+    }
+
+    public double calculateAverageFeedback(Long therapistId, String yearAndMonth) {
+        String[] parts = yearAndMonth.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+
+        List<Booking> bookings = bookingRepository.findBookingByTherapistIdAndMonthYear(therapistId, month, year);
+        // Tính tổng điểm feedback và đếm số lượng feedback
+        double totalFeedbackScore = bookings.stream()
+                .filter(booking -> booking.getFeedback() != null) // Chỉ tính booking có feedback
+                .mapToDouble(booking -> booking.getFeedback().getScore()) // Lấy điểm từ feedback
+                .sum();
+
+        long feedbackCount = bookings.stream()
+                .filter(booking -> booking.getFeedback() != null) // Chỉ tính booking có feedback
+                .count();
+        double averageFeedbackScore = feedbackCount > 0 ? totalFeedbackScore / feedbackCount : 0.0;
+
+        log.info(
+                "Therapist ID: {}, Total Feedback Score: {}, Average Feedback Score: {}",
+                therapistId,
+                totalFeedbackScore,
+                averageFeedbackScore);
+
+        return averageFeedbackScore;
     }
 }

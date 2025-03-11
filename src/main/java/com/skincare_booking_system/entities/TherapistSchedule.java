@@ -19,7 +19,7 @@ import lombok.experimental.FieldDefaults;
 public class TherapistSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long stylistScheduleId;
+    long therapistScheduleId;
 
     LocalDate workingDay;
 
@@ -29,8 +29,8 @@ public class TherapistSchedule {
 
     @ManyToMany
     @JoinTable(
-            name = "specific_stylist_schedule",
-            joinColumns = @JoinColumn(name = "stylist_schedule_id"),
+            name = "specific_therapist_schedule",
+            joinColumns = @JoinColumn(name = "therapist_schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "shift_id"))
     @JsonIgnore
     Set<Shift> shifts;

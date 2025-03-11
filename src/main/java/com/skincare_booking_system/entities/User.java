@@ -15,8 +15,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
     String username;
     String password;
@@ -33,7 +33,7 @@ public class User {
     Set<Role> roles;
 
     public User(
-            String id,
+            long id,
             String username,
             String password,
             String firstName,

@@ -1,6 +1,7 @@
 package com.skincare_booking_system.dto.request;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,12 +9,12 @@ import lombok.experimental.FieldDefaults;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FeedbackRequest {
+@Builder
+public class ChangeTherapist {
+    String to;
+    String subject;
     LocalDate date;
-    String content;
-    double score;
-    long userId;
-    long bookingId;
+    LocalTime time;
+    String therapistName;
 }

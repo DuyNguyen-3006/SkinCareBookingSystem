@@ -21,7 +21,7 @@ public class Services {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long serviceId;
 
     String serviceName;
     String description;
