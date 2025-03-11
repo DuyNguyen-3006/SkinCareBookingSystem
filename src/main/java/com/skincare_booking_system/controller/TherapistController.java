@@ -58,13 +58,13 @@ public class TherapistController {
                 .build();
     }
 
-    @PutMapping("/updateTherapist/{phoneNumber}")
-    ApiResponse<TherapistUpdateResponse> updateUser(
-            @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
-        return ApiResponse.<TherapistUpdateResponse>builder()
-                .result(therapistService.updateTherapist(phoneNumber, request))
-                .build();
-    }
+//    @PutMapping("/updateTherapist/{phoneNumber}")
+//    ApiResponse<TherapistUpdateResponse> updateUser(
+//            @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
+//        return ApiResponse.<TherapistUpdateResponse>builder()
+//                .result(therapistService.updateTherapist(phoneNumber, request))
+//                .build();
+//    }
 
     @GetMapping("/searchByName")
     public ApiResponse<List<TherapistResponse>> searchTherapists(@RequestParam String name) {
