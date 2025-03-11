@@ -6,10 +6,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import com.skincare_booking_system.entities.Therapist;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TherapistRepository extends JpaRepository<Therapist, Long> {
@@ -26,6 +26,7 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
     Optional<Therapist> findByUsername(String username);
 
     Therapist findTherapistById(Long id);
+    Therapist findTherapistByUsername(String username);
 
     @Query(
             value = "SELECT DISTINCT t.* FROM therapist t "
