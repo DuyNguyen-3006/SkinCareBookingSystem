@@ -64,7 +64,6 @@ public class UserService {
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
         user.setRoles(roles);
-
         emailService.sendWelcomeEmail(user.getEmail());
 
         return userMapper.toUserResponse(userRepository.save(user));

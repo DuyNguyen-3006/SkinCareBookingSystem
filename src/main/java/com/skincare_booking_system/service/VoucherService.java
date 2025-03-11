@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -55,22 +57,17 @@ public class VoucherService {
         return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<VoucherResponse> getVoucherOutOfStock() {
-        List<Voucher> vouchers = voucherRepository.findByQuantity(0);
-        if (vouchers.isEmpty()) {
-            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
-        }
-        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
-    }
+// dang thu nghiem
+    // Chạy mỗi ngày lúc 00:00 để kiểm tra voucher hết hạn
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Transactional
+    public void deactivateExpiredVouchers() {
+        List<Voucher> expiredVouchers = voucherRepository.findByExpiryDateBeforeAndIsActiveTrue(LocalDate.now());
 
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<VoucherResponse> getVoucherExpired() {
-        List<Voucher> vouchers = voucherRepository.findByExpiryDateBefore(LocalDate.now());
-        if (vouchers.isEmpty()) {
-            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
+        if (!expiredVouchers.isEmpty()) {
+            expiredVouchers.forEach(voucher -> voucher.setIsActive(false));
+            voucherRepository.saveAll(expiredVouchers);
         }
-        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -100,6 +97,7 @@ public class VoucherService {
         if (vouchers.isEmpty()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
         }
+
         return vouchers.stream()
                 .filter(voucher -> voucher.getExpiryDate().isAfter(LocalDate.now()) && voucher.getQuantity() > 0)
                 .map(voucherMapper::toVoucherResponse)
@@ -171,6 +169,9 @@ public class VoucherService {
         }
 
         voucher.setQuantity(voucher.getQuantity() - 1);
+        if(voucher.getQuantity() == 0) {
+            voucher.setIsActive(false);
+        }
         voucherRepository.save(voucher);
         return "Voucher used successfully";
     }

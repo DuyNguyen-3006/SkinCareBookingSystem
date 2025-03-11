@@ -26,12 +26,6 @@ public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
         "/users",
-        "/services",
-        "/staffs",
-        "/vouchers",
-        "/blogs",
-        "/packages",
-        "/therapists",
         "/authentication/log-in",
         "/authentication/introspect",
         "/authentication/logout",

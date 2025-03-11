@@ -3,6 +3,7 @@ package com.skincare_booking_system.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.RoleRequest;
@@ -21,6 +22,7 @@ public class RoleService {
     @Autowired
     private RoleMapper roleMapper;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public RoleResponse createRole(RoleRequest request) {
         var role = roleMapper.toRole(request);
         roleRepository.save(role);

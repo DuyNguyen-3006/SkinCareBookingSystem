@@ -16,7 +16,7 @@ public interface VoucherRepository extends JpaRepository<Voucher, String> {
 
     boolean existsByVoucherName(String voucherName);
 
-    List<Voucher> findByQuantity(int quantity);
+    List<Voucher> findByExpiryDateBeforeAndIsActiveTrue(LocalDate date);
 
     Optional<Voucher> findByVoucherCode(String voucherCode);
 

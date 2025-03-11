@@ -1,6 +1,5 @@
 package com.skincare_booking_system.dto.request;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.validation.constraints.Min;
@@ -23,6 +22,5 @@ public class PackageRequest {
     @Min(value = 0, message = "PRICE_INVALID")
     Double packageFinalPrice;
 
-    LocalTime duration;
     List<String> servicesNames;
 }

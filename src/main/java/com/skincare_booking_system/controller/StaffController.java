@@ -65,14 +65,14 @@ public class StaffController {
                 .build();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteStaff(@RequestParam String phoneNumber) {
+    @PutMapping("/delete/{phoneNumber}")
+    public ResponseEntity<String> deleteStaff(@PathVariable String phoneNumber) {
         staffService.deleteStaffbyPhone(phoneNumber);
         return ResponseEntity.ok("Staff has been deleted");
     }
 
-    @PutMapping("/restore")
-    public ResponseEntity<String> restoreStaff(@RequestParam String phoneNumber) {
+    @PutMapping("/restore/{phoneNumber}")
+    public ResponseEntity<String> restoreStaff(@PathVariable String phoneNumber) {
         staffService.restoreStaffByPhone(phoneNumber);
         return ResponseEntity.ok("Staff restored successfully");
     }
