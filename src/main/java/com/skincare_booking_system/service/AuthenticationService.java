@@ -82,7 +82,8 @@ public class AuthenticationService {
                 .subject(user.getUsername())
                 .issuer("SkinCareBooking")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(
+                        new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
