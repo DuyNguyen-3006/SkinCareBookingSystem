@@ -26,6 +26,7 @@ public class ServicesController {
     ApiResponse<ServicesResponse> createRequest(@RequestBody @Valid ServicesRequest request) {
         ApiResponse<ServicesResponse> response = new ApiResponse<>();
         response.setResult(servicesService.createServices(request));
+        response.setSuccess(true);
         return response;
     }
 

@@ -7,6 +7,10 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
+import com.skincare_booking_system.entities.Staff;
+import com.skincare_booking_system.entities.Therapist;
+import com.skincare_booking_system.repository.StaffRepository;
+import com.skincare_booking_system.repository.TherapistRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -40,7 +44,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService {
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private TherapistRepository therapistRepository;
+    @Autowired
+    private StaffRepository staffRepository;
     @Autowired
     private InvalidatedTokenRepository invalidatedTokenRepository;
 
@@ -106,6 +113,100 @@ public class AuthenticationService {
         }
         return stringJoiner.toString();
     }
+    public AuthenticationResponse loginThe(AuthenticationRequest request) {
+        var user = therapistRepository
+                .findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!authenticated) {
+            throw new AppException(ErrorCode.LOGIN_FAILED);
+        }
+
+        var token = generateTokenThe(user);
+
+        return AuthenticationResponse.builder().token(token).success(true).build();
+    }
+
+    private String generateTokenThe(Therapist therapist) {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
+
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .subject(therapist.getUsername())
+                .issuer("SkinCareBooking")
+                .issueTime(new Date())
+                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
+                .claim("scope", buildScopeThe(therapist))
+                .build();
+
+        Payload payload = new Payload(jwtClaimsSet.toJSONObject()); // tao payload
+
+        JWSObject jwsObject = new JWSObject(header, payload);
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Error while signing JWT object", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String buildScopeThe(Therapist therapist) {
+        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+        if (!CollectionUtils.isEmpty(therapist.getRoles())) {
+            therapist.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+        }
+        return stringJoiner.toString();
+    }
+    public AuthenticationResponse loginStaff(AuthenticationRequest request) {
+        var user = staffRepository
+                .findByUsername(request.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if (!authenticated) {
+            throw new AppException(ErrorCode.LOGIN_FAILED);
+        }
+
+        var token = generateTokenSta(user);
+
+        return AuthenticationResponse.builder().token(token).success(true).build();
+    }
+
+    private String generateTokenSta(Staff staff) {
+        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
+
+        JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
+                .subject(staff.getUsername())
+                .issuer("SkinCareBooking")
+                .issueTime(new Date())
+                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
+                .claim("scope", buildScopeSta(staff))
+                .build();
+
+        Payload payload = new Payload(jwtClaimsSet.toJSONObject()); // tao payload
+
+        JWSObject jwsObject = new JWSObject(header, payload);
+        try {
+            jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
+            return jwsObject.serialize();
+        } catch (JOSEException e) {
+            log.error("Error while signing JWT object", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String buildScopeSta(Staff staff) {
+        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+        if (!CollectionUtils.isEmpty(staff.getRoles())) {
+            staff.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+        }
+        return stringJoiner.toString();
+    }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
@@ -135,6 +236,44 @@ public class AuthenticationService {
                 userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
 
         var token = generateToken(user);
+
+        return AuthenticationResponse.builder().token(token).success(true).build();
+    }
+    public AuthenticationResponse refreshTokenThe(RefreshRequest request) throws ParseException, JOSEException {
+        var signJwt = verifyToken(request.getToken());
+
+        var jwtId = signJwt.getJWTClaimsSet().getJWTID();
+        var expirationTime = signJwt.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().id(jwtId).expiryTime(expirationTime).build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signJwt.getJWTClaimsSet().getSubject();
+        var user =
+                therapistRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
+
+        var token = generateTokenThe(user);
+
+        return AuthenticationResponse.builder().token(token).success(true).build();
+    }
+    public AuthenticationResponse refreshTokenStaff(RefreshRequest request) throws ParseException, JOSEException {
+        var signJwt = verifyToken(request.getToken());
+
+        var jwtId = signJwt.getJWTClaimsSet().getJWTID();
+        var expirationTime = signJwt.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().id(jwtId).expiryTime(expirationTime).build();
+
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signJwt.getJWTClaimsSet().getSubject();
+        var user =
+                staffRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
+
+        var token = generateTokenSta(user);
 
         return AuthenticationResponse.builder().token(token).success(true).build();
     }

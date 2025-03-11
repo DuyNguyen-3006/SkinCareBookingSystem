@@ -26,6 +26,7 @@ public class PackageController {
     ApiResponse<PackageResponse> createRequest(@RequestBody @Valid PackageRequest request) {
         ApiResponse<PackageResponse> response = new ApiResponse<>();
         response.setResult(packageService.createPackage(request));
+        response.setSuccess(true);
         return response;
     }
 

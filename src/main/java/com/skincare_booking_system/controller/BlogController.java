@@ -26,6 +26,7 @@ public class BlogController {
     ApiResponse<BlogResponse> createRequest(@RequestBody @Valid BlogRequest request) {
         ApiResponse<BlogResponse> response = new ApiResponse<>();
         response.setResult(blogService.createBlog(request));
+        response.setSuccess(true);
         return response;
     }
 
