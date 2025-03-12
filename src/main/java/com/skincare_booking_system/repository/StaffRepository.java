@@ -18,8 +18,12 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
 
     Optional<Staff> findByPhone(String phone);
 
-    List<Staff> findByFullnameContainingIgnoreCase(String fullName);
+    List<Staff> findByFullNameContainingIgnoreCase(String fullName);
 
     Optional<Staff> findByUsername(String username);
     Staff findStaffByUsername(String username);
+
+    boolean existsByPhone(String phone);
+
+    boolean existsByEmail(String email);
 }

@@ -17,11 +17,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffUpdateRequest {
-    @NotBlank(message = "BLANK_FIELD")
-    String firstName;
-
-    @NotBlank(message = "BLANK_FIELD")
-    String lastName;
+    String fullName;
 
     @Email(message = "EMAIL_INVALID")
     String email;
@@ -35,5 +31,4 @@ public class StaffUpdateRequest {
     String gender;
 
     LocalDate birthDate;
-    Boolean status;
 }

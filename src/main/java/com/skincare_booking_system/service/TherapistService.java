@@ -4,8 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 
 
+import com.skincare_booking_system.dto.request.ChangePasswordRequest;
+import com.skincare_booking_system.dto.request.ResetPasswordRequest;
+import com.skincare_booking_system.entities.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +32,7 @@ import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @Slf4j
@@ -50,6 +56,12 @@ public class TherapistService {
     public TherapistResponse createTherapist(TherapistRequest request) {
         if (therapistRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        if (therapistRepository.existsByPhone(request.getPhone())) {
+            throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
+        }
+        if (therapistRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         Therapist therapist = therapistMapper.toTherapist(request);
         therapist.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -148,5 +160,34 @@ public class TherapistService {
                 averageFeedbackScore);
 
         return averageFeedbackScore;
+    }
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Therapist the = therapistRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), the.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_WRONG);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        the.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        therapistRepository.save(the);
+    }
+
+    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+        Therapist the =
+                therapistRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        the.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        therapistRepository.save(the);
     }
 }
