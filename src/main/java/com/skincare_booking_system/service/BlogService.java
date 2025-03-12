@@ -98,6 +98,6 @@ public class BlogService {
     public BlogResponse updateBlog(String title, BlogUpdateRequest blogUpdateRequest) {
         Blog b = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blogMapper.updateBlog(b, blogUpdateRequest);
-        return blogMapper.toBlogResponse(b);
+        return blogMapper.toBlogResponse(blogRepository.save(b));
     }
 }

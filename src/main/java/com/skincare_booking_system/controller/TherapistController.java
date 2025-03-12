@@ -58,7 +58,7 @@ public class TherapistController {
                 .build();
     }
 
-    @PutMapping("/updateTherapist/{phone}")
+    @PutMapping("/updateTherapist/{phoneNumber}")
     ApiResponse<TherapistUpdateResponse> updateUser(
             @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
         return ApiResponse.<TherapistUpdateResponse>builder()
@@ -73,14 +73,14 @@ public class TherapistController {
                 .build();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTherapist(@RequestParam String phoneNumber) {
+    @PutMapping("/delete/{phoneNumber}")
+    public ResponseEntity<String> deleteTherapist(@PathVariable String phoneNumber) {
         therapistService.deleteTherapistbyPhone(phoneNumber);
         return ResponseEntity.ok("Therapist has been deleted");
     }
 
-    @PutMapping("/restore")
-    public ResponseEntity<String> restoreTherapist(@RequestParam String phoneNumber) {
+    @PutMapping("/restore/{phoneNumber}")
+    public ResponseEntity<String> restoreTherapist(@PathVariable String phoneNumber) {
         therapistService.restoreTherapistByPhone(phoneNumber);
         return ResponseEntity.ok("Therapist restored successfully");
     }

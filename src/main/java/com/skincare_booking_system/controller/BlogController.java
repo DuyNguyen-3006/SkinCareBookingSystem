@@ -51,14 +51,14 @@ public class BlogController {
                 .build();
     }
 
-    @GetMapping("/seacrchByNameCUS")
+    @GetMapping("/searchByTitleCUS")
     ApiResponse<List<BlogResponse>> getBlogByTitleCUS(@RequestParam String title) {
         return ApiResponse.<List<BlogResponse>>builder()
                 .result(blogService.getBlogByTitleCUS(title))
                 .build();
     }
 
-    @GetMapping("/seacrchByName")
+    @GetMapping("/searchByTitle")
     ApiResponse<List<BlogResponse>> getBlogByTitle(@RequestParam String title) {
         return ApiResponse.<List<BlogResponse>>builder()
                 .result(blogService.getBlogByTitle(title))

@@ -57,20 +57,6 @@ public class VoucherController {
                 .build();
     }
 
-    @GetMapping("/outofstock")
-    ApiResponse<List<VoucherResponse>> getOutOfStockVouchers() {
-        return ApiResponse.<List<VoucherResponse>>builder()
-                .result(voucherService.getVoucherOutOfStock())
-                .build();
-    }
-
-    @GetMapping("/expirydate")
-    ApiResponse<List<VoucherResponse>> getExpiryDateVouchers() {
-        return ApiResponse.<List<VoucherResponse>>builder()
-                .result(voucherService.getVoucherExpired())
-                .build();
-    }
-
     @PutMapping("/deactive/{voucherCode}")
     ApiResponse<String> deactivateVoucher(@PathVariable String voucherCode) {
         return ApiResponse.<String>builder()
