@@ -132,9 +132,9 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+    public void resetPassword(ResetPasswordRequest request, String id) {
         User user =
-                userRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);

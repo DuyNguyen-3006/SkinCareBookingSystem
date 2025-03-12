@@ -83,11 +83,11 @@ public class UserController {
         return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 
-    @PutMapping("/reset-password/{phoneNumber}")
+    @PutMapping("/reset-password/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
     public ApiResponse<String> resetPassword(
-            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
-        userService.resetPassword(request, phoneNumber);
+            @PathVariable String id, @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }
