@@ -56,13 +56,6 @@ public class Booking {
     @JsonIgnore
     Set<Services> services;
 
-    @ManyToMany
-    @JoinTable(
-            name = "booking_package",
-            joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "package_id"))
-    private Set<Package> packages;
-
     @OneToOne(mappedBy = "booking")
     @JsonIgnore
     Feedback feedback;

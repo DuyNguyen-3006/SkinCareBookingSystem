@@ -28,7 +28,8 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
 
     List<Services> findServicessByServiceNameContainingIgnoreCaseAndIsActiveTrue(String serviceName);
 
-    Services getServiceByServiceId(Long serviceId);
+    @Query(value = "SELECT * FROM services s WHERE s.service_id = ?1", nativeQuery = true)
+    Services getServiceById(long id);
 
     @Query(
             value = "SELECT sec_to_time(SUM(time_to_sec(s.duration))) FROM services s "

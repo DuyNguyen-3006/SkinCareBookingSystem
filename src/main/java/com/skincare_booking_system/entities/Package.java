@@ -27,13 +27,11 @@ public class Package {
     LocalTime duration;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "package_services",
             joinColumns = @JoinColumn(name = "package_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     List<Services> services;
-    // Quan hệ Many-to-Many với Booking (ngược lại)
-    @ManyToMany(mappedBy = "packages")
-    @JsonIgnore
-    Set<Booking> bookings;
+
 }

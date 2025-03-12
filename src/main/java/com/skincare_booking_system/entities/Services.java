@@ -21,18 +21,15 @@ public class Services {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long serviceId;
+    long serviceId;
 
     String serviceName;
     String description;
-    Double price;
+    int price;
     Boolean isActive;
     LocalTime duration;
     String imgUrl;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "services")
-    List<Package> packages;
 
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
