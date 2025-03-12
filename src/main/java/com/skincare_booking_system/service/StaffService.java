@@ -145,9 +145,9 @@ public class StaffService {
         staffRepository.save(sta);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+    public void resetPassword(ResetPasswordRequest request, String id) {
         Staff staff =
-                staffRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);

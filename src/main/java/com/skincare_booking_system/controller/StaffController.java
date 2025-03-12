@@ -96,11 +96,11 @@ public class StaffController {
         return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 
-    @PutMapping("/reset-password/{phoneNumber}")
+    @PutMapping("/reset-password/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<String> resetPassword(
-            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
-        staffService.resetPassword(request, phoneNumber);
+            @PathVariable String id, @RequestBody ResetPasswordRequest request) {
+        staffService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }

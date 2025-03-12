@@ -16,6 +16,5 @@ import lombok.experimental.FieldDefaults;
 public class BookingSlots {
     Set<Long> serviceId;
     long therapistId;
-    Set<Long> packageId;
     LocalDate date;
 }

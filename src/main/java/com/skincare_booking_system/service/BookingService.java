@@ -157,6 +157,7 @@ public class BookingService {
                     shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
             shifts.addAll(bookingBelongToShifts);
         }
+        System.out.println(shifts);
         List<Shift> shiftsReachedBookingLimit = shiftReachedBookingLimit(shifts);
         for (Shift shift : shiftsReachedBookingLimit) {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
@@ -355,22 +356,15 @@ public class BookingService {
         User user = userRepository.findUserById(request.getUserId());
         Set<Services> services = new HashSet<>();
         for (Long id : request.getServiceId()) {
-            Services service = servicesRepository.getServiceByServiceId(id);
+            Services service = servicesRepository.getServiceById(id);
             services.add(service);
-        }
-        Set<Package> packages = new HashSet<>();
-        if (request.getPackageId() != null && !request.getPackageId().isEmpty()) {
-            for (Long id : request.getPackageId()) {
-                Package packageGet = packageRepository.getPackageByPackageId(id);
-                packages.add(packageGet);
-            }
         }
         Slot slot = slotRepository.findSlotBySlotid(request.getSlotId());
         BookingSlots bookingSlots = new BookingSlots();
         bookingSlots.setServiceId(request.getServiceId());
-        bookingSlots.setPackageId(request.getPackageId());
         bookingSlots.setDate(request.getBookingDate());
         bookingSlots.setTherapistId(request.getTherapistId());
+        System.out.println("BookingSlots input: " + bookingSlots);
         List<Slot> slotAvailable = getListSlot(bookingSlots);
         int count = 0;
         for (Slot s : slotAvailable) {
@@ -398,7 +392,6 @@ public class BookingService {
         booking.setUser(user);
         booking.setSlot(slot);
         booking.setServices(services);
-        booking.setPackages(packages);
         booking.setVoucher(voucher);
         booking.setTherapistSchedule(therapistSchedule);
         booking.setStatus(BookingStatus.PENDING);
@@ -430,18 +423,12 @@ public class BookingService {
         }
         Set<Services> services = new HashSet<>();
         for (Long id : request.getServiceId()) {
-            Services service = servicesRepository.getServiceByServiceId(id);
+            Services service = servicesRepository. getServiceById(id);
             services.add(service);
-        }
-        Set<Package> packages = new HashSet<>();
-        for (Long id : request.getPackageId()) {
-            Package packageGet = packageRepository.getPackageByPackageId(id);
-            packages.add(packageGet);
         }
         Slot slot = slotRepository.findSlotBySlotid(request.getSlotId());
         BookingSlots bookingSlots = new BookingSlots();
         bookingSlots.setServiceId(request.getServiceId());
-        bookingSlots.setPackageId(request.getPackageId());
         bookingSlots.setDate(request.getBookingDate());
         bookingSlots.setTherapistId(request.getTherapistId());
         List<Slot> slotAvailable = getSlotsUpdateByCustomer(bookingSlots, bookingId);
@@ -470,7 +457,6 @@ public class BookingService {
         booking.setUser(user);
         booking.setSlot(slot);
         booking.setServices(services);
-        booking.setPackages(packages);
         booking.setVoucher(newVoucher);
         booking.setTherapistSchedule(therapistSchedule);
         booking.setStatus(BookingStatus.PENDING);
@@ -478,10 +464,6 @@ public class BookingService {
 
         for (Services service : services) {
             bookingRepository.updateBookingDetail(service.getPrice(), booking.getBookingId(), service.getServiceId());
-        }
-        for (Package packageItem : packages) {
-            bookingRepository.updateBookingDetailForPackage(
-                    packageItem.getPackageFinalPrice(), booking.getBookingId(), packageItem.getPackageId());
         }
 
         Booking bookingToRemove = new Booking();
@@ -602,13 +584,6 @@ public class BookingService {
                             .collect(Collectors.toSet());
                     response.setServiceName(serviceDTOs);
 
-                    Set<PackageCusResponse> packageDTOs = (booking.getPackages() != null) ?
-                            booking.getPackages().stream()
-                                    .map(pkg -> new PackageCusResponse(pkg.getPackageName()))
-                                    .collect(Collectors.toSet())
-                            : Collections.emptySet(); // Nếu không có package, trả về Set rỗng
-
-                    response.setPackages(packageDTOs);
 
                     response.setStatus(booking.getStatus());
                     return response;
@@ -625,7 +600,7 @@ public class BookingService {
     private LocalTime totalTimeServiceBooking(Set<Long> serviceId) {
         LocalTime totalTimeDuration = LocalTime.of(0, 0, 0);
         for (Long id : serviceId) {
-            Services service = servicesRepository.getServiceByServiceId(id);
+            Services service = servicesRepository.getServiceById(id);
             LocalTime duration = service.getDuration();
             totalTimeDuration = totalTimeDuration.plusHours(duration.getHour()).plusMinutes(duration.getMinute());
         }

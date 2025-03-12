@@ -97,11 +97,11 @@ public class TherapistController {
         return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 
-    @PutMapping("/reset-password/{phoneNumber}")
+    @PutMapping("/reset-password/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<String> resetPassword(
-            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
-        therapistService.resetPassword(request, phoneNumber);
+            @PathVariable Long id, @RequestBody ResetPasswordRequest request) {
+        therapistService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }

@@ -179,9 +179,9 @@ public class TherapistService {
         therapistRepository.save(the);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
+    public void resetPassword(ResetPasswordRequest request, Long id) {
         Therapist the =
-                therapistRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
