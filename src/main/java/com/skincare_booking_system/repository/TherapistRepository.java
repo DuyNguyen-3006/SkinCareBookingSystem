@@ -35,4 +35,5 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
                     + "WHERE ts.working_day = ?1 AND stsch.shift_id = ?2",
             nativeQuery = true)
     Set<Therapist> getTherapistForBooking(LocalDate date, long shiftId);
+
 }
