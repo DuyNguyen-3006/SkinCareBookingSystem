@@ -33,5 +33,5 @@ public class Services {
 
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
-    Set<Booking> bookings;
+    Set<Booking>bookings;
 }

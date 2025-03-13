@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesResponse {
-
+    Long serviceId;
     String serviceName;
     String description;
     Double price;
