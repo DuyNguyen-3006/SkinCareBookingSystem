@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -46,12 +45,16 @@ public class TherapistScheduleService {
         }
 
         Therapist therapist = therapistRepository
-                .findById(list.getTherapistId())
-                .orElseThrow(() -> new AppException(ErrorCode.THERAPIST_NOT_FOUND));
+                .findTherapistById(list.getTherapistId());
 
-        Set<Shift> shiftSet = list.getShiftId().stream()
-                .map(id -> shiftRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SHIFT_NOT_EXIST)))
-                .collect(Collectors.toSet());
+        Set<Shift> shiftSet = new HashSet<>();
+        for (Long id : list.getShiftId()) {
+            Shift shift = shiftRepository.findByShiftId(id);
+            if (shift == null) {
+                throw new AppException(ErrorCode.SHIFT_NOT_EXIST);
+            }
+            shiftSet.add(shift);
+        }
 
         TherapistSchedule therapistSchedule = new TherapistSchedule();
         therapistSchedule.setTherapist(therapist);

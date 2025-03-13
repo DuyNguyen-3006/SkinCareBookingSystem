@@ -39,4 +39,5 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);
+
 }

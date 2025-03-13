@@ -10,12 +10,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
+@ToString(exclude = "shifts")
+@EqualsAndHashCode(exclude = "shifts")
 public class TherapistSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
