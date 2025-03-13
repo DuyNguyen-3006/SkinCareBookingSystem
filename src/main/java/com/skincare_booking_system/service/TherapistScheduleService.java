@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.SpecificTherapistScheduleRequest;
@@ -17,6 +19,7 @@ import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.*;
 
 @Service
+@Slf4j
 public class TherapistScheduleService {
     private final TherapistSchedulerepository therapistSchedulerepository;
     private final TherapistRepository therapistRepository;
@@ -36,7 +39,7 @@ public class TherapistScheduleService {
         this.shiftRepository = shiftRepository;
         this.slotRepository = slotRepository;
     }
-
+    @Transactional
     public SpecificTherapistScheduleRequest createTherapistSchedule(SpecificTherapistScheduleRequest list) {
         TherapistSchedule schedule =
                 therapistSchedulerepository.getTherapistScheduleId(list.getTherapistId(), list.getWorkingDate());
@@ -54,6 +57,7 @@ public class TherapistScheduleService {
                 throw new AppException(ErrorCode.SHIFT_NOT_EXIST);
             }
             shiftSet.add(shift);
+            log.info("Added shift: {}", shift);
         }
 
         TherapistSchedule therapistSchedule = new TherapistSchedule();

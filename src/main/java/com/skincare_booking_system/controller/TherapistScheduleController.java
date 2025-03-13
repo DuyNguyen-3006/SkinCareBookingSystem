@@ -45,17 +45,26 @@ public class TherapistScheduleController {
         return apiResponse;
     }
 
-    @GetMapping("/theraist/{id}")
+    @GetMapping("/theraist/getById/{id}")
     public ApiResponse<SpecificTherapistScheduleResponse> getTherapistSchudele(@PathVariable long id) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(therapistScheduleService.getTherapistSchedule(id));
+        apiResponse.setSuccess(true);
         return apiResponse;
+    }
+
+    @PutMapping("/therapist/update/{id}")
+    public ApiResponse<SpecificTherapistScheduleResponse> updateTherapistSchedule(@PathVariable long id, @RequestBody SpecificTherapistScheduleRequest request) {
+        return ApiResponse.<SpecificTherapistScheduleResponse>builder()
+                .result(therapistScheduleService.updateTherapistSchedule(id, request))
+                .build();
     }
 
     @DeleteMapping("/therapist/{id}")
     public ApiResponse<SpecificTherapistScheduleResponse> deleteStylistSchedule(@PathVariable long id) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(therapistScheduleService.deleteStylistSchedule(id));
+        apiResponse.setSuccess(true);
         return apiResponse;
     }
 }

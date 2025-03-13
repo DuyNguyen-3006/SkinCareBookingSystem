@@ -11,6 +11,8 @@ import com.skincare_booking_system.entities.User;
 public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(String username);
 
+    User findByRole(String role);
+
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);

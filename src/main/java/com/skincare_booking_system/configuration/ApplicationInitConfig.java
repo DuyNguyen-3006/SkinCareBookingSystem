@@ -10,9 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.skincare_booking_system.constant.Roles;
-import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.User;
-import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -25,31 +23,20 @@ public class ApplicationInitConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if (userRepository.findByUsername("ADMIN").isEmpty()) {
-                Role adminRole = roleRepository.findById(Roles.ADMIN.name()).orElseGet(() -> {
-                    Role newRole = new Role();
-                    newRole.setName(Roles.ADMIN.name());
-                    return roleRepository.save(newRole);
-                });
+                if(userRepository.findByUsername("admin").isEmpty()) {
+                    User user = User.builder()
+                            .username("admin")
+                            .password(passwordEncoder.encode("admin"))
+                            .role(Roles.ADMIN)
+                            .build();
 
-                Set<Role> roles = new HashSet<>();
-                roles.add(adminRole);
-
-                User user = User.builder()
-                        .username("admin")
-                        .password(passwordEncoder.encode("admin"))
-                        .roles(roles)
-                        .build();
-
-                userRepository.save(user);
-                log.warn("Admin user created with default password: admin, please change password ");
-            }
-        };
+                    userRepository.save(user);
+                    log.warn("Admin user created with default password: admin, please change password ");
+                }
+            };
     }
 }

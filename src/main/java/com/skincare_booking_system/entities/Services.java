@@ -25,13 +25,20 @@ public class Services {
 
     String serviceName;
     String description;
+
+    @Column(nullable = false)
     int price;
+
     Boolean isActive;
+
     LocalTime duration;
+
     String imgUrl;
 
 
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
     Set<Booking> bookings;
+
+
 }

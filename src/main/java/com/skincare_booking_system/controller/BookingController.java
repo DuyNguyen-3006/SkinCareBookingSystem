@@ -84,4 +84,18 @@ public class BookingController {
         apiResponse.setSuccess(true);
         return apiResponse;
     }
+
+//    @GetMapping("/customer/{userId}/pending")
+//    public ApiResponse<List<Booking>> getPendingBookings(@PathVariable Long userId){
+//       return ApiResponse.<List<Booking>>builder()
+//               .result(bookingService.getBookingByStatusPendingByCustomer(userId))
+//               .build();
+//    }
+//
+//    @GetMapping("/customer/{userId}/completed")
+//    public ApiResponse<List<Booking>> getCompleteBookings(@PathVariable Long userId){
+//       return ApiResponse.<List<Booking>>builder()
+//               .result(bookingService.getBookingByStatusCompletedByCustomer(userId))
+//               .build();
+//    }
 }

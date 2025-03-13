@@ -1,11 +1,9 @@
 package com.skincare_booking_system.service;
 
-import java.util.HashSet;
 import java.util.List;
 
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.ResetPasswordRequest;
-import com.skincare_booking_system.entities.Therapist;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,12 +15,10 @@ import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.StaffRequest;
 import com.skincare_booking_system.dto.request.StaffUpdateRequest;
 import com.skincare_booking_system.dto.response.StaffResponse;
-import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.Staff;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.StaffMapper;
-import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.StaffRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -36,7 +32,6 @@ public class StaffService {
     StaffRepository staffRepository;
     StaffMapper staffMapper;
     PasswordEncoder passwordEncoder;
-    RoleRepository roleRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     public StaffResponse createStaff(StaffRequest request) {
@@ -51,9 +46,7 @@ public class StaffService {
         }
         Staff staff = staffMapper.toStaff(request);
         staff.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(Roles.STAFF.name()).ifPresent(roles::add);
-        staff.setRoles(roles);
+        staff.setRole(Roles.STAFF);
         staff.setStatus(true);
         return staffMapper.toStaffResponse(staffRepository.save(staff));
     }
@@ -87,7 +80,7 @@ public class StaffService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> searchStaffsByName(String name) {
-        List<Staff> staff = staffRepository.findByFullNameContainingIgnoreCase(name);
+        List<Staff> staff = staffRepository.findByFullnameContainingIgnoreCase(name);
 
         if (staff.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
@@ -127,6 +120,7 @@ public class StaffService {
                 staffRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         return staffMapper.toStaffResponse(staff);
     }
+
     public void changePassword(@Valid @RequestBody ChangePasswordRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

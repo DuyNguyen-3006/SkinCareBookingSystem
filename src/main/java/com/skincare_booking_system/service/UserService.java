@@ -1,6 +1,5 @@
 package com.skincare_booking_system.service;
 
-import java.util.HashSet;
 import java.util.List;
 
 import jakarta.validation.Valid;
@@ -20,12 +19,10 @@ import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.UserMapper;
-import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +39,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private EmailService emailService;
@@ -61,9 +56,7 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
-        user.setRoles(roles);
+        user.setRole(Roles.CUSTOMER);
         emailService.sendWelcomeEmail(user.getEmail());
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -71,8 +64,12 @@ public class UserService {
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole() != Roles.ADMIN)
+                .map(userMapper::toUserResponse)
+                .toList();
     }
+
 
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserByPhoneNumber(String phoneNumber) {
@@ -143,4 +140,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
+
+
 }

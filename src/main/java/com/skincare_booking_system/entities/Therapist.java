@@ -3,6 +3,7 @@ package com.skincare_booking_system.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.skincare_booking_system.constant.Roles;
 import jakarta.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,6 +42,6 @@ public class Therapist {
     @JsonIgnore
     Set<Booking> bookings;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    Roles role;
 }

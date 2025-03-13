@@ -3,6 +3,7 @@ package com.skincare_booking_system.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.skincare_booking_system.constant.Roles;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -21,7 +22,7 @@ public class Staff {
 
     String username;
     String password;
-    String fullName;
+    String fullname;
     String email;
     String phone;
     String address;
@@ -29,6 +30,6 @@ public class Staff {
     LocalDate birthDate;
     Boolean status;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    Roles role;
 }

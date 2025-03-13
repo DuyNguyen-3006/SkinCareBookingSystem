@@ -107,7 +107,6 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 .expirationTime(
                         new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject()); // tao payload
@@ -122,13 +121,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-    private String buildScope(User user) {
-        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-        if (!CollectionUtils.isEmpty(user.getRoles())) {
-            user.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
-        }
-        return stringJoiner.toString();
-    }
+//    private String buildScope(User user) {
+//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+//        if (!CollectionUtils.isEmpty(user.getRole())) {
+//            user.getRole().name(role -> stringJoiner.add("ROLE_" + ()));
+//        }
+//        return stringJoiner.toString();
+//    }
 
     private String generateTokenThe(Therapist therapist) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
@@ -139,7 +138,6 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScopeThe(therapist))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject()); // tao payload
@@ -154,13 +152,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-    private String buildScopeThe(Therapist therapist) {
-        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-        if (!CollectionUtils.isEmpty(therapist.getRoles())) {
-            therapist.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
-        }
-        return stringJoiner.toString();
-    }
+//    private String buildScopeThe(Therapist therapist) {
+//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+//        if (!CollectionUtils.isEmpty(therapist.getRoles())) {
+//            therapist.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+//        }
+//        return stringJoiner.toString();
+//    }
 
 
     private String generateTokenSta(Staff staff) {
@@ -172,7 +170,6 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScopeSta(staff))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject()); // tao payload
@@ -187,13 +184,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-    private String buildScopeSta(Staff staff) {
-        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-        if (!CollectionUtils.isEmpty(staff.getRoles())) {
-            staff.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
-        }
-        return stringJoiner.toString();
-    }
+//    private String buildScopeSta(Staff staff) {
+//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+//        if (!CollectionUtils.isEmpty(staff.getRole())) {
+//            staff.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+//        }
+//        return stringJoiner.toString();
+//    }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());

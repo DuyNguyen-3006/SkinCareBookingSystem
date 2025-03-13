@@ -3,9 +3,8 @@ package com.skincare_booking_system.dto.response;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.skincare_booking_system.constant.Roles;
 import jakarta.persistence.ManyToMany;
-
-import com.skincare_booking_system.entities.Role;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +25,5 @@ public class StaffResponse {
     LocalDate birthDate;
     Boolean status;
 
-    @ManyToMany
-    Set<Role> roles;
+    Roles role;
 }

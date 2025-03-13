@@ -71,6 +71,8 @@ public enum ErrorCode {
     SLOT_NOT_VALID("Slot is not valid", HttpStatus.BAD_REQUEST),
     BOOKING_EXIST("Booking already exists", HttpStatus.BAD_REQUEST),
     THERAPIST_NOT_FOUND("Therapist not found", HttpStatus.NOT_FOUND),
+    INVALID_PAYMENT_AMOUNT("Invalid payment amount", HttpStatus.BAD_REQUEST),
+    EXCEPTION("Error", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     private final String message;

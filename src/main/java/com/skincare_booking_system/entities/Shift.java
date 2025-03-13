@@ -14,6 +14,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@ToString(exclude = "therapistSchedules")
+@EqualsAndHashCode(of = "shiftId")
 public class Shift {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +25,6 @@ public class Shift {
     LocalTime endTime;
     Integer limitBooking;
 
-    @ManyToMany(mappedBy = "shifts")
+    @ManyToMany(mappedBy = "shifts", fetch = FetchType.LAZY)
     Set<TherapistSchedule> therapistSchedules;
 }

@@ -1,7 +1,9 @@
 package com.skincare_booking_system.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,10 +37,10 @@ public class BookingService {
     private final TherapistService therapistService;
     private final PackageRepository packageRepository;
     private final TherapistScheduleService therapistScheduleService;
-    //    private final PaymentRepository paymentRepository;
     private final EmailService emailService;
     public final UserService userService;
     private final VoucherService voucherService;
+    private final PaymentRepository paymentRepository;
 
     public BookingService(
             BookingRepository bookingRepository,
@@ -55,7 +57,7 @@ public class BookingService {
             TherapistScheduleService therapistScheduleService,
             EmailService emailService,
             UserService userService,
-            VoucherService voucherService) {
+            VoucherService voucherService, PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -71,6 +73,7 @@ public class BookingService {
         this.emailService = emailService;
         this.userService = userService;
         this.voucherService = voucherService;
+        this.paymentRepository = paymentRepository;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -122,10 +125,9 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalTime localTime = LocalTime.now();
-            LocalDate date = LocalDate.now();
-            if (date.isEqual(bookingSlots.getDate())) {
-                if (localTime.isAfter(slot.getSlottime())) {
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
+            if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
+                if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
                 } else {
                     break;
@@ -157,7 +159,6 @@ public class BookingService {
                     shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
             shifts.addAll(bookingBelongToShifts);
         }
-        System.out.println(shifts);
         List<Shift> shiftsReachedBookingLimit = shiftReachedBookingLimit(shifts);
         for (Shift shift : shiftsReachedBookingLimit) {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
@@ -591,6 +592,117 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+//    public List<CustomerBookingResponse> getBookingByStatusPendingByCustomer(Long userId) {
+//        List<Booking> bookings = bookingRepository.getBookingsByUserIdAndStatus(userId, BookingStatus.PENDING.name());
+//
+//        // Gán dịch vụ cho từng booking
+//        bookings.forEach(booking -> {
+//            Set<Services> services = servicesRepository.getServiceForBooking(booking.getBookingId());
+//            booking.setServices(services);
+//        });
+//
+//        return getBookingResponses(bookings);
+//    }
+//
+//    public List<CustomerBookingResponse> getBookingByStatusCompletedByCustomer(Long userId) {
+//        User user = new User();
+//        user.setId(userId);
+//        List<Booking> status = new ArrayList<>();
+//        List<Booking> bookings = bookingRepository.getBookingsByUserIdAndStatus(userId, BookingStatus.COMPLETED.name());
+//        for(Booking booking : bookings){
+//            Set<Services> service = servicesRepository.getServiceForBooking(booking.getBookingId());
+//            booking.setServices(service);
+//            status.add(booking);
+//        }
+//        return getBookingResponses(status);
+//    }
+
+    public String checkIn(long bookingId) {
+        Booking booking = bookingRepository.findBookingByBookingId(bookingId);
+        if(booking == null){
+            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
+        }
+        booking.setStatus(BookingStatus.IN_PROGRESS);
+        bookingRepository.save(booking);
+        return "check-in success";
+    }
+
+    public PaymentResponse finishedService(long bookingId) {
+        Booking booking = bookingRepository.findBookingByBookingId(bookingId);
+        if (booking == null) {
+            throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
+        }
+        Set<Services> services = booking.getServices();
+        double totalAmount = 0;
+        Set<PaymentServiceResponse> serviceResponses = new HashSet<>();
+        for (Services service : services) {
+            totalAmount += service.getPrice();
+            serviceResponses.add(new PaymentServiceResponse(service.getServiceName(), service.getImgUrl(),service.getPrice()));
+        }
+        String voucherCode = null;
+        if (booking.getVoucher() != null) {
+            double discount = booking.getVoucher().getPercentDiscount();
+            totalAmount -= totalAmount * discount / 100;
+            voucherCode = booking.getVoucher().getVoucherCode();
+        }
+        Payment existingPayment = paymentRepository.findPaymentByBooking(booking);
+        if (existingPayment != null) {
+            // Delete the existing payment
+            paymentRepository.delete(existingPayment);
+        }
+        String therapistName = booking.getTherapistSchedule().getTherapist().getFullName();
+
+        Payment payment = Payment.builder()
+                .paymentAmount(totalAmount)
+                .paymentDate(LocalDate.now())
+                .paymentStatus("Pending")
+                .booking(booking)
+                .build();
+        paymentRepository.save(payment);
+        return new PaymentResponse(
+                booking.getBookingId(),
+                booking.getBookingDay(),
+                booking.getUser().getFirstName(),
+                therapistName,
+                serviceResponses,
+                voucherCode,
+                totalAmount
+        );
+    }
+
+    public String checkout(String transactionId, Long bookingId) {
+        Payment payment = null;
+        Booking booking = null;
+        if (transactionId != null && !transactionId.isEmpty()) {
+            payment = paymentRepository.findByTransactionId(transactionId);
+            if (payment == null) {
+                throw new AppException(ErrorCode.BOOKING_NOT_FOUND);
+            }
+            booking = payment.getBooking();
+        }
+
+        else if (bookingId != null) {
+            booking = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_FOUND));
+            payment = booking.getPayment();
+        } else {
+            throw new AppException(ErrorCode.EXCEPTION);
+        }
+
+        booking.setStatus(BookingStatus.COMPLETED);
+        bookingRepository.save(booking);
+
+        booking.getPayment().setPaymentStatus("Completed");
+        if(booking.getPayment().getPaymentMethod() == null){
+            booking.getPayment().setPaymentMethod("Cash");
+            booking.getPayment().setTransactionId(null);
+        }
+        paymentRepository.save(payment);
+
+        return "Check-out success";
+    }
+
+
     private List<Shift> shiftMissingInSpecificTherapistSchedule(List<Shift> shifts) {
         List<Shift> allShift = shiftRepository.findAll();
         allShift.removeAll(shifts);
@@ -642,8 +754,12 @@ public class BookingService {
 
 
     private User currentUser() {
-        var context = SecurityContextHolder.getContext();
-        User user = (User) context.getAuthentication().getPrincipal();
-        return user;
+            var context = SecurityContextHolder.getContext();
+            var authentication = context.getAuthentication();
+
+            String username = authentication.getName();
+            return userRepository.findByUsername(username)
+                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
     }
 }

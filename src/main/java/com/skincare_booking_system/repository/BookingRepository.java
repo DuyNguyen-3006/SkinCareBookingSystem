@@ -18,6 +18,10 @@ import com.skincare_booking_system.entities.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking findBookingByBookingId(long id);
 
+    @Query(value = "select * from booking b\n" +
+            "where b.user_id = ?1 and b.status = ?2;",nativeQuery = true)
+    List<Booking> getBookingsByUserIdAndStatus(long id, String status);
+
     @Query(
             value = "select distinct b.* from booking b\n" + "inner join specific_therapist_schedule stsch\n"
                     + "on b.therapist_schedule_id = stsch.therapist_schedule_id\n"

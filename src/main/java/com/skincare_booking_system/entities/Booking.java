@@ -60,7 +60,8 @@ public class Booking {
     @JsonIgnore
     Feedback feedback;
 
-    //    @OneToOne(mappedBy = "booking")
-    //    @JsonIgnore
-    //    Payment payment;
+    @OneToOne(mappedBy = "booking")
+    @JsonIgnore
+    Payment payment;
+
 }

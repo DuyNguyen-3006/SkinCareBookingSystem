@@ -24,7 +24,6 @@ public class CustomerBookingResponse {
     LocalDate bookingDate;
     LocalTime bookingTime;
     Set<ServiceCusResponse> serviceName;
-    Set<PackageCusResponse> packages;
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 }

@@ -3,6 +3,7 @@ package com.skincare_booking_system.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.skincare_booking_system.constant.Roles;
 import jakarta.persistence.*;
 
 import lombok.*;
@@ -29,8 +30,8 @@ public class User {
     LocalDate birthDate;
     Boolean status;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    Roles role;
 
     public User(
             long id,
@@ -44,7 +45,7 @@ public class User {
             String gender,
             LocalDate birthDate,
             Boolean status,
-            Set<Role> roles) {
+            Roles role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -56,6 +57,6 @@ public class User {
         this.gender = gender;
         this.birthDate = birthDate;
         this.status = true;
-        this.roles = roles;
+        this.role = role;
     }
 }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.ResetPasswordRequest;
-import com.skincare_booking_system.entities.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,13 +21,11 @@ import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.entities.Booking;
-import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.TherapistMapper;
 import com.skincare_booking_system.repository.BookingRepository;
-import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +43,6 @@ public class TherapistService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -65,9 +60,7 @@ public class TherapistService {
         }
         Therapist therapist = therapistMapper.toTherapist(request);
         therapist.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(Roles.THERAPIST.name()).ifPresent(roles::add);
-        therapist.setRoles(roles);
+        therapist.setRole(Roles.THERAPIST);
         therapist.setStatus(true);
         return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
     }
