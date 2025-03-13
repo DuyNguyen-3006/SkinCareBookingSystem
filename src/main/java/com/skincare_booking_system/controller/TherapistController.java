@@ -2,13 +2,13 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.request.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.TherapistRequest;
-import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
@@ -90,5 +90,18 @@ public class TherapistController {
         return ApiResponse.<InfoTherapistResponse>builder()
                 .result(therapistService.getMyInfo())
                 .build();
+    }
+    @PutMapping("/change-password")
+    public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        therapistService.changePassword(request);
+        return ApiResponse.<String>builder().result("Password has been changed").build();
+    }
+
+    @PutMapping("/reset-password/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<String> resetPassword(
+            @PathVariable Long id, @RequestBody ResetPasswordRequest request) {
+        therapistService.resetPassword(request, id);
+        return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }

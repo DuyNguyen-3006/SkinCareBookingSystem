@@ -24,11 +24,7 @@ public class StaffRequest {
     @Size(min = 8, max = 20, message = "PASSWORD_INVALID")
     String password;
 
-    @NotBlank(message = "BLANK_FIELD")
-    String firstName;
-
-    @NotBlank(message = "BLANK_FIELD")
-    String lastName;
+    String fullName;
 
     @Email(message = "EMAIL_INVALID")
     String email;

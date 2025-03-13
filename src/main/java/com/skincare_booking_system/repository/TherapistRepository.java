@@ -36,4 +36,8 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
             nativeQuery = true)
     Set<Therapist> getTherapistForBooking(LocalDate date, long shiftId);
 
+    boolean existsByPhone(String phone);
+
+    boolean existsByEmail(String email);
+
 }

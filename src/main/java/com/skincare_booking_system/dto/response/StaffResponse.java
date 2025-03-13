@@ -18,8 +18,7 @@ import lombok.experimental.FieldDefaults;
 public class StaffResponse {
     String id;
     String username;
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
     String address;
