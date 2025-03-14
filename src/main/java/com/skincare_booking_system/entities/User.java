@@ -1,6 +1,7 @@
 package com.skincare_booking_system.entities;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -32,6 +33,8 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     Roles role;
+
+
 
     public User(
             long id,
