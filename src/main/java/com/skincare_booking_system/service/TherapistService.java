@@ -8,7 +8,6 @@ import java.util.Set;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,7 +52,6 @@ public class TherapistService {
     @Autowired
     private ServicesRepository servicesRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public TherapistResponse createTherapist(TherapistRequest request) {
         if (therapistRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);

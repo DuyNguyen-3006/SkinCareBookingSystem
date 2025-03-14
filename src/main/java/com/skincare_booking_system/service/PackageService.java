@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.PackageRequest;
@@ -30,7 +29,6 @@ public class PackageService {
     PackageMapper packageMapper;
     ServicesRepository servicesRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public PackageResponse createPackage(PackageRequest packageRequest) {
         if (packageRepository.existsByPackageName(packageRequest.getPackageName())) {
             throw new AppException(ErrorCode.PACKAGE_EXIST);
@@ -56,7 +54,6 @@ public class PackageService {
         return packageMapper.toPackageResponse(packageRepository.save(p));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<PackageResponse> getAllPackages() {
         List<Package> packages = packageRepository.findAll();
         if (packages.isEmpty()) {
@@ -65,7 +62,6 @@ public class PackageService {
         return packages.stream().map(packageMapper::toPackageResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<PackageResponse> getPackagesByPackagesName(String packageName) {
         List<Package> packages = packageRepository.findPackageByPackageNameContainsIgnoreCase(packageName);
         if (packages.isEmpty()) {
@@ -93,7 +89,6 @@ public class PackageService {
         return activePackages.stream().map(packageMapper::toPackageResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<PackageResponse> getPackagesDeactive() {
         List<Package> deActivePackages = packageRepository.findByPackageActiveFalse();
         if (deActivePackages.isEmpty()) {
@@ -102,7 +97,6 @@ public class PackageService {
         return deActivePackages.stream().map(packageMapper::toPackageResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public PackageResponse updatePackage(String packageName, PackageUpdateRequest packageUpdateRequest) {
         Package p = packageRepository
                 .findByPackageName(packageName)
@@ -111,7 +105,6 @@ public class PackageService {
         return packageMapper.toPackageResponse(p);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String deactivePackage(String packageName) {
         Package p = packageRepository
                 .findByPackageName(packageName)
@@ -121,7 +114,6 @@ public class PackageService {
         return "Package deactivated successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String activePackage(String packageName) {
         Package p = packageRepository
                 .findByPackageName(packageName)
