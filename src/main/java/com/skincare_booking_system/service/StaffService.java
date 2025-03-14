@@ -74,7 +74,7 @@ public class StaffService {
     }
 
     public List<StaffResponse> searchStaffsByName(String name) {
-        List<Staff> staff = staffRepository.findByFullnameContainingIgnoreCase(name);
+        List<Staff> staff = staffRepository.findByFullNameContainingIgnoreCase(name);
 
         if (staff.isEmpty()) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
@@ -133,7 +133,7 @@ public class StaffService {
         staffRepository.save(sta);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String id) {
+    public void resetPassword(ResetPasswordRequest request, long id) {
         Staff staff = staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {

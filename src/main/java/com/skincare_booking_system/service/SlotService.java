@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.UpdateSlotRequest;
@@ -69,7 +68,6 @@ public class SlotService {
 
     public Slot delete(long slotid) {
         Slot slot = slotRepository.findById(slotid).orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
-
         slot.setDeleted(true);
         return slotRepository.save(slot);
     }

@@ -17,12 +17,12 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Staff {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
     String username;
     String password;
-    String fullname;
+    String fullName;
     String email;
     String phone;
     String address;

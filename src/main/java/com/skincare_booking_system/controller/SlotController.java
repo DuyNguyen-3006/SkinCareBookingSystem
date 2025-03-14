@@ -64,6 +64,7 @@ public class SlotController {
                 .build();
     }
 
+
     @GetMapping("/time/between")
     public ApiResponse<SlotTimeResponse> getSlotTimeBetween() {
         return ApiResponse.<SlotTimeResponse>builder()

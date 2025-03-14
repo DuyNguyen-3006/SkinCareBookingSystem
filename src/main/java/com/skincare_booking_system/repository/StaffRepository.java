@@ -18,7 +18,7 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
 
     Optional<Staff> findByPhone(String phone);
 
-    List<Staff> findByFullnameContainingIgnoreCase(String fullname);
+    List<Staff> findByFullNameContainingIgnoreCase(String fullName);
 
     Optional<Staff> findByUsername(String username);
 
@@ -27,4 +27,6 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);
+
+   Optional<Staff> findById(long id);
 }
