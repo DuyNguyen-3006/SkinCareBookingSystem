@@ -33,7 +33,6 @@ public class StaffService {
     StaffMapper staffMapper;
     PasswordEncoder passwordEncoder;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public StaffResponse createStaff(StaffRequest request) {
         if (staffRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -51,34 +50,29 @@ public class StaffService {
         return staffMapper.toStaffResponse(staffRepository.save(staff));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> getAllStaffs() {
         return staffRepository.findByStatusTrue().stream()
                 .map(staffMapper::toStaffResponse)
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> getAllStaffsActive() {
         return staffRepository.findByStatusTrue().stream()
                 .map(staffMapper::toStaffResponse)
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> getAllStaffsInactive() {
         return staffRepository.findByStatusFalse().stream()
                 .map(staffMapper::toStaffResponse)
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public StaffResponse getStaffsbyPhone(String phone) {
         return staffMapper.toStaffResponse(
                 staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<StaffResponse> searchStaffsByName(String name) {
         List<Staff> staff = staffRepository.findByFullnameContainingIgnoreCase(name);
 
@@ -88,7 +82,6 @@ public class StaffService {
         return staff.stream().map(staffMapper::toStaffResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void deleteStaffbyPhone(String phone) {
         Staff staff =
                 staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -96,7 +89,6 @@ public class StaffService {
         staffRepository.save(staff);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public void restoreStaffByPhone(String phone) {
         Staff staff =
                 staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

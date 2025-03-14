@@ -49,7 +49,6 @@ public class TherapistService {
     @Autowired
     private ServicesRepository servicesRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public TherapistResponse createTherapist(TherapistRequest request) {
         if (therapistRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);

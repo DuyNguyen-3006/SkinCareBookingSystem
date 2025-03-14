@@ -61,14 +61,14 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}")
     String deleteUser(@PathVariable String id) {
         System.out.println("Deleting user with ID: " + id);
         userService.deleteUser(id);
         return "User has been deleted";
     }
 
-    @PostMapping("/active/{id}")
+    @PutMapping("/active/{id}")
     String activeUser(@PathVariable String id) {
         userService.activeUser(id);
         return "Active user successfully";

@@ -26,7 +26,6 @@ public class VoucherService {
     VoucherRepository voucherRepository;
     VoucherMapper voucherMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public VoucherResponse createVoucher(VoucherRequest request) {
         if (voucherRepository.existsByVoucherCode(request.getVoucherCode())) {
             throw new AppException(ErrorCode.VOUCHER_CODE_EXISTS);
@@ -46,7 +45,6 @@ public class VoucherService {
         return voucherMapper.toVoucherResponse(voucherRepository.save(voucher));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getAllVouchers() {
         List<Voucher> vouchers = voucherRepository.findAll();
         if (vouchers.isEmpty()) {
@@ -55,20 +53,8 @@ public class VoucherService {
         return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
     }
 
-    // dang thu nghiem
-    // Chạy mỗi ngày lúc 00:00 để kiểm tra voucher hết hạn
-    @Scheduled(cron = "0 0 0 * * ?")
-    @Transactional
-    public void deactivateExpiredVouchers() {
-        List<Voucher> expiredVouchers = voucherRepository.findByExpiryDateBeforeAndIsActiveTrue(LocalDate.now());
 
-        if (!expiredVouchers.isEmpty()) {
-            expiredVouchers.forEach(voucher -> voucher.setIsActive(false));
-            voucherRepository.saveAll(expiredVouchers);
-        }
-    }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public VoucherResponse getVoucherByCode(String voucherCode) {
         Voucher voucher = voucherRepository
                 .findByVoucherCode(voucherCode)
@@ -89,7 +75,6 @@ public class VoucherService {
         return voucherMapper.toVoucherResponse(voucher);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getActiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveTrue();
         if (vouchers.isEmpty()) {
@@ -102,7 +87,6 @@ public class VoucherService {
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getInactiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveFalse();
         if (vouchers.isEmpty()) {
@@ -111,7 +95,6 @@ public class VoucherService {
         return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String deactivateVoucher(String voucherCode) {
         Voucher voucher = voucherRepository
                 .findByVoucherCode(voucherCode)
@@ -126,7 +109,6 @@ public class VoucherService {
         return "Voucher deactivated successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String activateVoucher(String voucherCode) {
         Voucher voucher = voucherRepository
                 .findByVoucherCode(voucherCode)
