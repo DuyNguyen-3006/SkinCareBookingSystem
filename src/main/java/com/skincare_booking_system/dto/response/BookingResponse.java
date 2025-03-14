@@ -26,8 +26,7 @@ public class BookingResponse {
     String voucherCode;
 
     Set<Long> serviceId;
-
-    Set<Long> packageId;
+//    Set<Long> packageId;
 
     BookingStatus status;
 }

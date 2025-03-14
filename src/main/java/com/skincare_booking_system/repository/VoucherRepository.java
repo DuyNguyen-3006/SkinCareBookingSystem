@@ -1,6 +1,5 @@
 package com.skincare_booking_system.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +14,6 @@ public interface VoucherRepository extends JpaRepository<Voucher, String> {
     boolean existsByVoucherCode(String voucherCode);
 
     boolean existsByVoucherName(String voucherName);
-
-    List<Voucher> findByExpiryDateBeforeAndIsActiveTrue(LocalDate date);
 
     Optional<Voucher> findByVoucherCode(String voucherCode);
 

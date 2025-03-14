@@ -104,6 +104,21 @@ public class BookingService {
         List<Shift> shifts = new ArrayList<>();
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
+
+        LocalTime lastShiftEndTime = LocalTime.MIN;
+        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+            }
+        }
+
+        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        for (Slot slot : allSlots) {
+            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+                slotToRemove.add(slot);
+            }
+        }
+
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
 
@@ -149,7 +164,12 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list1 = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
+            slotToRemove.addAll(list);
+
+            LocalTime minimunTimeToBooking = slot.getSlottime().minusHours(totalTimeServiceNewBooking.getHour())
+                    .minusMinutes(totalTimeServiceNewBooking.getMinute());
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking);
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
@@ -535,14 +555,14 @@ public class BookingService {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
 
-        Set<Package> packages = packageRepository.getPackageForBooking(bookingId);
-        if (packages != null) {
-            Set<Long> packageId = new HashSet<>();
-            for (Package p : packages) {
-                packageId.add(p.getPackageId());
-            }
-            bookingResponse.setPackageId(packageId);
-        }
+//        Set<Package> packages = packageRepository.getPackageForBooking(bookingId);
+//        if (packages != null) {
+//            Set<Long> packageId = new HashSet<>();
+//            for (Package p : packages) {
+//                packageId.add(p.getPackageId());
+//            }
+//            bookingResponse.setPackageId(packageId);
+//        }
         return bookingResponse;
     }
 
