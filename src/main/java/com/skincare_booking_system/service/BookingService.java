@@ -410,6 +410,9 @@ public class BookingService {
             throw new AppException(ErrorCode.SLOT_NOT_VALID);
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
+        if(voucher.getQuantity()==0){
+            voucher=null;
+        }
         if (voucher != null) {
             voucherService.useVoucher(voucher.getVoucherCode());
         }
