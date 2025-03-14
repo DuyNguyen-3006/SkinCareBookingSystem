@@ -63,7 +63,6 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     String deleteUser(@PathVariable String id) {
         System.out.println("Deleting user with ID: " + id);
         userService.deleteUser(id);
@@ -71,7 +70,6 @@ public class UserController {
     }
 
     @PostMapping("/active/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
     String activeUser(@PathVariable String id) {
         userService.activeUser(id);
         return "Active user successfully";
@@ -84,7 +82,6 @@ public class UserController {
     }
 
     @PutMapping("/reset-password/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
     public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
         userService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
