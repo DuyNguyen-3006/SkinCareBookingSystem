@@ -99,7 +99,6 @@ public class StaffController {
     }
 
     @PutMapping("/reset-password/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
         staffService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();

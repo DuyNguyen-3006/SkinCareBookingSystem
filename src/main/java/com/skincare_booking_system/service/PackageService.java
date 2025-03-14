@@ -121,7 +121,6 @@ public class PackageService {
         return "Package deactivated successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String activePackage(String packageName) {
         Package p = packageRepository
                 .findByPackageName(packageName)
