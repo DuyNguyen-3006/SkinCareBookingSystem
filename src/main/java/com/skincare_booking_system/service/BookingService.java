@@ -202,6 +202,21 @@ public class BookingService {
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
+
+        LocalTime lastShiftEndTime = LocalTime.MIN;
+        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+            }
+        }
+
+        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        for (Slot slot : allSlot) {
+            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+                slotToRemove.add(slot);
+            }
+        }
+
         // therapist đã có booking trong ngày
         // tính tổng thời gian để hoàn thành yêu cầu booking mới
         LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
@@ -506,11 +521,11 @@ public class BookingService {
             success.setDate(booking.getBookingDay());
             success.setTime(booking.getSlot().getSlottime());
             success.setTo(booking.getUser().getEmail());
-            success.setSubject("Change Stylist");
+            success.setSubject("Change Therapist");
             success.setTherapistName(
                     booking.getTherapistSchedule().getTherapist().getFullName());
             emailService.sendMailChangeTherapist(success);
-            System.out.println("Successfully changed the stylist in service");
+            System.out.println("Successfully changed the therapist in service");
         }
         return request;
     }
