@@ -1,5 +1,13 @@
 package com.skincare_booking_system.controller;
 
+import java.io.UnsupportedEncodingException;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.skincare_booking_system.entities.Payment;
 import com.skincare_booking_system.entities.Transactions;
 import com.skincare_booking_system.entities.User;
@@ -7,12 +15,6 @@ import com.skincare_booking_system.repository.PaymentRepository;
 import com.skincare_booking_system.repository.TransactionsRepository;
 import com.skincare_booking_system.repository.UserRepository;
 import com.skincare_booking_system.service.PaymentService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/payment")
@@ -22,7 +24,11 @@ public class PaymentController {
     private final TransactionsRepository transactionsRepository;
     private final UserRepository userRepository;
 
-    public PaymentController(PaymentService paymentService, PaymentRepository paymentRepository, TransactionsRepository transactionsRepository, UserRepository userRepository) {
+    public PaymentController(
+            PaymentService paymentService,
+            PaymentRepository paymentRepository,
+            TransactionsRepository transactionsRepository,
+            UserRepository userRepository) {
         this.paymentService = paymentService;
         this.paymentRepository = paymentRepository;
         this.transactionsRepository = transactionsRepository;
@@ -30,7 +36,7 @@ public class PaymentController {
     }
 
     @GetMapping("/{bookingId}")
-    public String getPay(@PathVariable Long bookingId, HttpServletRequest req ) throws UnsupportedEncodingException {
+    public String getPay(@PathVariable Long bookingId, HttpServletRequest req) throws UnsupportedEncodingException {
 
         return paymentService.generatePaymentUrl(bookingId, req);
     }
@@ -42,7 +48,7 @@ public class PaymentController {
             @RequestParam String vnp_ResponseCode,
             @RequestParam String vnp_TxnRef) {
         // String vnp_ResponseCode = vnp_Params.get("vnp_ResponseCode");
-        //String vnp_txnRef = vnp_Params.get("vnp_TxnRef");
+        // String vnp_txnRef = vnp_Params.get("vnp_TxnRef");
         Payment payment = paymentRepository.findByTransactionId(vnp_TxnRef);
         // Kiểm tra mã phản hồi từ VNPay
         if ("00".equals(vnp_ResponseCode)) {

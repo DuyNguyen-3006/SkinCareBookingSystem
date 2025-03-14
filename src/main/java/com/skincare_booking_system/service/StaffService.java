@@ -2,16 +2,18 @@ package com.skincare_booking_system.service;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.request.ChangePasswordRequest;
-import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import jakarta.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.skincare_booking_system.constant.Roles;
+import com.skincare_booking_system.dto.request.ChangePasswordRequest;
+import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.StaffRequest;
 import com.skincare_booking_system.dto.request.StaffUpdateRequest;
 import com.skincare_booking_system.dto.response.StaffResponse;
@@ -23,7 +25,6 @@ import com.skincare_booking_system.repository.StaffRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @RequiredArgsConstructor
@@ -125,7 +126,9 @@ public class StaffService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Staff sta = staffRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Staff sta = staffRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!passwordEncoder.matches(request.getOldPassword(), sta.getPassword())) {
             throw new AppException(ErrorCode.PASSWORD_WRONG);
@@ -140,8 +143,7 @@ public class StaffService {
     }
 
     public void resetPassword(ResetPasswordRequest request, String id) {
-        Staff staff =
-                staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Staff staff = staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);

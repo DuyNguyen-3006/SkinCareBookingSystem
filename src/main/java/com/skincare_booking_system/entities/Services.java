@@ -1,7 +1,6 @@
 package com.skincare_booking_system.entities;
 
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -35,10 +34,7 @@ public class Services {
 
     String imgUrl;
 
-
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
     Set<Booking> bookings;
-
-
 }

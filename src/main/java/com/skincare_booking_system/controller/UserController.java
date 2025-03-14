@@ -85,8 +85,7 @@ public class UserController {
 
     @PutMapping("/reset-password/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
-    public ApiResponse<String> resetPassword(
-            @PathVariable String id, @RequestBody ResetPasswordRequest request) {
+    public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
         userService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }

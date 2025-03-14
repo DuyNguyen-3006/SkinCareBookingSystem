@@ -3,6 +3,7 @@ package com.skincare_booking_system.repository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
@@ -18,8 +19,10 @@ import com.skincare_booking_system.entities.Booking;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking findBookingByBookingId(long id);
 
-    @Query(value = "select * from booking b\n" +
-            "where b.user_id = ?1 and b.status = ?2;",nativeQuery = true)
+    @Query(value = "SELECT * FROM booking b WHERE b.booking_id = :bookingId", nativeQuery = true)
+    Optional<Booking> findBookingById(@Param("bookingId") Long bookingId);
+
+    @Query(value = "select * from booking b\n" + "where b.user_id = ?1 and b.status = ?2;", nativeQuery = true)
     List<Booking> getBookingsByUserIdAndStatus(long id, String status);
 
     @Query(
@@ -41,11 +44,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     void updateBookingDetail(double price, long bookingId, long serviceId);
 
     @Query(
-            value = "UPDATE booking_package SET packageFinalPrice = ?1 WHERE booking_id = ?2 AND package_id = ?3;",
+            value = "select b.booking_day, sum(p.payment_amount) from booking b\n" + "inner join payment p\n"
+                    + "on b.booking_id = p.booking_id\n"
+                    + "where month(b.booking_day) = ?1\n"
+                    + "group by b.booking_day",
             nativeQuery = true)
-    @Transactional
-    @Modifying
-    void updateBookingDetailForPackage(double packageFinalPrice, long bookingId, long packageId);
+    List<Object[]> getTotalMoneyByBookingDay(int month);
 
     @Modifying
     @Transactional
@@ -140,4 +144,49 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             nativeQuery = true)
     Booking getBySlotSlotidAndBookingDayAndTherapistScheduleTherapistScheduleId(
             long slotId, LocalDate date, long therapistScheduleId);
+
+    @Query(
+            value = "SELECT b.*, ts.therapist_id AS therapist_id FROM booking b "
+                    + "JOIN therapist_schedule ts ON b.therapist_schedule_id = ts.therapist_schedule_id "
+                    + "WHERE ts.therapist_id = :therapistId "
+                    + "AND b.booking_day = :bookingDay "
+                    + "AND b.slot_id > :slotId "
+                    + "AND b.status = 'PENDING'"
+                    + "ORDER BY b.slot_id ASC LIMIT 1",
+            nativeQuery = true)
+    Optional<Booking> findNextBookingSameDay(
+            @Param("therapistId") Long therapistId,
+            @Param("slotId") Long slotId,
+            @Param("bookingDay") LocalDate bookingDay);
+
+    @Query(value = "select count(*) from booking b where month(b.booking_day) = ?1", nativeQuery = true)
+    long countAllBookingsInMonth(int month);
+
+    @Query(
+            value = "select b.* from booking b \n" + "inner join payment p \n"
+                    + "on b.booking_id = p.booking_id\n"
+                    + "where p.payment_status = 'Completed' and b.booking_id = ?1",
+            nativeQuery = true)
+    Booking checkBookingStatus(long bookingId);
+
+    @Query(
+            value = "select count(*) from booking b\n"
+                    + "where b.status = 'COMPLETED' and year(b.booking_day) = ?1 and month(b.booking_day) =  ?2",
+            nativeQuery = true)
+    long countAllBookingsCompleted(int year, int month);
+
+    @Query(
+            value = "select sum(p.payment_amount) from booking b\n" + "inner join payment p\n"
+                    + "on b.booking_id = p.booking_id\n"
+                    + "where month(b.booking_day) = ?1",
+            nativeQuery = true)
+    double getTotalMoneyInMonth(int month);
+
+    @Query(
+            value = "SELECT b.* FROM booking b " + "INNER JOIN therapist_schedule ts "
+                    + "ON b.therapist_schedule_id = ts.therapist_schedule_id "
+                    + "WHERE ts.therapist_id = ?1 AND b.booking_day = ?2 "
+                    + "ORDER BY b.status DESC, b.slot_id ASC",
+            nativeQuery = true)
+    List<Booking> findAllByTherapistAndDate(long therapistId, LocalDate date);
 }

@@ -4,19 +4,11 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.skincare_booking_system.entities.Staff;
-import com.skincare_booking_system.entities.Therapist;
-import com.skincare_booking_system.repository.StaffRepository;
-import com.skincare_booking_system.repository.TherapistRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -30,12 +22,18 @@ import com.skincare_booking_system.dto.request.RefreshRequest;
 import com.skincare_booking_system.dto.response.AuthenticationResponse;
 import com.skincare_booking_system.dto.response.IntrospectResponse;
 import com.skincare_booking_system.entities.InvalidatedToken;
+import com.skincare_booking_system.entities.Staff;
+import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.InvalidatedTokenRepository;
+import com.skincare_booking_system.repository.StaffRepository;
+import com.skincare_booking_system.repository.TherapistRepository;
 import com.skincare_booking_system.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,10 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 public class AuthenticationService {
-UserRepository userRepository;
-TherapistRepository therapistRepository;
-StaffRepository staffRepository;
-InvalidatedTokenRepository invalidatedTokenRepository;
+    UserRepository userRepository;
+    TherapistRepository therapistRepository;
+    StaffRepository staffRepository;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal // de bien nay khong add vao constructor
     @Value("${jwt.signerKey}") // doc signerKey tu file yaml
@@ -73,7 +71,10 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
             var token = generateToken(user);
-            return AuthenticationResponse.builder().token(token).success(true).build(); // Trả về ngay sau khi thành công
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .success(true)
+                    .build(); // Trả về ngay sau khi thành công
         }
 
         if (therapistRepository.existsByUsername(username)) {
@@ -95,7 +96,6 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
         throw new AppException(ErrorCode.USER_NOT_EXISTED); // Không tìm thấy tài khoản nào
     }
-
 
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
@@ -121,13 +121,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-//    private String buildScope(User user) {
-//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-//        if (!CollectionUtils.isEmpty(user.getRole())) {
-//            user.getRole().name(role -> stringJoiner.add("ROLE_" + ()));
-//        }
-//        return stringJoiner.toString();
-//    }
+    //    private String buildScope(User user) {
+    //        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+    //        if (!CollectionUtils.isEmpty(user.getRole())) {
+    //            user.getRole().name(role -> stringJoiner.add("ROLE_" + ()));
+    //        }
+    //        return stringJoiner.toString();
+    //    }
 
     private String generateTokenThe(Therapist therapist) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
@@ -136,7 +136,8 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 .subject(therapist.getUsername())
                 .issuer("SkinCareBooking")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(
+                        new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
 
@@ -152,14 +153,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-//    private String buildScopeThe(Therapist therapist) {
-//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-//        if (!CollectionUtils.isEmpty(therapist.getRoles())) {
-//            therapist.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
-//        }
-//        return stringJoiner.toString();
-//    }
-
+    //    private String buildScopeThe(Therapist therapist) {
+    //        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+    //        if (!CollectionUtils.isEmpty(therapist.getRoles())) {
+    //            therapist.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+    //        }
+    //        return stringJoiner.toString();
+    //    }
 
     private String generateTokenSta(Staff staff) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
@@ -168,7 +168,8 @@ InvalidatedTokenRepository invalidatedTokenRepository;
                 .subject(staff.getUsername())
                 .issuer("SkinCareBooking")
                 .issueTime(new Date())
-                .expirationTime(new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
+                .expirationTime(
+                        new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .build();
 
@@ -184,13 +185,13 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         }
     }
 
-//    private String buildScopeSta(Staff staff) {
-//        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
-//        if (!CollectionUtils.isEmpty(staff.getRole())) {
-//            staff.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
-//        }
-//        return stringJoiner.toString();
-//    }
+    //    private String buildScopeSta(Staff staff) {
+    //        StringJoiner stringJoiner = new StringJoiner(" "); // Ghép nhiều role thành chuỗi
+    //        if (!CollectionUtils.isEmpty(staff.getRole())) {
+    //            staff.getRoles().forEach(role -> stringJoiner.add("ROLE_" + role.getName()));
+    //        }
+    //        return stringJoiner.toString();
+    //    }
 
     public void logout(LogoutRequest request) throws ParseException, JOSEException {
         var signToken = verifyToken(request.getToken());
@@ -223,6 +224,7 @@ InvalidatedTokenRepository invalidatedTokenRepository;
 
         return AuthenticationResponse.builder().token(token).success(true).build();
     }
+
     public AuthenticationResponse refreshTokenThe(RefreshRequest request) throws ParseException, JOSEException {
         var signJwt = verifyToken(request.getToken());
 
@@ -235,13 +237,15 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         invalidatedTokenRepository.save(invalidatedToken);
 
         var username = signJwt.getJWTClaimsSet().getSubject();
-        var user =
-                therapistRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
+        var user = therapistRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
 
         var token = generateTokenThe(user);
 
         return AuthenticationResponse.builder().token(token).success(true).build();
     }
+
     public AuthenticationResponse refreshTokenStaff(RefreshRequest request) throws ParseException, JOSEException {
         var signJwt = verifyToken(request.getToken());
 
@@ -254,8 +258,9 @@ InvalidatedTokenRepository invalidatedTokenRepository;
         invalidatedTokenRepository.save(invalidatedToken);
 
         var username = signJwt.getJWTClaimsSet().getSubject();
-        var user =
-                staffRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
+        var user = staffRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATION));
 
         var token = generateTokenSta(user);
 

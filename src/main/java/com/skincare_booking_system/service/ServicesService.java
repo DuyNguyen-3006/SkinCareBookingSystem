@@ -4,7 +4,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.ServicesRequest;
@@ -29,7 +28,6 @@ public class ServicesService {
     PackageRepository packageRepository;
     ServicesMapper servicesMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public ServicesResponse createServices(ServicesRequest servicesRequest) {
         if (servicesRepository.existsByServiceName(servicesRequest.getServiceName())) {
             throw new AppException(ErrorCode.SERVICE_EXIST);
@@ -38,7 +36,6 @@ public class ServicesService {
         return servicesMapper.toServicesResponse(servicesRepository.save(services));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<ServicesResponse> getAllServices() {
         List<Services> services = servicesRepository.findAll();
         if (services.isEmpty()) {
@@ -55,7 +52,6 @@ public class ServicesService {
         return activeServices.stream().map(servicesMapper::toServicesResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<ServicesResponse> getAllServicesIsActiveFalse() {
 
         List<Services> activeServices = servicesRepository.findByIsActiveFalse();
@@ -74,7 +70,6 @@ public class ServicesService {
         return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<ServicesResponse> getServicesByServicesName(String serviceName) {
         List<Services> services = servicesRepository.findServicessByServiceNameContainingIgnoreCase(serviceName);
         if (services.isEmpty()) {
@@ -83,7 +78,6 @@ public class ServicesService {
         return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public ServicesResponse updateServices(String serviceName, ServicesUpdateRequest servicesUpdateRequest) {
         Services services = servicesRepository
                 .findByServiceName(serviceName)
@@ -109,7 +103,6 @@ public class ServicesService {
         return servicesMapper.toServicesResponse(servicesRepository.save(services));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String deactivateServices(String serviceName) {
         Services services = servicesRepository
                 .findByServiceName(serviceName)
@@ -124,7 +117,6 @@ public class ServicesService {
         return "Services deactivated successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String activateServices(String serviceName) {
         Services services = servicesRepository
                 .findByServiceName(serviceName)
@@ -132,5 +124,9 @@ public class ServicesService {
         services.setIsActive(true);
         servicesRepository.save(services);
         return "Service activated successfully";
+    }
+
+    public Long countAllServices() {
+        return servicesRepository.countAllServices();
     }
 }

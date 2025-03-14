@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +38,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @Autowired
     private EmailService emailService;
 
@@ -62,14 +60,12 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
                 .filter(user -> user.getRole() != Roles.ADMIN)
                 .map(userMapper::toUserResponse)
                 .toList();
     }
-
 
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserByPhoneNumber(String phoneNumber) {
@@ -130,8 +126,7 @@ public class UserService {
     }
 
     public void resetPassword(ResetPasswordRequest request, String id) {
-        User user =
-                userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
@@ -141,5 +136,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-
+    public Long countAllCustomers() {
+        return userRepository.countAllCustomers();
+    }
 }

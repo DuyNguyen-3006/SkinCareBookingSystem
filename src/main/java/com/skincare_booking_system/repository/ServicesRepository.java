@@ -45,4 +45,16 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
                     + "where bd.booking_id = ?1 ",
             nativeQuery = true)
     Set<Services> getServiceForBooking(long bookingId);
+
+    @Query(
+            value = "select  ss.service_id from services ss\n" + "inner join booking_detail bd\n"
+                    + "on ss.service_id = bd.service_id\n"
+                    + "where bd.booking_id = ?1",
+            nativeQuery = true)
+    Set<Long> getServiceIdByBooking(long id);
+
+    List<Services> findByServiceIdIn(List<Long> serviceIds);
+
+    @Query(value = "select count(*) from services", nativeQuery = true)
+    long countAllServices();
 }

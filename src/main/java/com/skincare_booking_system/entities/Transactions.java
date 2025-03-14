@@ -1,10 +1,11 @@
 package com.skincare_booking_system.entities;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -21,14 +22,17 @@ public class Transactions {
     @ManyToOne
     @JoinColumn(name = "from_id")
     User fromAccount;
+
     @ManyToOne
     @JoinColumn(name = "to_id")
     User toAccount;
+
     double amount;
     LocalDate transactionDate;
     String bankCode;
     String cardType;
     String transactionIdVNPay;
+
     @ManyToOne
     @JoinColumn(name = "payment_id")
     Payment payment;

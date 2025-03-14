@@ -1,17 +1,17 @@
 package com.skincare_booking_system.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-import com.skincare_booking_system.dto.request.BookingRequest;
-import com.skincare_booking_system.dto.response.BookingResponse;
-import com.skincare_booking_system.entities.Booking;
 import org.springframework.web.bind.annotation.*;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.BookingSlots;
-import com.skincare_booking_system.dto.request.BookingTherapist;
+import com.skincare_booking_system.dto.request.*;
+import com.skincare_booking_system.dto.response.BookingResponse;
+import com.skincare_booking_system.dto.response.PaymentResponse;
 import com.skincare_booking_system.dto.response.TherapistForBooking;
+import com.skincare_booking_system.dto.response.TotalMoneyByBookingDay;
+import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Slot;
 import com.skincare_booking_system.service.BookingService;
 import com.skincare_booking_system.service.ServicesService;
@@ -47,15 +47,15 @@ public class BookingController {
     }
 
     @PostMapping("/slots/{bookingId}")
-    public ApiResponse<List<Slot>> getSlotsUpdateByCustomer(@RequestBody BookingSlots bookingSlots,
-                                                            @PathVariable long bookingId){
-       return ApiResponse.<List<Slot>>builder()
-               .result(bookingService.getSlotsUpdateByCustomer(bookingSlots, bookingId))
-               .build();
+    public ApiResponse<List<Slot>> getSlotsUpdateByCustomer(
+            @RequestBody BookingSlots bookingSlots, @PathVariable long bookingId) {
+        return ApiResponse.<List<Slot>>builder()
+                .result(bookingService.getSlotsUpdateByCustomer(bookingSlots, bookingId))
+                .build();
     }
 
     @PostMapping("/createBooking")
-    public ApiResponse<Booking> createBooking(@RequestBody BookingRequest request){
+    public ApiResponse<Booking> createBooking(@RequestBody BookingRequest request) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(bookingService.createNewBooking(request));
         apiResponse.setSuccess(true);
@@ -63,39 +63,109 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public ApiResponse<BookingResponse> getBookingById(@PathVariable long bookingId){
+    public ApiResponse<BookingResponse> getBookingById(@PathVariable long bookingId) {
         return ApiResponse.<BookingResponse>builder()
                 .result(bookingService.getBookingById(bookingId))
                 .build();
     }
 
     @PutMapping("/update/{bookingId}")
-    public ApiResponse<Booking> updateBooking(@PathVariable long bookingId,@RequestBody BookingRequest request){
+    public ApiResponse<Booking> updateBooking(@PathVariable long bookingId, @RequestBody BookingRequest request) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(bookingService.updateBooking(bookingId,request));
+        apiResponse.setResult(bookingService.updateBooking(bookingId, request));
         apiResponse.setSuccess(true);
         return apiResponse;
     }
 
     @DeleteMapping("/delete/{bookingId}")
-    public ApiResponse deleteBooking(@PathVariable Long bookingId){
+    public ApiResponse deleteBooking(@PathVariable Long bookingId) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(bookingService.deleteBooking(bookingId));
         apiResponse.setSuccess(true);
         return apiResponse;
     }
 
-//    @GetMapping("/customer/{userId}/pending")
-//    public ApiResponse<List<Booking>> getPendingBookings(@PathVariable Long userId){
-//       return ApiResponse.<List<Booking>>builder()
-//               .result(bookingService.getBookingByStatusPendingByCustomer(userId))
-//               .build();
-//    }
-//
-//    @GetMapping("/customer/{userId}/completed")
-//    public ApiResponse<List<Booking>> getCompleteBookings(@PathVariable Long userId){
-//       return ApiResponse.<List<Booking>>builder()
-//               .result(bookingService.getBookingByStatusCompletedByCustomer(userId))
-//               .build();
-//    }
+    @PostMapping("/therapist/update")
+    public ApiResponse<Set<TherapistForBooking>> getTherapistByStaff(
+            @RequestBody AssignNewTherapistForBooking bookingTherapist) {
+        return ApiResponse.<Set<TherapistForBooking>>builder()
+                .result(bookingService.getTherapistWhenUpdateBookingByStaff(bookingTherapist))
+                .build();
+    }
+
+    @GetMapping("/customer/{userId}/pending")
+    public ApiResponse<List<Booking>> getPendingBookings(@PathVariable Long userId) {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setResult(bookingService.getBookingByStatusPendingByCustomer(userId));
+        apiResponse.setSuccess(true);
+        return apiResponse;
+    }
+
+    @GetMapping("/customer/{userId}/completed")
+    public ApiResponse<List<Booking>> getCompleteBookings(@PathVariable Long userId) {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setResult(bookingService.getBookingByStatusCompletedByCustomer(userId));
+        apiResponse.setSuccess(true);
+        return apiResponse;
+    }
+
+    @PutMapping("/{bookingId}/checkin")
+    public ApiResponse<String> checkIn(@PathVariable Long bookingId) {
+        return ApiResponse.<String>builder()
+                .result(bookingService.checkIn(bookingId))
+                .build();
+    }
+
+    @PutMapping("/checkout")
+    public ApiResponse<String> checkOut(
+            @RequestParam(required = false) String transactionId, @RequestParam(required = false) Long bookingId) {
+        return ApiResponse.<String>builder()
+                .result(bookingService.checkout(transactionId, bookingId))
+                .build();
+    }
+
+    @GetMapping("/stylist/{date}/{therapistId}")
+    public ApiResponse<List<BookingResponse>> getTodayBookingForTherapist(
+            @PathVariable Long therapistId, @PathVariable String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        return ApiResponse.<List<BookingResponse>>builder()
+                .result(therapistService.getBookingsForTherapistOnDate(therapistId, localDate))
+                .build();
+    }
+
+    @PutMapping("/update/service/{bookingId}")
+    public ApiResponse<BookingRequest> updateService(
+            @PathVariable Long bookingId, @RequestBody BookingRequest request) {
+        return ApiResponse.<BookingRequest>builder()
+                .result(bookingService.updateBookingWithService(bookingId, request.getServiceId()))
+                .build();
+    }
+
+    @PostMapping("/{bookingId}/finish")
+    public ApiResponse<PaymentResponse> finishBooking(@PathVariable Long bookingId) {
+        return ApiResponse.<PaymentResponse>builder()
+                .result(bookingService.finishedService(bookingId))
+                .build();
+    }
+
+    @GetMapping("/booking/total-money/day/month/{month}")
+    public ApiResponse<List<TotalMoneyByBookingDay>> totalMoneyByBookingDay(@PathVariable int month) {
+        return ApiResponse.<List<TotalMoneyByBookingDay>>builder()
+                .result(bookingService.totalMoneyByBookingDayInMonth(month))
+                .build();
+    }
+
+    @GetMapping("/status/{bookingId}")
+    public ApiResponse<String> checkBookingStatus(@PathVariable long bookingId) {
+        return ApiResponse.<String>builder()
+                .result(bookingService.checkBookingStatus(bookingId))
+                .build();
+    }
+
+    @GetMapping("/count/completed/{yearAndMonth}")
+    public ApiResponse<Long> countAllBookingsComplete(@PathVariable String yearAndMonth) {
+        return ApiResponse.<Long>builder()
+                .result(bookingService.countAllBookingsCompleted(yearAndMonth))
+                .build();
+    }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -57,7 +58,7 @@ public class VoucherService {
         return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
     }
 
-// dang thu nghiem
+    // dang thu nghiem
     // Chạy mỗi ngày lúc 00:00 để kiểm tra voucher hết hạn
     @Scheduled(cron = "0 0 0 * * ?")
     @Transactional
@@ -169,7 +170,7 @@ public class VoucherService {
         }
 
         voucher.setQuantity(voucher.getQuantity() - 1);
-        if(voucher.getQuantity() == 0) {
+        if (voucher.getQuantity() == 0) {
             voucher.setIsActive(false);
         }
         voucherRepository.save(voucher);

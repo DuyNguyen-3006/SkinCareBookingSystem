@@ -1,14 +1,14 @@
 package com.skincare_booking_system.configuration;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 public class VnpayConfig {
     public static String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
@@ -16,7 +16,7 @@ public class VnpayConfig {
     public static String vnp_ReturnUrl = "";
     public static String vnp_TmnCode = "K8ML0YE6";
     public static String secretKey = "RLIR7U7TDFH29OK0W1JZ3KORHZGNZ2DM";
-//    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    //    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {
         String digest = null;
@@ -54,7 +54,7 @@ public class VnpayConfig {
         return digest;
     }
 
-    //Util for VNPAY
+    // Util for VNPAY
     public static String hashAllFields(Map fields) {
         List fieldNames = new ArrayList(fields.keySet());
         Collections.sort(fieldNames);
@@ -72,7 +72,7 @@ public class VnpayConfig {
                 sb.append("&");
             }
         }
-        return hmacSHA512(secretKey,sb.toString());
+        return hmacSHA512(secretKey, sb.toString());
     }
 
     public static String hmacSHA512(final String key, final String data) {
@@ -121,4 +121,3 @@ public class VnpayConfig {
         return sb.toString();
     }
 }
-

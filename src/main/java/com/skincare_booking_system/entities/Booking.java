@@ -63,5 +63,4 @@ public class Booking {
     @OneToOne(mappedBy = "booking")
     @JsonIgnore
     Payment payment;
-
 }

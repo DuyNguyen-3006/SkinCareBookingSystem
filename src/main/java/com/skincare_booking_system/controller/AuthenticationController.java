@@ -26,7 +26,6 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
-
     @GetMapping("/log-in-google")
     public Map<String, Object> signInGoogle(OAuth2AuthenticationToken oAuth2AuthenticationToken) {
         return oAuth2AuthenticationToken.getPrincipal().getAttributes();
@@ -54,6 +53,7 @@ public class AuthenticationController {
 
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
+
     @PostMapping("/refreshThe")
     ApiResponse<AuthenticationResponse> refreshThe(@RequestBody RefreshRequest request)
             throws JOSEException, ParseException {
@@ -61,6 +61,7 @@ public class AuthenticationController {
 
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
+
     @PostMapping("/refreshSta")
     ApiResponse<AuthenticationResponse> refreshSta(@RequestBody RefreshRequest request)
             throws JOSEException, ParseException {

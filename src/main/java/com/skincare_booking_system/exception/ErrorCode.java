@@ -73,6 +73,8 @@ public enum ErrorCode {
     THERAPIST_NOT_FOUND("Therapist not found", HttpStatus.NOT_FOUND),
     INVALID_PAYMENT_AMOUNT("Invalid payment amount", HttpStatus.BAD_REQUEST),
     EXCEPTION("Error", HttpStatus.INTERNAL_SERVER_ERROR),
+    SERVICES_ALREADY_BOOKED("Service is already booked", HttpStatus.BAD_REQUEST),
+    STYLIST_UNAVAILABLE("Stylist is not available", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;

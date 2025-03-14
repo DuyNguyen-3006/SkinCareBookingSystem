@@ -2,7 +2,6 @@ package com.skincare_booking_system.entities;
 
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -33,5 +32,4 @@ public class Package {
             joinColumns = @JoinColumn(name = "package_id"),
             inverseJoinColumns = @JoinColumn(name = "service_id"))
     List<Services> services;
-
 }

@@ -54,7 +54,8 @@ public class TherapistScheduleController {
     }
 
     @PutMapping("/therapist/update/{id}")
-    public ApiResponse<SpecificTherapistScheduleResponse> updateTherapistSchedule(@PathVariable long id, @RequestBody SpecificTherapistScheduleRequest request) {
+    public ApiResponse<SpecificTherapistScheduleResponse> updateTherapistSchedule(
+            @PathVariable long id, @RequestBody SpecificTherapistScheduleRequest request) {
         return ApiResponse.<SpecificTherapistScheduleResponse>builder()
                 .result(therapistScheduleService.updateTherapistSchedule(id, request))
                 .build();

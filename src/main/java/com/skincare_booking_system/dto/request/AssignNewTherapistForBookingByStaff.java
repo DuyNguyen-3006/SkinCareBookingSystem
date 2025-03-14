@@ -1,4 +1,6 @@
-package com.skincare_booking_system.dto.response;
+package com.skincare_booking_system.dto.request;
+
+import java.time.LocalDate;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ServiceCusResponse {
-    String serviceName;
+public class AssignNewTherapistForBookingByStaff {
+    LocalDate date;
+    long slotId;
 }

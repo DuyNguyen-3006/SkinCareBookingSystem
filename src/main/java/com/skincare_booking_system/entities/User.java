@@ -1,10 +1,10 @@
 package com.skincare_booking_system.entities;
 
 import java.time.LocalDate;
-import java.util.Set;
+
+import jakarta.persistence.*;
 
 import com.skincare_booking_system.constant.Roles;
-import jakarta.persistence.*;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

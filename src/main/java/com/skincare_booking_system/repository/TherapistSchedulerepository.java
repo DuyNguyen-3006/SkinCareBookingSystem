@@ -1,13 +1,16 @@
 package com.skincare_booking_system.repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.skincare_booking_system.entities.TherapistSchedule;
@@ -34,4 +37,27 @@ public interface TherapistSchedulerepository extends JpaRepository<TherapistSche
     @Modifying
     @Transactional
     void deleteSpecificSchedule(long id);
+
+    @Query(
+            value = "SELECT s.shift_id " + "FROM shift s "
+                    + "JOIN specific_therapist_schedule sts ON s.shift_id = sts.shift_id "
+                    + "JOIN therapist_schedule ts ON sts.therapist_schedule_id = ts.therapist_schedule_id "
+                    + "WHERE ts.therapist_schedule_id = :therapistScheduleId "
+                    + "AND ts.working_day = :workingDay "
+                    + "ORDER BY s.shift_id",
+            nativeQuery = true)
+    List<Long> findShiftIdsByTherapistScheduleAndWorkingDay(
+            @Param("therapistScheduleId") Long therapistScheduleId, @Param("workingDay") String workingDay);
+
+    @Query(
+            value = "SELECT s.end_time FROM shift s "
+                    + "JOIN specific_therapist_schedule st ON s.shift_id = st.shift_id "
+                    + "JOIN therapist_schedule ts ON st.therapist_schedule_id = ts.therapist_schedule_id "
+                    + "WHERE ts.therapist_schedule_id = :therapistScheduleId "
+                    + "AND ts.working_day = :bookingDay "
+                    + "ORDER BY s.end_time DESC "
+                    + "LIMIT 1",
+            nativeQuery = true)
+    Optional<LocalTime> findShiftEndTime(
+            @Param("therapistScheduleId") Long therapistScheduleId, @Param("bookingDay") LocalDate bookingDay);
 }

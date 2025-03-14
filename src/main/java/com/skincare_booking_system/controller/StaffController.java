@@ -2,12 +2,13 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.request.*;
 import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.StaffResponse;
 import com.skincare_booking_system.service.StaffService;
 
@@ -90,6 +91,7 @@ public class StaffController {
                 .result(staffService.getMyInfo())
                 .build();
     }
+
     @PutMapping("/change-password")
     public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         staffService.changePassword(request);
@@ -98,8 +100,7 @@ public class StaffController {
 
     @PutMapping("/reset-password/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<String> resetPassword(
-            @PathVariable String id, @RequestBody ResetPasswordRequest request) {
+    public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
         staffService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
