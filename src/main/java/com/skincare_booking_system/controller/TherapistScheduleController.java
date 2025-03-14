@@ -3,6 +3,7 @@ package com.skincare_booking_system.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.skincare_booking_system.dto.response.TherapistScheduleResponse;
 import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
@@ -68,4 +69,12 @@ public class TherapistScheduleController {
         apiResponse.setSuccess(true);
         return apiResponse;
     }
+
+    @GetMapping("/therapist//month/{therapistId}/{month}")
+    public ApiResponse<List<TherapistScheduleResponse>> getTherapistScheduleByMonth(@PathVariable long therapistId, @PathVariable int month) {
+        return ApiResponse.<List<TherapistScheduleResponse>>builder()
+                .result(therapistScheduleService.getTherapistScheduleInMonth(therapistId, month))
+                .build();
+    }
+
 }

@@ -25,7 +25,6 @@ public class BlogService {
     BlogMapper blogMapper;
     BlogRepository blogRepository;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public BlogResponse createBlog(BlogRequest blogRequest) {
         if (blogRepository.existsBlogByTitle(blogRequest.getTitle())) {
             throw new AppException(ErrorCode.BLOG_ALREADY_USED);
@@ -43,7 +42,6 @@ public class BlogService {
         return blogs.stream().map(blogMapper::toBlogResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<BlogResponse> getBlogByTitle(String title) {
         List<Blog> blogs = blogRepository.findByTitleContainingIgnoreCase(title);
         if (blogs.isEmpty()) {
@@ -52,7 +50,6 @@ public class BlogService {
         return blogs.stream().map(blogMapper::toBlogResponse).collect(Collectors.toList());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<BlogResponse> getAllBlogs() {
         List<Blog> blogs = blogRepository.findAll();
         if (blogs.isEmpty()) {
@@ -69,7 +66,6 @@ public class BlogService {
         return publishBlogs.stream().map(blogMapper::toBlogResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<BlogResponse> getAllBlogsIsActiveFalse() {
         List<Blog> publishBlogs = blogRepository.findByActiveFalse();
         if (publishBlogs.isEmpty()) {
@@ -78,7 +74,6 @@ public class BlogService {
         return publishBlogs.stream().map(blogMapper::toBlogResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String publishBlog(String title) {
         Blog blog = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blog.setActive(true);
@@ -86,7 +81,6 @@ public class BlogService {
         return "Blog publish successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String unpublishBlog(String title) {
         Blog blog = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blog.setActive(false);
@@ -94,7 +88,6 @@ public class BlogService {
         return "Blog unpublish successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public BlogResponse updateBlog(String title, BlogUpdateRequest blogUpdateRequest) {
         Blog b = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blogMapper.updateBlog(b, blogUpdateRequest);

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.skincare_booking_system.dto.response.*;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,6 @@ import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.TherapistRequest;
 import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
-import com.skincare_booking_system.dto.response.BookingResponse;
-import com.skincare_booking_system.dto.response.InfoTherapistResponse;
-import com.skincare_booking_system.dto.response.TherapistResponse;
-import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.exception.AppException;
@@ -219,5 +216,66 @@ public class TherapistService {
 
         the.setPassword(passwordEncoder.encode(request.getNewPassword()));
         therapistRepository.save(the);
+    }
+
+    private int countBooking(Long therapistId, String yearAndMonth) {
+        // Tách tháng và năm từ yearAndMonth
+        String[] parts = yearAndMonth.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+
+        // Gọi hàm để lấy danh sách booking
+        List<Booking> bookings = bookingRepository.findBookingByTherapistIdAndMonthYear(therapistId, month, year);
+
+        int sizeBookings = bookings.size();
+
+        log.info("Total bookings: {}", sizeBookings);
+        return sizeBookings;
+    }
+
+    private double calculateTotalRevenue(Long therapistId, String yearAndMonth) {
+        String[] parts = yearAndMonth.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+
+        List<Booking> bookings = bookingRepository.findBookingByTherapistIdAndMonthYear(therapistId, month, year);
+        log.info("Bookings for stylist ID {} in month {} of year {}: {}", therapistId, month, year, bookings);
+        log.info("Number of bookings for stylist ID {}: {}", therapistId, bookings.size());
+
+
+        double totalPayment = bookings.stream()
+                .filter(booking -> booking.getPayment() != null && booking.getPayment().getPaymentStatus().equals("Completed"))
+                .mapToDouble(booking -> booking.getPayment().getPaymentAmount())
+                .sum();
+
+        log.info("Total payment: {}", totalPayment);
+        return totalPayment;
+    }
+
+    public TherapistRevenueResponse getTherapistRevenue(long therapistId, String yearAndMonth) {
+        String[] parts = yearAndMonth.split("-");
+        int year = Integer.parseInt(parts[0]);
+        int month = Integer.parseInt(parts[1]);
+        double bonusPercent = 0;
+
+        double totalRevenue = calculateTotalRevenue(therapistId, yearAndMonth);
+        int sizeBookings = countBooking(therapistId, yearAndMonth);
+
+
+        // Lấy thông tin về therapist
+        Therapist therapist = therapistRepository.findTherapistById(therapistId);
+        if (therapist == null) { // Kiểm tra nếu therapist không tồn tại
+            throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
+        }
+
+        String therapistName = therapist.getFullName();
+        // Tạo đối tượng TherapistRevenueResponse
+        return TherapistRevenueResponse.builder()
+                .therapistId(therapistId)
+                .therapistName(therapistName)
+                .bookingQuantity(sizeBookings) // Đảm bảo bookingQuantity được định nghĩa trong TherapistRevenueResponse
+                .totalRevenue(totalRevenue)
+                .build();
+
     }
 }

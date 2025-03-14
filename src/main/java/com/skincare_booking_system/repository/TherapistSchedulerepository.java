@@ -38,6 +38,12 @@ public interface TherapistSchedulerepository extends JpaRepository<TherapistSche
     @Transactional
     void deleteSpecificSchedule(long id);
 
+    @Query(value = "select ts.* from therapist_schedule ts\n" +
+            "where ts.therapist_id = ?1 and month(ss.working_day) = ?2\n" +
+            "order by ss.working_day asc",nativeQuery = true)
+    List<TherapistSchedule> getTherapistSchedule(long therapistId, int month);
+
+
     @Query(
             value = "SELECT s.shift_id " + "FROM shift s "
                     + "JOIN specific_therapist_schedule sts ON s.shift_id = sts.shift_id "

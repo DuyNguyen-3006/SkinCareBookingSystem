@@ -189,4 +189,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     + "ORDER BY b.status DESC, b.slot_id ASC",
             nativeQuery = true)
     List<Booking> findAllByTherapistAndDate(long therapistId, LocalDate date);
+
+    @Query(value = "select b.* from booking b where b.booking_day = ?1 and b.status = 'PENDING'",nativeQuery = true)
+    List<Booking> getBookingByDateAndStatusPending(LocalDate date);
+
+
+
 }

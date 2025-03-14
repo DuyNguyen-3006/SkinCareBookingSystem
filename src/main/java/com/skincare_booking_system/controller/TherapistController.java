@@ -2,6 +2,7 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.response.TherapistRevenueResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,5 +103,14 @@ public class TherapistController {
     public ApiResponse<String> resetPassword(@PathVariable Long id, @RequestBody ResetPasswordRequest request) {
         therapistService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
+    }
+
+    @GetMapping("/{therapistId}/revenue/{yearAndMonth}")
+    public ApiResponse<TherapistRevenueResponse> getStylistsRevenue(@PathVariable long therapistId,
+                                                                    @PathVariable String yearAndMonth) {
+        TherapistRevenueResponse totalRevenue = therapistService.getTherapistRevenue(therapistId, yearAndMonth);
+       return ApiResponse.<TherapistRevenueResponse>builder()
+               .result(totalRevenue)
+               .build();
     }
 }

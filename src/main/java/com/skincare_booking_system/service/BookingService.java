@@ -489,7 +489,7 @@ public class BookingService {
             success.setSubject("Change Stylist");
             success.setTherapistName(
                     booking.getTherapistSchedule().getTherapist().getFullName());
-            emailService.sendMailChangeStylist(success);
+            emailService.sendMailChangeTherapist(success);
             System.out.println("Successfully changed the stylist in service");
         }
         return request;
