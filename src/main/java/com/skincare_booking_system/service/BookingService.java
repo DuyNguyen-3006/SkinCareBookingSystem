@@ -543,6 +543,7 @@ public class BookingService {
                 booking.getTherapistSchedule().getTherapist().getId());
         BookingResponse bookingResponse = new BookingResponse();
         bookingResponse.setId(booking.getBookingId());
+        bookingResponse.setUserPhone(booking.getUser().getPhone());
         bookingResponse.setDate(booking.getBookingDay());
         bookingResponse.setTime(booking.getSlot().getSlottime());
         bookingResponse.setUserId(booking.getUser().getId());
@@ -550,7 +551,7 @@ public class BookingService {
                 booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
         bookingResponse.setServiceId(serviceId);
         bookingResponse.setTherapistName(therapist.getFullName());
-
+        bookingResponse.setStatus(booking.getStatus());
         if (booking.getVoucher() != null) {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
