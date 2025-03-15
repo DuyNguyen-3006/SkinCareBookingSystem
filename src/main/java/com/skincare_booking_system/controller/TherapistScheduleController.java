@@ -46,8 +46,8 @@ public class TherapistScheduleController {
         return apiResponse;
     }
 
-    @GetMapping("/theraist/getById/{id}")
-    public ApiResponse<SpecificTherapistScheduleResponse> getTherapistSchudele(@PathVariable long id) {
+    @GetMapping("/therapist/getById/{id}")
+    public ApiResponse<SpecificTherapistScheduleResponse> getTherapistSchedule(@PathVariable long id) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(therapistScheduleService.getTherapistSchedule(id));
         apiResponse.setSuccess(true);
