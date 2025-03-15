@@ -42,7 +42,7 @@ public class SlotController {
                 .build();
     }
 
-    @PutMapping("{slotid}")
+    @PutMapping("/{slotid}")
     ApiResponse<SlotResponse> updateSlot(@PathVariable Long slotid, @Valid @RequestBody Slot slot) {
         ApiResponse response = new ApiResponse<>();
         response.setResult(slotService.update(slotid, slot));
@@ -50,7 +50,7 @@ public class SlotController {
         return response;
     }
 
-    @DeleteMapping("{slotid}")
+    @DeleteMapping("/{slotid}")
     ApiResponse<SlotResponse> deleteSlot(@PathVariable long slotid) {
         ApiResponse response = new ApiResponse<>();
         response.setResult(slotService.delete(slotid));
