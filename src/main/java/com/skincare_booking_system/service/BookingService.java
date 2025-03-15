@@ -505,8 +505,18 @@ public class BookingService {
             bookingRepository.updateBookingDetail(service.getPrice(), booking.getBookingId(), service.getServiceId());
         }
 
-        Booking bookingToRemove = new Booking();
-        if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
+//        Booking bookingToRemove = new Booking();
+//        if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
+//            for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
+//                if (booking.getBookingId() == booking1.getBookingId()) {
+//                    bookingToRemove = booking1;
+//                    break;
+//                }
+//            }
+//        }
+        Booking bookingToRemove = null;
+        if (therapistScheduleService.bookingByShiftNotWorking != null &&
+                !therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
             for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
                 if (booking.getBookingId() == booking1.getBookingId()) {
                     bookingToRemove = booking1;
@@ -514,12 +524,13 @@ public class BookingService {
                 }
             }
         }
-        therapistScheduleService.bookingByShiftNotWorking.remove(bookingToRemove);
+        if (bookingToRemove != null) {
+            therapistScheduleService.bookingByShiftNotWorking.remove(bookingToRemove);
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         Staff currentStaff = staffRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .findStaffByUsername(username);
         if (currentStaff != null) {
             ChangeTherapist success = new ChangeTherapist();
             success.setDate(booking.getBookingDay());

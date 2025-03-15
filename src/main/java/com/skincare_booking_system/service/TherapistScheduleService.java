@@ -116,7 +116,7 @@ public class TherapistScheduleService {
             }
         }
         therapistSchedulerepository.deleteSpecificSchedule(schedule.getTherapistScheduleId());
-        Therapist therapist = therapistRepository.findTherapistById(id);
+        Therapist therapist = therapistRepository.findTherapistById(request.getTherapistId());
         schedule.setShifts(shifts);
         schedule.setTherapist(therapist);
         schedule.setWorkingDay(request.getWorkingDate());
