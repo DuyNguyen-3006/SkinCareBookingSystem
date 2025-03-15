@@ -3,8 +3,10 @@ package com.skincare_booking_system.entities;
 import java.time.LocalDate;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.skincare_booking_system.constant.Roles;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -34,12 +36,13 @@ public class Therapist {
 
     @OneToMany(mappedBy = "therapist")
     @JsonIgnore
+    @ToString.Exclude
     Set<TherapistSchedule> therapistSchedules;
 
     @OneToMany(mappedBy = "therapist")
     @JsonIgnore
     Set<Booking> bookings;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    Roles role;
 }

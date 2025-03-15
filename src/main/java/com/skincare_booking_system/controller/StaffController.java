@@ -1,17 +1,19 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.StaffRequest;
-import com.skincare_booking_system.dto.request.StaffUpdateRequest;
-import com.skincare_booking_system.dto.response.StaffResponse;
-import com.skincare_booking_system.service.StaffService;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.*;
+import com.skincare_booking_system.dto.response.StaffResponse;
+import com.skincare_booking_system.service.StaffService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
@@ -27,6 +29,7 @@ public class StaffController {
                 .result(staffService.createStaff(request))
                 .build();
     }
+
     @GetMapping()
     ApiResponse<List<StaffResponse>> getStaffs() {
         return ApiResponse.<List<StaffResponse>>builder()
@@ -62,23 +65,25 @@ public class StaffController {
                 .build();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteStaff(@RequestParam String phoneNumber) {
+    @PutMapping("/delete/{phoneNumber}")
+    public ResponseEntity<String> deleteStaff(@PathVariable String phoneNumber) {
         staffService.deleteStaffbyPhone(phoneNumber);
         return ResponseEntity.ok("Staff has been deleted");
     }
 
-    @PutMapping("/restore")
-    public ResponseEntity<String> restoreStaff(@RequestParam String phoneNumber) {
+    @PutMapping("/restore/{phoneNumber}")
+    public ResponseEntity<String> restoreStaff(@PathVariable String phoneNumber) {
         staffService.restoreStaffByPhone(phoneNumber);
         return ResponseEntity.ok("Staff restored successfully");
     }
+
     @PutMapping("/update/{phone}")
     ApiResponse<StaffResponse> updateStaff(@PathVariable String phone, @RequestBody StaffUpdateRequest request) {
         return ApiResponse.<StaffResponse>builder()
                 .result(staffService.updateStaff(phone, request))
                 .build();
     }
+
     @GetMapping("/staffInfo")
     ApiResponse<StaffResponse> getMyInfo() {
         return ApiResponse.<StaffResponse>builder()
@@ -86,4 +91,15 @@ public class StaffController {
                 .build();
     }
 
+    @PutMapping("/change-password")
+    public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        staffService.changePassword(request);
+        return ApiResponse.<String>builder().result("Password has been changed").build();
+    }
+
+    @PutMapping("/reset-password/{id}")
+    public ApiResponse<String> resetPassword(@PathVariable long id, @RequestBody ResetPasswordRequest request) {
+        staffService.resetPassword(request, id);
+        return ApiResponse.<String>builder().result("Password has been reset").build();
+    }
 }

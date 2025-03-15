@@ -1,17 +1,5 @@
 package com.skincare_booking_system.service;
 
-import com.skincare_booking_system.dto.request.UpdateSlotRequest;
-import com.skincare_booking_system.dto.response.SlotResponse;
-import com.skincare_booking_system.dto.response.SlotTimeResponse;
-import com.skincare_booking_system.entities.Shift;
-import com.skincare_booking_system.repository.ShiftRepository;
-import org.springframework.stereotype.Service;
-
-import com.skincare_booking_system.entities.Slot;
-import com.skincare_booking_system.exception.AppException;
-import com.skincare_booking_system.exception.ErrorCode;
-import com.skincare_booking_system.repository.SlotRepository;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,6 +7,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.skincare_booking_system.dto.request.UpdateSlotRequest;
+import com.skincare_booking_system.dto.response.SlotResponse;
+import com.skincare_booking_system.dto.response.SlotTimeResponse;
+import com.skincare_booking_system.entities.Shift;
+import com.skincare_booking_system.entities.Slot;
+import com.skincare_booking_system.exception.AppException;
+import com.skincare_booking_system.exception.ErrorCode;
+import com.skincare_booking_system.repository.ShiftRepository;
+import com.skincare_booking_system.repository.SlotRepository;
 
 @Service
 public class SlotService {
@@ -54,14 +54,11 @@ public class SlotService {
         }
 
         LocalTime now = LocalTime.now();
-        return slots.stream()
-                .filter(slot -> !now.isAfter(slot.getSlottime()))
-                .collect(Collectors.toList());
+        return slots.stream().filter(slot -> !now.isAfter(slot.getSlottime())).collect(Collectors.toList());
     }
 
     public Slot update(long slotid, Slot slot) {
-        Slot updeSlot = slotRepository.findById(slotid)
-                .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
+        Slot updeSlot = slotRepository.findById(slotid).orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
         boolean exists = slotRepository.existsBySlottime(slot.getSlottime());
         if (exists) {
             throw new AppException(ErrorCode.SLOT_TIME_ALREADY_EXISTS);
@@ -71,8 +68,7 @@ public class SlotService {
     }
 
     public Slot delete(long slotid) {
-        Slot slot = slotRepository.findById(slotid)
-                .orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
+        Slot slot = slotRepository.findById(slotid).orElseThrow(() -> new AppException(ErrorCode.SLOT_NOT_FOUND));
 
         slot.setDeleted(true);
         return slotRepository.save(slot);
@@ -143,16 +139,18 @@ public class SlotService {
         return responses;
     }
 
-    public SlotTimeResponse getSlotTimeBetween(){
+    public SlotTimeResponse getSlotTimeBetween() {
         Slot slotBegin = slotRepository.slotBeginActive();
         Slot slotAfterBegin = slotRepository.slotAfterBeginActive(slotBegin.getSlottime());
         Slot slotEnd = slotRepository.slotEndActive();
-        LocalTime timeBetweenTwoSlot = slotAfterBegin.getSlottime().minusHours(slotBegin.getSlottime().getHour()).minusMinutes(slotBegin.getSlottime().getMinute());
-        SlotTimeResponse  response = new SlotTimeResponse();
+        LocalTime timeBetweenTwoSlot = slotAfterBegin
+                .getSlottime()
+                .minusHours(slotBegin.getSlottime().getHour())
+                .minusMinutes(slotBegin.getSlottime().getMinute());
+        SlotTimeResponse response = new SlotTimeResponse();
         response.setTimeStart(slotBegin.getSlottime());
         response.setTimeEnd(slotEnd.getSlottime());
         response.setTimeBetween(timeBetweenTwoSlot);
         return response;
     }
-
 }

@@ -3,6 +3,7 @@ package com.skincare_booking_system.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.skincare_booking_system.entities.User;
@@ -10,6 +11,8 @@ import com.skincare_booking_system.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(String username);
+
+    User findByRole(String role);
 
     boolean existsByPhone(String phone);
 
@@ -19,12 +22,14 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByUsername(String username);
 
-    Optional<User> findById(String id);
-
-
     Optional<User> findByEmail(String email);
 
-    User findUserById(String id);
+    User findUserById(long id);
+
+    User findUserByUsername(String username);
 
     Optional<User> findUserByEmail(String email);
+
+    @Query(value = "select count(*) from user u where u.role = 'CUSTOMER'", nativeQuery = true)
+    long countAllCustomers();
 }

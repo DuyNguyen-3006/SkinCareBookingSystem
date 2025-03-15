@@ -14,6 +14,6 @@ public class FeedbackRequest {
     LocalDate date;
     String content;
     double score;
-    String userId;
+    long userId;
     long bookingId;
 }

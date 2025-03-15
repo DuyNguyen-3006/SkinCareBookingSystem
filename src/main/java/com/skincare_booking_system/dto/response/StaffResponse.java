@@ -1,12 +1,11 @@
 package com.skincare_booking_system.dto.response;
 
-import com.skincare_booking_system.entities.Role;
-import jakarta.persistence.ManyToMany;
+import java.time.LocalDate;
+
+import com.skincare_booking_system.constant.Roles;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -14,10 +13,9 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StaffResponse {
-    String id;
+    long id;
     String username;
-    String firstName;
-    String lastName;
+    String fullName;
     String email;
     String phone;
     String address;
@@ -25,6 +23,5 @@ public class StaffResponse {
     LocalDate birthDate;
     Boolean status;
 
-    @ManyToMany
-    Set<Role> roles;
+    Roles role;
 }

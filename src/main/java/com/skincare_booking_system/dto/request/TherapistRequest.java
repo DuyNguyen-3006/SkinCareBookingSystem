@@ -2,7 +2,9 @@ package com.skincare_booking_system.dto.request;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,12 +15,18 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TherapistRequest {
+    @Size(min = 3, max = 20, message = "USERNAME_INVALID")
     String username;
+
+    @Size(min = 8, max = 20, message = "PASSWORD_INVALID")
     String password;
+
     String fullName;
+
+    @Email(message = "EMAIL_INVALID")
     String email;
 
-    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
+    @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "Your phone number is not valid")
     String phone;
 
     String address;

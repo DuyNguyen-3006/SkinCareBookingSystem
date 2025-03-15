@@ -1,13 +1,18 @@
 package com.skincare_booking_system.dto.response;
 
+import java.time.LocalTime;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleResponse {
-    String name;
+public class ShiftResponse {
+    long shiftId;
+    LocalTime startTime;
+    LocalTime endTime;
+    int limitBooking;
 }

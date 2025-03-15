@@ -1,19 +1,16 @@
 package com.skincare_booking_system.service;
 
-import java.util.HashSet;
 import java.util.List;
 
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
@@ -21,12 +18,10 @@ import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.UserRegisterRequest;
 import com.skincare_booking_system.dto.request.UserUpdateRequest;
 import com.skincare_booking_system.dto.response.UserResponse;
-import com.skincare_booking_system.entities.Role;
 import com.skincare_booking_system.entities.User;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.UserMapper;
-import com.skincare_booking_system.repository.RoleRepository;
 import com.skincare_booking_system.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +39,6 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private EmailService emailService;
 
     public UserResponse registerUser(UserRegisterRequest request) {
@@ -62,18 +54,17 @@ public class UserService {
 
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findById(Roles.CUSTOMER.toString()).ifPresent(roles::add);
-        user.setRoles(roles);
-
+        user.setRole(Roles.CUSTOMER);
         emailService.sendWelcomeEmail(user.getEmail());
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+        return userRepository.findAll().stream()
+                .filter(user -> user.getRole() != Roles.ADMIN)
+                .map(userMapper::toUserResponse)
+                .toList();
     }
 
     @PostAuthorize("returnObject.username == authentication.name")
@@ -134,9 +125,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String phoneNumber) {
-        User user =
-                userRepository.findByPhone(phoneNumber).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public void resetPassword(ResetPasswordRequest request, String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
@@ -144,5 +134,9 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    public Long countAllCustomers() {
+        return userRepository.countAllCustomers();
     }
 }

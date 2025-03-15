@@ -1,9 +1,9 @@
 package com.skincare_booking_system.validator;
 
+import java.lang.annotation.*;
+
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-
-import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = ImageURLValidator.class)

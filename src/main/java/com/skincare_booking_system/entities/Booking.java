@@ -1,14 +1,15 @@
 package com.skincare_booking_system.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.skincare_booking_system.constant.BookingStatus;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.time.LocalDate;
 import java.util.Set;
 
+import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.skincare_booking_system.constant.BookingStatus;
+
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Getter
 @Setter
@@ -21,6 +22,7 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long bookingId;
+
     LocalDate bookingDay;
 
     @ManyToOne
@@ -47,25 +49,18 @@ public class Booking {
     BookingStatus status;
 
     @ManyToMany
-    @JoinTable(name = "booking_detail",
+    @JoinTable(
+            name = "booking_detail",
             joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonIgnore
     Set<Services> services;
-
-    @ManyToMany
-    @JoinTable(name = "booking_package",
-            joinColumns = @JoinColumn(name = "booking_id"),
-            inverseJoinColumns = @JoinColumn(name = "package_id")
-    )
-    private Set<Package> packages;
 
     @OneToOne(mappedBy = "booking")
     @JsonIgnore
     Feedback feedback;
 
-//    @OneToOne(mappedBy = "booking")
-//    @JsonIgnore
-//    Payment payment;
+    @OneToOne(mappedBy = "booking")
+    @JsonIgnore
+    Payment payment;
 }

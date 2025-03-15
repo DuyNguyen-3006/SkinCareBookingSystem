@@ -3,8 +3,9 @@ package com.skincare_booking_system.entities;
 import java.time.LocalTime;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +25,7 @@ public class Slot {
 
     boolean deleted = false;
 
-        @OneToMany(mappedBy = "slot")
-        @JsonIgnore
-        Set<Booking> bookings;
+    @OneToMany(mappedBy = "slot")
+    @JsonIgnore
+    Set<Booking> bookings;
 }

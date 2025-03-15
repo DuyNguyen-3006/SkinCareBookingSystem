@@ -1,11 +1,11 @@
 package com.skincare_booking_system.validator;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class ImageURLValidator implements ConstraintValidator<ImageURL, String> {
 

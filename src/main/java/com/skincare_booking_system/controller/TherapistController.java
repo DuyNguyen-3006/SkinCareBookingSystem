@@ -2,13 +2,14 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.response.TherapistRevenueResponse;
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.TherapistRequest;
-import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
+import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
@@ -58,7 +59,7 @@ public class TherapistController {
                 .build();
     }
 
-    @PutMapping("/updateTherapist/{phone}")
+    @PutMapping("/updateTherapist/{phoneNumber}")
     ApiResponse<TherapistUpdateResponse> updateUser(
             @PathVariable String phoneNumber, @RequestBody TherapistUpdateRequest request) {
         return ApiResponse.<TherapistUpdateResponse>builder()
@@ -73,14 +74,14 @@ public class TherapistController {
                 .build();
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteTherapist(@RequestParam String phoneNumber) {
+    @PutMapping("/delete/{phoneNumber}")
+    public ResponseEntity<String> deleteTherapist(@PathVariable String phoneNumber) {
         therapistService.deleteTherapistbyPhone(phoneNumber);
         return ResponseEntity.ok("Therapist has been deleted");
     }
 
-    @PutMapping("/restore")
-    public ResponseEntity<String> restoreTherapist(@RequestParam String phoneNumber) {
+    @PutMapping("/restore/{phoneNumber}")
+    public ResponseEntity<String> restoreTherapist(@PathVariable String phoneNumber) {
         therapistService.restoreTherapistByPhone(phoneNumber);
         return ResponseEntity.ok("Therapist restored successfully");
     }
@@ -90,5 +91,26 @@ public class TherapistController {
         return ApiResponse.<InfoTherapistResponse>builder()
                 .result(therapistService.getMyInfo())
                 .build();
+    }
+
+    @PutMapping("/change-password")
+    public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        therapistService.changePassword(request);
+        return ApiResponse.<String>builder().result("Password has been changed").build();
+    }
+
+    @PutMapping("/reset-password/{id}")
+    public ApiResponse<String> resetPassword(@PathVariable Long id, @RequestBody ResetPasswordRequest request) {
+        therapistService.resetPassword(request, id);
+        return ApiResponse.<String>builder().result("Password has been reset").build();
+    }
+
+    @GetMapping("/{therapistId}/revenue/{yearAndMonth}")
+    public ApiResponse<TherapistRevenueResponse> getStylistsRevenue(@PathVariable long therapistId,
+                                                                    @PathVariable String yearAndMonth) {
+        TherapistRevenueResponse totalRevenue = therapistService.getTherapistRevenue(therapistId, yearAndMonth);
+       return ApiResponse.<TherapistRevenueResponse>builder()
+               .result(totalRevenue)
+               .build();
     }
 }

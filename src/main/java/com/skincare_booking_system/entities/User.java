@@ -5,6 +5,8 @@ import java.util.Set;
 
 import jakarta.persistence.*;
 
+import com.skincare_booking_system.constant.Roles;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    long id;
 
     String username;
     String password;
@@ -29,10 +31,24 @@ public class User {
     LocalDate birthDate;
     Boolean status;
 
-    @ManyToMany
-    Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    Roles role;
 
-    public User(String id, String username, String password, String firstName, String lastName, String email, String phone, String address, String gender, LocalDate birthDate, Boolean status, Set<Role> roles) {
+
+
+    public User(
+            long id,
+            String username,
+            String password,
+            String firstName,
+            String lastName,
+            String email,
+            String phone,
+            String address,
+            String gender,
+            LocalDate birthDate,
+            Boolean status,
+            Roles role) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -44,6 +60,6 @@ public class User {
         this.gender = gender;
         this.birthDate = birthDate;
         this.status = true;
-        this.roles = roles;
+        this.role = role;
     }
 }

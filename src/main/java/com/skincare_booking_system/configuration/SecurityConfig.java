@@ -25,19 +25,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
-        "/users",
-        "/services",
-        "/staffs",
-        "/vouchers",
-         "/blogs",
-        "/packages",
-        "/therapists",
-        "/authentication/log-in",
-        "/authentication/introspect",
-        "/authentication/logout",
-        "/authentication/refresh",
-        "/forgot-password/**",
-        "/feedback/**",
+            "/users",
+            "/authentication/log-in",
+            "/authentication/introspect",
+            "/authentication/logout",
+            "/authentication/refresh",
+            "/forgot-password/**",
+            "/feedback/**",
     };
 
     @Autowired
@@ -49,9 +43,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Bật CORS
                 .csrf(AbstractHttpConfigurer::disable) //  Tắt CSRF nếu không dùng session
                 .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.OPTIONS, "/**")
-                        .permitAll() //  Cho phép OPTIONS request
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(
@@ -60,7 +53,7 @@ public class SecurityConfig {
                                         .jwtAuthenticationConverter(jwtConverter()))
                                 .authenticationEntryPoint(
                                         new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                        );
+                );
 
         return httpSecurity.build();
     }

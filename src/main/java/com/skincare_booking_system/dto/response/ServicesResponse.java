@@ -1,9 +1,9 @@
 package com.skincare_booking_system.dto.response;
 
+import java.time.LocalTime;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ServicesResponse {
-
+    Long serviceId;
     String serviceName;
     String description;
     Double price;

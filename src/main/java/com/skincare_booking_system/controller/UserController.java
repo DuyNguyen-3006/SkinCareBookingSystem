@@ -5,7 +5,6 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,16 +61,14 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    @PutMapping("/{id}")
     String deleteUser(@PathVariable String id) {
         System.out.println("Deleting user with ID: " + id);
         userService.deleteUser(id);
         return "User has been deleted";
     }
 
-    @PostMapping("/active/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF')")
+    @PutMapping("/active/{id}")
     String activeUser(@PathVariable String id) {
         userService.activeUser(id);
         return "Active user successfully";
@@ -83,11 +80,9 @@ public class UserController {
         return ApiResponse.<String>builder().result("Password has been changed").build();
     }
 
-    @PutMapping("/reset-password/{phoneNumber}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('STAFF') or hasRole('THERAPIST')")
-    public ApiResponse<String> resetPassword(
-            @PathVariable String phoneNumber, @RequestBody ResetPasswordRequest request) {
-        userService.resetPassword(request, phoneNumber);
+    @PutMapping("/reset-password/{id}")
+    public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
+        userService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 }

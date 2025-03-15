@@ -26,14 +26,17 @@ public class ServicesController {
     ApiResponse<ServicesResponse> createRequest(@RequestBody @Valid ServicesRequest request) {
         ApiResponse<ServicesResponse> response = new ApiResponse<>();
         response.setResult(servicesService.createServices(request));
+        response.setSuccess(true);
         return response;
     }
+
     @GetMapping
     ApiResponse<List<ServicesResponse>> getAllServices() {
         return ApiResponse.<List<ServicesResponse>>builder()
                 .result(servicesService.getAllServices())
                 .build();
     }
+
     @GetMapping("/active")
     ApiResponse<List<ServicesResponse>> getAllServicesActive() {
         return ApiResponse.<List<ServicesResponse>>builder()
@@ -54,6 +57,7 @@ public class ServicesController {
                 .result(servicesService.getServicesByServicesName(serviceName))
                 .build();
     }
+
     @GetMapping("/searchByNameCUS")
     ApiResponse<List<ServicesResponse>> getServicesByServciesNameCUS(@RequestParam String serviceName) {
         return ApiResponse.<List<ServicesResponse>>builder()

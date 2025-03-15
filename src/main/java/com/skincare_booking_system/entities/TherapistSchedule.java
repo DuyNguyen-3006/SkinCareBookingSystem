@@ -10,16 +10,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
+@Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
+@ToString(exclude = "shifts")
+@EqualsAndHashCode(exclude = "shifts")
 public class TherapistSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long stylistScheduleId;
+    long therapistScheduleId;
 
     LocalDate workingDay;
 
@@ -29,8 +32,8 @@ public class TherapistSchedule {
 
     @ManyToMany
     @JoinTable(
-            name = "specific_stylist_schedule",
-            joinColumns = @JoinColumn(name = "stylist_schedule_id"),
+            name = "specific_therapist_schedule",
+            joinColumns = @JoinColumn(name = "therapist_schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "shift_id"))
     @JsonIgnore
     Set<Shift> shifts;

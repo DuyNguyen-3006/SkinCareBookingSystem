@@ -1,5 +1,11 @@
 package com.skincare_booking_system.service;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
+
+import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.VoucherRequest;
 import com.skincare_booking_system.dto.response.VoucherResponse;
@@ -8,14 +14,9 @@ import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.VoucherMapper;
 import com.skincare_booking_system.repository.VoucherRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,6 @@ public class VoucherService {
     VoucherRepository voucherRepository;
     VoucherMapper voucherMapper;
 
-    @PreAuthorize("hasRole('ADMIN')")
     public VoucherResponse createVoucher(VoucherRequest request) {
         if (voucherRepository.existsByVoucherCode(request.getVoucherCode())) {
             throw new AppException(ErrorCode.VOUCHER_CODE_EXISTS);
@@ -44,35 +44,20 @@ public class VoucherService {
         voucher.setIsActive(true);
         return voucherMapper.toVoucherResponse(voucherRepository.save(voucher));
     }
-    @PreAuthorize("hasRole('ADMIN')")
+
     public List<VoucherResponse> getAllVouchers() {
         List<Voucher> vouchers = voucherRepository.findAll();
-        if(vouchers.isEmpty()){
+        if (vouchers.isEmpty()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
         }
         return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
     }
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<VoucherResponse> getVoucherOutOfStock() {
-        List <Voucher> vouchers = voucherRepository.findByQuantity(0);
-        if (vouchers.isEmpty()) {
-            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
-        }
-        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
-    }
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<VoucherResponse> getVoucherExpired() {
-        List <Voucher> vouchers = voucherRepository.findByExpiryDateBefore(LocalDate.now());
-        if (vouchers.isEmpty()) {
-            throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
-        }
-        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
-    }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     public VoucherResponse getVoucherByCode(String voucherCode) {
-        Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
+        Voucher voucher = voucherRepository
+                .findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
@@ -89,32 +74,30 @@ public class VoucherService {
 
         return voucherMapper.toVoucherResponse(voucher);
     }
-    @PreAuthorize("hasRole('ADMIN')")
+
     public List<VoucherResponse> getActiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveTrue();
         if (vouchers.isEmpty()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
         }
+
         return vouchers.stream()
                 .filter(voucher -> voucher.getExpiryDate().isAfter(LocalDate.now()) && voucher.getQuantity() > 0)
                 .map(voucherMapper::toVoucherResponse)
                 .toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public List<VoucherResponse> getInactiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveFalse();
         if (vouchers.isEmpty()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
         }
-        return vouchers.stream()
-                .map(voucherMapper::toVoucherResponse)
-                .toList();
+        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String deactivateVoucher(String voucherCode) {
-        Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
+        Voucher voucher = voucherRepository
+                .findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
@@ -126,9 +109,9 @@ public class VoucherService {
         return "Voucher deactivated successfully";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     public String activateVoucher(String voucherCode) {
-        Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
+        Voucher voucher = voucherRepository
+                .findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (voucher.getIsActive()) {
@@ -149,7 +132,8 @@ public class VoucherService {
     }
 
     public String useVoucher(String voucherCode) {
-        Voucher voucher = voucherRepository.findByVoucherCode(voucherCode)
+        Voucher voucher = voucherRepository
+                .findByVoucherCode(voucherCode)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
@@ -165,6 +149,9 @@ public class VoucherService {
         }
 
         voucher.setQuantity(voucher.getQuantity() - 1);
+        if (voucher.getQuantity() == 0) {
+            voucher.setIsActive(false);
+        }
         voucherRepository.save(voucher);
         return "Voucher used successfully";
     }
