@@ -42,6 +42,8 @@ public class TherapistScheduleService {
         this.slotRepository = slotRepository;
     }
 
+    List<Booking> bookingByShiftNotWorking = new ArrayList<>();
+
     @Transactional
     public SpecificTherapistScheduleRequest createTherapistSchedule(SpecificTherapistScheduleRequest list) {
         TherapistSchedule schedule =
@@ -92,7 +94,7 @@ public class TherapistScheduleService {
         return specificTherapistScheduleResponses;
     }
 
-    List<Booking> bookingByShiftNotWorking = new ArrayList<>();
+
 
     public SpecificTherapistScheduleResponse updateTherapistSchedule(
             long id, SpecificTherapistScheduleRequest request) {
@@ -139,7 +141,7 @@ public class TherapistScheduleService {
         return response;
     }
 
-    public TherapistScheduleResponse deleteStylistSchedule(long id) {
+    public TherapistScheduleResponse deleteTherapistSchedule(long id) {
         TherapistSchedule schedule = therapistSchedulerepository.findByTherapistScheduleId(id);
         Set<Long> shiftsId = shiftRepository.getShiftIdByTherapistSchedule(id);
         for (Long shiftId : shiftsId) {

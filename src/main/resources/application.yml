@@ -42,5 +42,8 @@ spring:
     cache: false
 
 
+
+
+
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"

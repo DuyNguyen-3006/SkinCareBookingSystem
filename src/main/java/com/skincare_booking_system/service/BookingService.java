@@ -104,8 +104,13 @@ public class BookingService {
         List<Shift> shifts = new ArrayList<>();
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
+
+
+
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
+
+
 
         LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
         slotToRemove.addAll(getSlotsExperiedTime(totalTimeServiceNewBooking, shiftsFromSpecificTherapistSchedule));
@@ -149,7 +154,14 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list1 = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            slotToRemove.addAll(list);
+
+            LocalTime minimunTimeToBooking = slot.getSlottime().minusHours(totalTimeServiceNewBooking.getHour())
+                    .minusMinutes(totalTimeServiceNewBooking.getMinute());
+
+            // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking,TimeFinishBooking);
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
@@ -393,12 +405,13 @@ public class BookingService {
         booking.setServices(services);
         booking.setVoucher(voucher);
         booking.setTherapistSchedule(therapistSchedule);
+        booking.setTherapist(therapistSchedule.getTherapist());
         booking.setStatus(BookingStatus.PENDING);
         Booking newBooking = bookingRepository.save(booking);
-        for (Services service : services) {
-            bookingRepository.updateBookingDetail(
-                    service.getPrice(), newBooking.getBookingId(), service.getServiceId());
-        }
+//        for (Services service : services) {
+//            bookingRepository.updateBookingDetail(
+//                    service.getPrice(), newBooking.getBookingId(), service.getServiceId());
+//        }
         User currentUser = currentUser();
         CreateNewBookingSuccess success = new CreateNewBookingSuccess();
         success.setDate(booking.getBookingDay());
@@ -593,15 +606,16 @@ public class BookingService {
     }
 
     public List<CustomerBookingResponse> getBookingByStatusPendingByCustomer(Long userId) {
+        User user = new User();
+        user.setId(userId);
+        List<Booking> status = new ArrayList<>();
         List<Booking> bookings = bookingRepository.getBookingsByUserIdAndStatus(userId, BookingStatus.PENDING.name());
-
-        // Gán dịch vụ cho từng booking
-        bookings.forEach(booking -> {
-            Set<Services> services = servicesRepository.getServiceForBooking(booking.getBookingId());
-            booking.setServices(services);
-        });
-
-        return getBookingResponses(bookings);
+        for (Booking booking : bookings) {
+            Set<Services> service = servicesRepository.getServiceForBooking(booking.getBookingId());
+            booking.setServices(service);
+            status.add(booking);
+        }
+        return getBookingResponses(status);
     }
 
     public List<CustomerBookingResponse> getBookingByStatusCompletedByCustomer(Long userId) {

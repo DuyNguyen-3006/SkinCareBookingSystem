@@ -21,7 +21,7 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     Set<Slot> getAllSlot();
 
     @Query(
-            value = "SELECT * FROM slot s WHERE s.deleted = false " + "AND s.slottime AND s.slottime != '23:00:00'\n "
+            value = "SELECT * FROM slot s WHERE s.deleted = false " + "AND s.slottime != '23:00:00'\n "
                     + "ORDER BY s.slottime ASC",
             nativeQuery = true)
     List<Slot> getAllSlotActive();

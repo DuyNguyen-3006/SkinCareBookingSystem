@@ -65,7 +65,7 @@ public class TherapistScheduleController {
     @DeleteMapping("/therapist/{id}")
     public ApiResponse<SpecificTherapistScheduleResponse> deleteStylistSchedule(@PathVariable long id) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(therapistScheduleService.deleteStylistSchedule(id));
+        apiResponse.setResult(therapistScheduleService.deleteTherapistSchedule(id));
         apiResponse.setSuccess(true);
         return apiResponse;
     }
