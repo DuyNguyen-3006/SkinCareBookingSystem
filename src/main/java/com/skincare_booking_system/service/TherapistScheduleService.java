@@ -66,6 +66,7 @@ public class TherapistScheduleService {
 
         TherapistSchedule therapistSchedule = new TherapistSchedule();
         therapistSchedule.setTherapist(therapist);
+        therapistSchedule.setTherapistScheduleId(list.getTherapistId());
         therapistSchedule.setWorkingDay(list.getWorkingDate());
         therapistSchedule.setShifts(shiftSet);
         therapistSchedulerepository.save(therapistSchedule);

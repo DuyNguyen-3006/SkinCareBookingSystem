@@ -18,11 +18,11 @@ import lombok.experimental.FieldDefaults;
 public class Staff {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    long id;
 
     String username;
     String password;
-    String fullname;
+    String fullName;
     String email;
     String phone;
     String address;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.skincare_booking_system.entities.Staff;
 
 @Repository
-public interface StaffRepository extends JpaRepository<Staff, String> {
+public interface StaffRepository extends JpaRepository<Staff, Long> {
     boolean existsByUsername(String username);
 
     List<Staff> findByStatusTrue();
@@ -18,7 +18,7 @@ public interface StaffRepository extends JpaRepository<Staff, String> {
 
     Optional<Staff> findByPhone(String phone);
 
-    List<Staff> findByFullnameContainingIgnoreCase(String fullname);
+    List<Staff> findByFullNameContainingIgnoreCase(String fullname);
 
     Optional<Staff> findByUsername(String username);
 

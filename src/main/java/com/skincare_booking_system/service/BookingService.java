@@ -168,7 +168,7 @@ public class BookingService {
                     .minusMinutes(totalTimeServiceNewBooking.getMinute());
 
             // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
-            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking,TimeFinishBooking);
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking,TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
@@ -201,6 +201,21 @@ public class BookingService {
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
+
+        LocalTime lastShiftEndTime = LocalTime.MIN;
+        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+            }
+        }
+
+        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        for (Slot slot : allSlot) {
+            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+                slotToRemove.add(slot);
+            }
+        }
+
         // therapist đã có booking trong ngày
         // tính tổng thời gian để hoàn thành yêu cầu booking mới
         LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
@@ -258,7 +273,7 @@ public class BookingService {
                     .minusHours(totalTimeServiceNewBooking.getHour())
                     .minusMinutes(totalTimeServiceNewBooking.getMinute());
             // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
-            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking);
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list1);
             slotToRemove.add(slot); // 10 11
             // tìm ra list ca làm mà cái booking đó thuộc về
@@ -394,6 +409,9 @@ public class BookingService {
             throw new AppException(ErrorCode.SLOT_NOT_VALID);
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
+        if(voucher.getQuantity()==0){
+            voucher=null;
+        }
         if (voucher != null) {
             voucherService.useVoucher(voucher.getVoucherCode());
         }
@@ -507,11 +525,11 @@ public class BookingService {
             success.setDate(booking.getBookingDay());
             success.setTime(booking.getSlot().getSlottime());
             success.setTo(booking.getUser().getEmail());
-            success.setSubject("Change Stylist");
+            success.setSubject("Change Therapist");
             success.setTherapistName(
                     booking.getTherapistSchedule().getTherapist().getFullName());
             emailService.sendMailChangeTherapist(success);
-            System.out.println("Successfully changed the stylist in service");
+            System.out.println("Successfully changed the therapist in service");
         }
         return request;
     }
