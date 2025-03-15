@@ -409,9 +409,9 @@ public class BookingService {
             throw new AppException(ErrorCode.SLOT_NOT_VALID);
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
-        if(voucher.getQuantity()==0){
-            voucher=null;
-        }
+//        if(voucher.getQuantity()==0){
+//            voucher = null;
+//        }
         if (voucher != null) {
             voucherService.useVoucher(voucher.getVoucherCode());
         }
@@ -759,7 +759,7 @@ public class BookingService {
                 // Thời gian totalTime đã vượt qua ngày mới
                 totalTime = totalTime.plusHours(24);
             }
-            if (totalTime.isAfter(shift.getEndTime()) || totalTime.isBefore(slot.getSlottime())) {
+            if (totalTime.isAfter(shift.getEndTime().plusSeconds(1)) || totalTime.isBefore(slot.getSlottime())) {
                 slotsToRemove.add(slot);
             }
         }
