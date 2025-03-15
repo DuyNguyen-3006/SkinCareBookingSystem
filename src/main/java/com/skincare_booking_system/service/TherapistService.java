@@ -84,9 +84,9 @@ public class TherapistService {
                 .toList();
     }
 
-    public TherapistResponse getTherapistbyPhone(String phone) {
+    public TherapistResponse getTherapistbyPhone(String id) {
         return therapistMapper.toTherapistResponse(
-                therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public List<TherapistResponse> searchTherapistsByName(String name) {
@@ -98,16 +98,16 @@ public class TherapistService {
         return therapists.stream().map(therapistMapper::toTherapistResponse).toList();
     }
 
-    public void deleteTherapistbyPhone(String phone) {
+    public void deleteTherapistbyPhone(String id) {
         Therapist therapist =
-                therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(false);
         therapistRepository.save(therapist);
     }
 
-    public void restoreTherapistByPhone(String phone) {
+    public void restoreTherapistByPhone(String id) {
         Therapist therapist =
-                therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(true);
         therapistRepository.save(therapist);
     }
@@ -123,9 +123,9 @@ public class TherapistService {
         return therapistMapper.toInfoTherapist(therapist);
     }
 
-    public TherapistUpdateResponse updateTherapist(String phone, TherapistUpdateRequest request) {
+    public TherapistUpdateResponse updateTherapist(String id, TherapistUpdateRequest request) {
         Therapist therapist =
-                therapistRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapistMapper.toUpdateTherapist(therapist, request);
         return therapistMapper.toTherapistUpdateResponse(therapistRepository.save(therapist));
     }
