@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.VoucherRequest;
@@ -52,8 +51,6 @@ public class VoucherService {
         }
         return vouchers.stream().map(voucherMapper::toVoucherResponse).collect(Collectors.toList());
     }
-
-
 
     public VoucherResponse getVoucherByCode(String voucherCode) {
         Voucher voucher = voucherRepository

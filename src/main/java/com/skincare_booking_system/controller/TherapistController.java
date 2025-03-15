@@ -2,7 +2,6 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.response.TherapistRevenueResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
+import com.skincare_booking_system.dto.response.TherapistRevenueResponse;
 import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.service.TherapistService;
 
@@ -106,11 +106,11 @@ public class TherapistController {
     }
 
     @GetMapping("/{therapistId}/revenue/{yearAndMonth}")
-    public ApiResponse<TherapistRevenueResponse> getStylistsRevenue(@PathVariable long therapistId,
-                                                                    @PathVariable String yearAndMonth) {
+    public ApiResponse<TherapistRevenueResponse> getStylistsRevenue(
+            @PathVariable long therapistId, @PathVariable String yearAndMonth) {
         TherapistRevenueResponse totalRevenue = therapistService.getTherapistRevenue(therapistId, yearAndMonth);
-       return ApiResponse.<TherapistRevenueResponse>builder()
-               .result(totalRevenue)
-               .build();
+        return ApiResponse.<TherapistRevenueResponse>builder()
+                .result(totalRevenue)
+                .build();
     }
 }

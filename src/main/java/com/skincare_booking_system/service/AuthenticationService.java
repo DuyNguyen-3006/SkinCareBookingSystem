@@ -73,6 +73,7 @@ public class AuthenticationService {
             var token = generateToken(user);
             return AuthenticationResponse.builder()
                     .token(token)
+                    .role(user.getRole())
                     .success(true)
                     .build(); // Trả về ngay sau khi thành công
         }
@@ -83,7 +84,11 @@ public class AuthenticationService {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
             var token = generateTokenThe(therapist);
-            return AuthenticationResponse.builder().token(token).success(true).build();
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .role(therapist.getRole())
+                    .success(true)
+                    .build();
         }
 
         if (staffRepository.existsByUsername(username)) {
@@ -92,7 +97,11 @@ public class AuthenticationService {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
             var token = generateTokenSta(staff);
-            return AuthenticationResponse.builder().token(token).success(true).build();
+            return AuthenticationResponse.builder()
+                    .token(token)
+                    .role(staff.getRole())
+                    .success(true)
+                    .build();
         }
         throw new AppException(ErrorCode.USER_NOT_EXISTED); // Không tìm thấy tài khoản nào
     }
