@@ -70,7 +70,7 @@ public class TherapistScheduleController {
         return apiResponse;
     }
 
-    @GetMapping("/therapist//month/{therapistId}/{month}")
+    @GetMapping("/therapist/month/{therapistId}/{month}")
     public ApiResponse<List<TherapistScheduleResponse>> getTherapistScheduleByMonth(@PathVariable long therapistId, @PathVariable int month) {
         return ApiResponse.<List<TherapistScheduleResponse>>builder()
                 .result(therapistScheduleService.getTherapistScheduleInMonth(therapistId, month))
