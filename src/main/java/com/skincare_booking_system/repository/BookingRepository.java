@@ -77,7 +77,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("therapistId") Long therapistId, @Param("month") int month, @Param("year") int year);
 
     @Query(
-            value = "SELECT b.* FROM booking b " + "INNER JOIN therapist_schedule tsch "
+            value = "SELECT b.* FROM booking b "
+                    + "INNER JOIN therapist_schedule tsch "
                     + "ON b.therapist_schedule_id = tsch.therapist_schedule_id "
                     + "WHERE tsch.working_day = ?1 AND tsch.therapist_id = ?2 AND b.status != 'CANCELLED' "
                     + "ORDER BY b.slot_id DESC",
