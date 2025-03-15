@@ -31,7 +31,7 @@ public class AdminController {
     }
 
     @GetMapping("/booking/total-money/month/{month}")
-    public ApiResponse<Double> totalMoneyAllSalonInMonth(@PathVariable int month) {
+    public ApiResponse<Double> totalMoneyAllServiceInMonth(@PathVariable int month) {
         return ApiResponse.<Double>builder()
                 .result(bookingService.totalMoneyByMonth(month))
                 .build();

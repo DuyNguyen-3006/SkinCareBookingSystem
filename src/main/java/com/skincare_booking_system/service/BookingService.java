@@ -13,7 +13,6 @@ import com.skincare_booking_system.constant.BookingStatus;
 import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.*;
-import com.skincare_booking_system.entities.Package;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.*;

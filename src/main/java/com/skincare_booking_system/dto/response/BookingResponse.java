@@ -27,7 +27,5 @@ public class BookingResponse {
 
     Set<Long> serviceId;
 
-    Set<Long> packageId;
-
     BookingStatus status;
 }
