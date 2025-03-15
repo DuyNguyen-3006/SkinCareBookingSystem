@@ -147,13 +147,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             long slotId, LocalDate date, long therapistScheduleId);
 
     @Query(
-            value = "SELECT b.*, ts.therapist_id AS therapist_id FROM booking b "
-                    + "JOIN therapist_schedule ts ON b.therapist_schedule_id = ts.therapist_schedule_id "
-                    + "WHERE ts.therapist_id = :therapistId "
-                    + "AND b.booking_day = :bookingDay "
-                    + "AND b.slot_id > :slotId "
-                    + "AND b.status = 'PENDING'"
-                    + "ORDER BY b.slot_id ASC LIMIT 1",
+            value = "SELECT * FROM booking b " +
+                    "WHERE b.therapist_id = :therapistId " +
+                    "AND b.booking_day = :bookingDay " +
+                    "AND b.slot_id > :slotId " +
+                    "AND b.status = 'PENDING' " +
+                    "ORDER BY b.slot_id ASC LIMIT 1",
             nativeQuery = true)
     Optional<Booking> findNextBookingSameDay(
             @Param("therapistId") Long therapistId,
