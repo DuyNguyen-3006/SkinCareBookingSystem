@@ -58,6 +58,7 @@ public class FeedbackService {
         response.setScore(feedback.getScore());
         response.setDate(feedback.getDay());
         response.setContent(feedback.getContent());
+        response.setBookingId(feedback.getBooking().getBookingId());
         return response;
     }
 
