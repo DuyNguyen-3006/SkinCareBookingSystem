@@ -49,7 +49,6 @@ public class BookingService {
             TherapistSchedulerepository therapistSchedulerepository,
             ShiftRepository shiftRepository,
             TherapistService therapistService,
-            PackageRepository packageRepository,
             TherapistScheduleService therapistScheduleService,
             EmailService emailService,
             UserService userService,
@@ -65,7 +64,6 @@ public class BookingService {
         this.therapistSchedulerepository = therapistSchedulerepository;
         this.shiftRepository = shiftRepository;
         this.therapistService = therapistService;
-        this.packageRepository = packageRepository;
         this.therapistScheduleService = therapistScheduleService;
         this.emailService = emailService;
         this.userService = userService;
@@ -103,11 +101,22 @@ public class BookingService {
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
 
+        LocalTime lastShiftEndTime = LocalTime.MIN;
+        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+            }
+        }
 
+        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        for (Slot slot : allSlots) {
+            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+                slotToRemove.add(slot);
+            }
+        }
 
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
-
 
 
         LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
@@ -406,10 +415,10 @@ public class BookingService {
         booking.setTherapist(therapistSchedule.getTherapist());
         booking.setStatus(BookingStatus.PENDING);
         Booking newBooking = bookingRepository.save(booking);
-//        for (Services service : services) {
-//            bookingRepository.updateBookingDetail(
-//                    service.getPrice(), newBooking.getBookingId(), service.getServiceId());
-//        }
+        for (Services service : services) {
+            bookingRepository.updateBookingDetail(
+                    service.getPrice(), newBooking.getBookingId(), service.getServiceId());
+        }
         User currentUser = currentUser();
         CreateNewBookingSuccess success = new CreateNewBookingSuccess();
         success.setDate(booking.getBookingDay());
@@ -467,6 +476,7 @@ public class BookingService {
         booking.setBookingDay(request.getBookingDate());
         booking.setUser(user);
         booking.setSlot(slot);
+        booking.setTherapist(therapistSchedule.getTherapist());
         booking.setServices(services);
         booking.setVoucher(newVoucher);
         booking.setTherapistSchedule(therapistSchedule);
@@ -546,14 +556,6 @@ public class BookingService {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
 
-        Set<Package> packages = packageRepository.getPackageForBooking(bookingId);
-        if (packages != null) {
-            Set<Long> packageId = new HashSet<>();
-            for (Package p : packages) {
-                packageId.add(p.getPackageId());
-            }
-            bookingResponse.setPackageId(packageId);
-        }
         return bookingResponse;
     }
 
@@ -596,7 +598,6 @@ public class BookingService {
                             .map(service -> new ServiceCusResponse(service.getServiceName()))
                             .collect(Collectors.toSet());
                     response.setServiceName(serviceDTOs);
-
                     response.setStatus(booking.getStatus());
                     return response;
                 })
