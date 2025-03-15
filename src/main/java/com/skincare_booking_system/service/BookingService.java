@@ -32,7 +32,6 @@ public class BookingService {
     private final TherapistSchedulerepository therapistSchedulerepository;
     private final ShiftRepository shiftRepository;
     private final TherapistService therapistService;
-    private final PackageRepository packageRepository;
     private final TherapistScheduleService therapistScheduleService;
     private final EmailService emailService;
     public final UserService userService;
