@@ -14,4 +14,3 @@ public class TherapistRevenueResponse {
     int bookingQuantity;
     Double totalRevenue;
 }
-

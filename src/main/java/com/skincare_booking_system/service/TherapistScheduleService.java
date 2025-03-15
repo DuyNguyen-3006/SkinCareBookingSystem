@@ -94,8 +94,6 @@ public class TherapistScheduleService {
         return specificTherapistScheduleResponses;
     }
 
-
-
     public SpecificTherapistScheduleResponse updateTherapistSchedule(
             long id, SpecificTherapistScheduleRequest request) {
 
@@ -163,11 +161,13 @@ public class TherapistScheduleService {
         return response;
     }
 
-    public List<TherapistScheduleResponse> getTherapistScheduleInMonth(long therapistId, int month){
-        List<TherapistSchedule> therapistSchedules = therapistSchedulerepository.getTherapistSchedule(therapistId,month);
+    public List<TherapistScheduleResponse> getTherapistScheduleInMonth(long therapistId, int month) {
+        List<TherapistSchedule> therapistSchedules =
+                therapistSchedulerepository.getTherapistSchedule(therapistId, month);
         List<TherapistScheduleResponse> responses = new ArrayList<>();
-        for(TherapistSchedule therapistSchedule : therapistSchedules){
-            Set<Long> shiftId = shiftRepository.getShiftIdByTherapistSchedule(therapistSchedule.getTherapistScheduleId());
+        for (TherapistSchedule therapistSchedule : therapistSchedules) {
+            Set<Long> shiftId =
+                    shiftRepository.getShiftIdByTherapistSchedule(therapistSchedule.getTherapistScheduleId());
             TherapistScheduleResponse response = new TherapistScheduleResponse();
             response.setId(therapistSchedule.getTherapistScheduleId());
             response.setTherapistName(therapistSchedule.getTherapist().getFullName());

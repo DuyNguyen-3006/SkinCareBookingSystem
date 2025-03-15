@@ -118,7 +118,6 @@ public class BookingService {
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
 
-
         LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
         slotToRemove.addAll(getSlotsExperiedTime(totalTimeServiceNewBooking, shiftsFromSpecificTherapistSchedule));
         if (!shiftMissingInSpecificTherapistSchedule.isEmpty()) {
@@ -164,11 +163,12 @@ public class BookingService {
             List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
             slotToRemove.addAll(list);
 
-            LocalTime minimunTimeToBooking = slot.getSlottime().minusHours(totalTimeServiceNewBooking.getHour())
+            LocalTime minimunTimeToBooking = slot.getSlottime()
+                    .minusHours(totalTimeServiceNewBooking.getHour())
                     .minusMinutes(totalTimeServiceNewBooking.getMinute());
 
             // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
-            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking,TimeFinishBooking.minusSeconds(1));
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
@@ -409,9 +409,9 @@ public class BookingService {
             throw new AppException(ErrorCode.SLOT_NOT_VALID);
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
-//        if(voucher.getQuantity()==0){
-//            voucher = null;
-//        }
+        //        if(voucher.getQuantity()==0){
+        //            voucher = null;
+        //        }
         if (voucher != null) {
             voucherService.useVoucher(voucher.getVoucherCode());
         }
@@ -505,18 +505,18 @@ public class BookingService {
             bookingRepository.updateBookingDetail(service.getPrice(), booking.getBookingId(), service.getServiceId());
         }
 
-//        Booking bookingToRemove = new Booking();
-//        if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
-//            for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
-//                if (booking.getBookingId() == booking1.getBookingId()) {
-//                    bookingToRemove = booking1;
-//                    break;
-//                }
-//            }
-//        }
+        //        Booking bookingToRemove = new Booking();
+        //        if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
+        //            for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
+        //                if (booking.getBookingId() == booking1.getBookingId()) {
+        //                    bookingToRemove = booking1;
+        //                    break;
+        //                }
+        //            }
+        //        }
         Booking bookingToRemove = null;
-        if (therapistScheduleService.bookingByShiftNotWorking != null &&
-                !therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
+        if (therapistScheduleService.bookingByShiftNotWorking != null
+                && !therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
             for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
                 if (booking.getBookingId() == booking1.getBookingId()) {
                     bookingToRemove = booking1;
@@ -529,8 +529,7 @@ public class BookingService {
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        Staff currentStaff = staffRepository
-                .findStaffByUsername(username);
+        Staff currentStaff = staffRepository.findStaffByUsername(username);
         if (currentStaff != null) {
             ChangeTherapist success = new ChangeTherapist();
             success.setDate(booking.getBookingDay());

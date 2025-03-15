@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.skincare_booking_system.dto.response.*;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.ResetPasswordRequest;
 import com.skincare_booking_system.dto.request.TherapistRequest;
 import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
+import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Therapist;
 import com.skincare_booking_system.exception.AppException;
@@ -240,9 +240,9 @@ public class TherapistService {
         log.info("Bookings for stylist ID {} in month {} of year {}: {}", therapistId, month, year, bookings);
         log.info("Number of bookings for stylist ID {}: {}", therapistId, bookings.size());
 
-
         double totalPayment = bookings.stream()
-                .filter(booking -> booking.getPayment() != null && booking.getPayment().getPaymentStatus().equals("Completed"))
+                .filter(booking -> booking.getPayment() != null
+                        && booking.getPayment().getPaymentStatus().equals("Completed"))
                 .mapToDouble(booking -> booking.getPayment().getPaymentAmount())
                 .sum();
 
@@ -259,7 +259,6 @@ public class TherapistService {
         double totalRevenue = calculateTotalRevenue(therapistId, yearAndMonth);
         int sizeBookings = countBooking(therapistId, yearAndMonth);
 
-
         // Lấy thông tin về therapist
         Therapist therapist = therapistRepository.findTherapistById(therapistId);
         if (therapist == null) { // Kiểm tra nếu therapist không tồn tại
@@ -274,6 +273,5 @@ public class TherapistService {
                 .bookingQuantity(sizeBookings) // Đảm bảo bookingQuantity được định nghĩa trong TherapistRevenueResponse
                 .totalRevenue(totalRevenue)
                 .build();
-
     }
 }

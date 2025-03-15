@@ -1,6 +1,5 @@
 package com.skincare_booking_system.repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 

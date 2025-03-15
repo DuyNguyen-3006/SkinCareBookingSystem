@@ -41,7 +41,7 @@ public class PaymentController {
         return paymentService.generatePaymentUrl(bookingId, req);
     }
 
-    @GetMapping("/payment/response")
+    @GetMapping("/response")
     public ResponseEntity<String> checkPaymentSuccess(
             @RequestParam String vnp_BankCode,
             @RequestParam String vnp_CardType,

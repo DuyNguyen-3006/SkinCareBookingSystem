@@ -25,13 +25,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
-            "/users",
-            "/authentication/log-in",
-            "/authentication/introspect",
-            "/authentication/logout",
-            "/authentication/refresh",
-            "/forgot-password/**",
-            "/feedback/**",
+        "/users",
+        "/authentication/log-in",
+        "/authentication/introspect",
+        "/authentication/logout",
+        "/authentication/refresh",
+        "/forgot-password/**",
+        "/feedback/**",
     };
 
     @Autowired
@@ -44,7 +44,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) //  Tắt CSRF nếu không dùng session
                 .authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(
@@ -53,7 +54,7 @@ public class SecurityConfig {
                                         .jwtAuthenticationConverter(jwtConverter()))
                                 .authenticationEntryPoint(
                                         new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                );
+                        );
 
         return httpSecurity.build();
     }

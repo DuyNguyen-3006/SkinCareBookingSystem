@@ -3,12 +3,12 @@ package com.skincare_booking_system.controller;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.skincare_booking_system.dto.response.TherapistScheduleResponse;
 import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
 import com.skincare_booking_system.dto.request.SpecificTherapistScheduleRequest;
 import com.skincare_booking_system.dto.response.SpecificTherapistScheduleResponse;
+import com.skincare_booking_system.dto.response.TherapistScheduleResponse;
 import com.skincare_booking_system.service.TherapistScheduleService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -70,11 +70,11 @@ public class TherapistScheduleController {
         return apiResponse;
     }
 
-    @GetMapping("/therapist//month/{therapistId}/{month}")
-    public ApiResponse<List<TherapistScheduleResponse>> getTherapistScheduleByMonth(@PathVariable long therapistId, @PathVariable int month) {
+    @GetMapping("/therapist/month/{therapistId}/{month}")
+    public ApiResponse<List<TherapistScheduleResponse>> getTherapistScheduleByMonth(
+            @PathVariable long therapistId, @PathVariable int month) {
         return ApiResponse.<List<TherapistScheduleResponse>>builder()
                 .result(therapistScheduleService.getTherapistScheduleInMonth(therapistId, month))
                 .build();
     }
-
 }
