@@ -37,6 +37,13 @@ public class StaffController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    ApiResponse<StaffResponse>getActiveStaffs(@PathVariable Long id) {
+        return ApiResponse.<StaffResponse>builder()
+                .result(staffService.getStaffById(id))
+                .build();
+    }
+
     @GetMapping("/activeStaffs")
     ApiResponse<List<StaffResponse>> getActiveStaffs() {
         return ApiResponse.<List<StaffResponse>>builder()
@@ -51,7 +58,7 @@ public class StaffController {
                 .build();
     }
 
-    @GetMapping("/{phoneNumber}")
+    @GetMapping("/phone/{phoneNumber}")
     ApiResponse<StaffResponse> getStaff(@PathVariable("phoneNumber") String phone) {
         return ApiResponse.<StaffResponse>builder()
                 .result(staffService.getStaffsbyPhone(phone))
@@ -65,22 +72,22 @@ public class StaffController {
                 .build();
     }
 
-    @PutMapping("/delete/{phoneNumber}")
-    public ResponseEntity<String> deleteStaff(@PathVariable String phoneNumber) {
-        staffService.deleteStaffbyPhone(phoneNumber);
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<String> deleteStaff(@PathVariable Long id) {
+        staffService.deleteStaff(id);
         return ResponseEntity.ok("Staff has been deleted");
     }
 
-    @PutMapping("/restore/{phoneNumber}")
-    public ResponseEntity<String> restoreStaff(@PathVariable String phoneNumber) {
-        staffService.restoreStaffByPhone(phoneNumber);
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<String> restoreStaff(@PathVariable Long id) {
+        staffService.restoreStaff(id);
         return ResponseEntity.ok("Staff restored successfully");
     }
 
-    @PutMapping("/update/{phone}")
-    ApiResponse<StaffResponse> updateStaff(@PathVariable String phone, @RequestBody StaffUpdateRequest request) {
+    @PutMapping("/update/{id}")
+    ApiResponse<StaffResponse> updateStaff(@PathVariable Long id, @RequestBody StaffUpdateRequest request) {
         return ApiResponse.<StaffResponse>builder()
-                .result(staffService.updateStaff(phone, request))
+                .result(staffService.updateStaff(id, request))
                 .build();
     }
 

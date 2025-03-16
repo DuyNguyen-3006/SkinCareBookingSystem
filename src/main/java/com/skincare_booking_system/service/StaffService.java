@@ -2,6 +2,7 @@ package com.skincare_booking_system.service;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.request.*;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.Authentication;
@@ -11,10 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.skincare_booking_system.constant.Roles;
-import com.skincare_booking_system.dto.request.ChangePasswordRequest;
-import com.skincare_booking_system.dto.request.ResetPasswordRequest;
-import com.skincare_booking_system.dto.request.StaffRequest;
-import com.skincare_booking_system.dto.request.StaffUpdateRequest;
 import com.skincare_booking_system.dto.response.StaffResponse;
 import com.skincare_booking_system.entities.Staff;
 import com.skincare_booking_system.exception.AppException;
@@ -55,6 +52,12 @@ public class StaffService {
                 .map(staffMapper::toStaffResponse)
                 .toList();
     }
+    public StaffResponse getStaffById(Long staffId) {
+        return staffRepository.findById(staffId)
+                .map(staffMapper::toStaffResponse) // Chuyển từ Staff -> StaffResponse
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
+
 
     public List<StaffResponse> getAllStaffsActive() {
         return staffRepository.findByStatusTrue().stream()
@@ -82,23 +85,23 @@ public class StaffService {
         return staff.stream().map(staffMapper::toStaffResponse).toList();
     }
 
-    public void deleteStaffbyPhone(String phone) {
+    public void deleteStaff(Long id) {
         Staff staff =
-                staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         staff.setStatus(false);
         staffRepository.save(staff);
     }
 
-    public void restoreStaffByPhone(String phone) {
+    public void restoreStaff(Long id) {
         Staff staff =
-                staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         staff.setStatus(true);
         staffRepository.save(staff);
     }
 
-    public StaffResponse updateStaff(String phone, StaffUpdateRequest request) {
+    public StaffResponse updateStaff(Long id, StaffUpdateRequest request) {
         Staff staff =
-                staffRepository.findByPhone(phone).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                staffRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         staffMapper.toUpdateStaff(staff, request);
 
         return staffMapper.toStaffResponse(staffRepository.save(staff));

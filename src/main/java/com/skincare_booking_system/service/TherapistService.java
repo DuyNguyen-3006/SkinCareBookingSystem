@@ -2,7 +2,6 @@ package com.skincare_booking_system.service;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
 import com.skincare_booking_system.dto.request.ResetPasswordRequest;
-import com.skincare_booking_system.dto.request.TherapistRequest;
-import com.skincare_booking_system.dto.request.TherapistUpdateRequest;
 import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Therapist;
@@ -80,7 +77,7 @@ public class TherapistService {
                 .yearExperience(yearExperience)
                 .status(true)
                 .role(Roles.THERAPIST)
-                .imgUrl(imageUrl) // Cần xử lý upload ảnh trước khi lưu
+                .imgUrl(imageUrl)
                 .build();
         therapistRepository.save(therapist);
         return therapistMapper.toTherapistResponse(therapist);
@@ -143,12 +140,31 @@ public class TherapistService {
         return therapistMapper.toInfoTherapist(therapist);
     }
 
-    public TherapistUpdateResponse updateTherapist(Long id, TherapistUpdateRequest request) {
-        Therapist therapist =
-                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        therapistMapper.toUpdateTherapist(therapist, request);
-        return therapistMapper.toTherapistUpdateResponse(therapistRepository.save(therapist));
+    public TherapistResponse updateTherapist(Long id,
+                                                   String fullName, String email, String phone,
+                                                   String address, String gender, LocalDate birthDate,
+                                                   Integer yearExperience, MultipartFile imgUrl) throws IOException {
+        Therapist therapist = therapistRepository.findTherapistById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        String imageUrl = therapist.getImgUrl(); // Giữ ảnh cũ nếu không upload mới
+        if (imgUrl != null && !imgUrl.isEmpty()) {
+            imageUrl = imagesService.uploadImage(imgUrl);
+        }
+
+        therapist.setFullName(fullName);
+        therapist.setEmail(email);
+        therapist.setPhone(phone);
+        therapist.setAddress(address);
+        therapist.setGender(gender);
+        therapist.setBirthDate(birthDate);
+        therapist.setYearExperience(yearExperience);
+        therapist.setImgUrl(imageUrl);
+
+        therapistRepository.save(therapist);
+        return therapistMapper.toTherapistResponse(therapist);
     }
+
 
     public double calculateAverageFeedback(Long therapistId, String yearAndMonth) {
         String[] parts = yearAndMonth.split("-");

@@ -20,7 +20,7 @@ public class TherapistResponse {
     String phone;
     String address;
     String gender;
-    String imgurl;
+    String imgUrl;
     LocalDate birthDate;
     Boolean status;
     Integer yearExperience;

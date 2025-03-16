@@ -11,6 +11,6 @@ import lombok.experimental.FieldDefaults;
 public class TherapistForBooking {
     long id;
     String fullName;
-    String imgurl;
+    String imgUrl;
     double feedbackScore;
 }

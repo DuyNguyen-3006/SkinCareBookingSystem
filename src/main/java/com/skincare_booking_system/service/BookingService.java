@@ -88,7 +88,7 @@ public class BookingService {
             response.setFeedbackScore(therapistService.calculateAverageFeedback(therapist.getId(), yearAndMonth));
             response.setId(therapist.getId());
             response.setFullName(therapist.getFullName());
-            response.setImgurl(therapist.getImgUrl());
+            response.setImgUrl(therapist.getImgUrl());
             therapistForBooking.add(response);
         }
         return therapistForBooking;
@@ -311,7 +311,7 @@ public class BookingService {
             TherapistForBooking therapistBooking = new TherapistForBooking();
             therapistBooking.setId(therapist.getId());
             therapistBooking.setFullName(therapist.getFullName());
-            therapistBooking.setImgurl(therapist.getImgUrl());
+            therapistBooking.setImgUrl(therapist.getImgUrl());
             therapistBooking.setFeedbackScore(therapistService.calculateAverageFeedback(therapist.getId(), "2025-03"));
             therapistsForBooking.add(therapistBooking);
         }
