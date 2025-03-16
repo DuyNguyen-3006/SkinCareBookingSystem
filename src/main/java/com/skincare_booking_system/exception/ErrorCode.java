@@ -75,6 +75,7 @@ public enum ErrorCode {
     EXCEPTION("Error", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVICES_ALREADY_BOOKED("Service is already booked", HttpStatus.BAD_REQUEST),
     THERAPIST_UNAVAILABLE("Stylist is not available", HttpStatus.BAD_REQUEST),
+    CUSTOMER_DE_ACTIVE("Your account has been blocked", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;
