@@ -1,22 +1,21 @@
 package com.skincare_booking_system.repository;
 
+import java.awt.print.Pageable;
 import java.time.LocalTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import com.skincare_booking_system.entities.Services;
 
-@Repository
 public interface ServicesRepository extends JpaRepository<Services, Long> {
     boolean existsByServiceName(String serviceName);
-
-    Optional<Services> findByServiceName(String serviceName);
 
     List<Services> findByIsActiveTrue();
 
@@ -57,4 +56,6 @@ public interface ServicesRepository extends JpaRepository<Services, Long> {
 
     @Query(value = "select count(*) from services", nativeQuery = true)
     long countAllServices();
+
+    Optional<Services> findByServiceId(long serviceId);
 }

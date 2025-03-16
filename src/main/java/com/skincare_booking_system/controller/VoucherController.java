@@ -2,6 +2,8 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.dto.request.BlogUpdateRequest;
+import com.skincare_booking_system.dto.response.BlogResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +38,19 @@ public class VoucherController {
                 .build();
     }
 
-    @GetMapping("/{voucherCode}")
+    @GetMapping("/code/{voucherCode}")
     ApiResponse<VoucherResponse> getVoucherByCode(@PathVariable String voucherCode) {
         return ApiResponse.<VoucherResponse>builder()
                 .result(voucherService.getVoucherByCode(voucherCode))
                 .build();
     }
+    @GetMapping("/{id}")
+    ApiResponse<VoucherResponse> getVoucherById(@PathVariable Long id) {
+        return ApiResponse.<VoucherResponse>builder()
+                .result(voucherService.getVoucherById(id))
+                .build();
+    }
+
 
     @GetMapping("/active")
     ApiResponse<List<VoucherResponse>> getActiveVouchers() {
@@ -57,17 +66,17 @@ public class VoucherController {
                 .build();
     }
 
-    @PutMapping("/deactive/{voucherCode}")
-    ApiResponse<String> deactivateVoucher(@PathVariable String voucherCode) {
+    @PutMapping("/deactive/{id}")
+    ApiResponse<String> deactivateVoucher(@PathVariable Long id) {
         return ApiResponse.<String>builder()
-                .result(voucherService.deactivateVoucher(voucherCode))
+                .result(voucherService.deactivateVoucher(id))
                 .build();
     }
 
-    @PutMapping("/active/{voucherCode}")
-    ApiResponse<String> activateVoucher(@PathVariable String voucherCode) {
+    @PutMapping("/active/{id}")
+    ApiResponse<String> activateVoucher(@PathVariable Long id) {
         return ApiResponse.<String>builder()
-                .result(voucherService.activateVoucher(voucherCode))
+                .result(voucherService.activateVoucher(id))
                 .build();
     }
 
@@ -75,6 +84,13 @@ public class VoucherController {
     ApiResponse<String> useVoucher(@PathVariable String voucherCode) {
         return ApiResponse.<String>builder()
                 .result(voucherService.useVoucher(voucherCode))
+                .build();
+    }
+    @PutMapping("/update/{id}")
+    ApiResponse<VoucherResponse> updateVoucher(
+            @PathVariable Long id, @Valid @RequestBody VoucherRequest request) {
+        return ApiResponse.<VoucherResponse>builder()
+                .result(voucherService.updateVoucher(id, request))
                 .build();
     }
 }

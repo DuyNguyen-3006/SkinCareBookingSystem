@@ -1,6 +1,8 @@
 package com.skincare_booking_system.service;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,7 @@ import com.skincare_booking_system.repository.ServicesRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -48,26 +51,43 @@ public class TherapistService {
 
     @Autowired
     private ServicesRepository servicesRepository;
+    @Autowired
+    private ImagesService imagesService;
 
-    public TherapistResponse createTherapist(TherapistRequest request) {
-        if (therapistRepository.existsByUsername(request.getUsername())) {
+    public TherapistResponse createTherapist(String userName, String password,
+                                             String fullName, String email, String phone,
+                                             String address,String gender,LocalDate birthDate,
+                                             Integer yearExperience, MultipartFile imgUrl) throws IOException {
+        if (therapistRepository.existsByUsername(userName)) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        if (therapistRepository.existsByPhone(request.getPhone())) {
+        if (therapistRepository.existsByPhone(phone)) {
             throw new AppException(ErrorCode.PHONENUMBER_EXISTED);
         }
-        if (therapistRepository.existsByEmail(request.getEmail())) {
+        if (therapistRepository.existsByEmail(email)) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
-        Therapist therapist = therapistMapper.toTherapist(request);
-        therapist.setPassword(passwordEncoder.encode(request.getPassword()));
-        therapist.setRole(Roles.THERAPIST);
-        therapist.setStatus(true);
-        return therapistMapper.toTherapistResponse(therapistRepository.save(therapist));
+        String imageUrl = (imgUrl != null && !imgUrl.isEmpty()) ? imagesService.uploadImage(imgUrl) : null;
+        Therapist therapist = Therapist.builder()
+                .username(userName)
+                .password(passwordEncoder.encode(password))
+                .fullName(fullName)
+                .email(email)
+                .phone(phone)
+                .address(address)
+                .gender(gender)
+                .birthDate(birthDate)
+                .yearExperience(yearExperience)
+                .status(true)
+                .role(Roles.THERAPIST)
+                .imgUrl(imageUrl) // Cần xử lý upload ảnh trước khi lưu
+                .build();
+        therapistRepository.save(therapist);
+        return therapistMapper.toTherapistResponse(therapist);
     }
 
     public List<TherapistResponse> getAllTherapists() {
-        return therapistRepository.findByStatusTrue().stream()
+        return therapistRepository.findAll().stream()
                 .map(therapistMapper::toTherapistResponse)
                 .toList();
     }

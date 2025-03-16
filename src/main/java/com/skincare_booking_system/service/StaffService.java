@@ -51,7 +51,7 @@ public class StaffService {
     }
 
     public List<StaffResponse> getAllStaffs() {
-        return staffRepository.findByStatusTrue().stream()
+        return staffRepository.findAll().stream()
                 .map(staffMapper::toStaffResponse)
                 .toList();
     }

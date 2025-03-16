@@ -1,9 +1,12 @@
 package com.skincare_booking_system.controller;
 
+import java.io.IOException;
+import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
@@ -14,6 +17,7 @@ import com.skincare_booking_system.service.ServicesService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/services")
@@ -23,11 +27,18 @@ public class ServicesController {
     ServicesService servicesService;
 
     @PostMapping
-    ApiResponse<ServicesResponse> createRequest(@RequestBody @Valid ServicesRequest request) {
-        ApiResponse<ServicesResponse> response = new ApiResponse<>();
-        response.setResult(servicesService.createServices(request));
-        response.setSuccess(true);
-        return response;
+    ApiResponse<ServicesResponse> createRequest(@RequestParam("serviceName") String serviceName,
+                                                @RequestParam("description") String description,
+                                                @RequestParam("price") Double price,
+                                                @RequestParam("isActive") Boolean isActive,
+                                                @RequestParam("duration") LocalTime duration,
+                                                @RequestParam("image") MultipartFile image) throws IOException {
+            ServicesResponse serviceResponse = servicesService.createServices(serviceName, description, price,duration ,isActive, image);
+            return ApiResponse.<ServicesResponse>builder()
+                    .success(true)
+                    .message("Service created successfully")
+                    .result(serviceResponse)
+                    .build();
     }
 
     @GetMapping
@@ -35,6 +46,12 @@ public class ServicesController {
         return ApiResponse.<List<ServicesResponse>>builder()
                 .result(servicesService.getAllServices())
                 .build();
+    }
+    @GetMapping("/{serviceId}")
+    ApiResponse<ServicesResponse> SearchServiceById(@PathVariable long serviceId) {
+        ApiResponse response = new ApiResponse<>();
+        response.setResult(servicesService.searchServiceId(serviceId));
+        return response ;
     }
 
     @GetMapping("/active")
@@ -65,25 +82,32 @@ public class ServicesController {
                 .build();
     }
 
-    @PutMapping("/update/{serviceName}")
+    @PutMapping("/update/{serviceId}")
     ApiResponse<ServicesResponse> updateServices(
-            @PathVariable String serviceName, @Valid @RequestBody ServicesUpdateRequest servicesUpdateRequest) {
+            @PathVariable Long serviceId, @RequestParam("serviceName") String serviceName,
+            @RequestParam("description") String description,
+            @RequestParam("price") Double price,
+            @RequestParam("duration") LocalTime duration,
+            @RequestParam("image") MultipartFile image) throws IOException {
+        ServicesResponse serviceResponse = servicesService.updateServices(serviceId, serviceName, description, price,duration, image);
         return ApiResponse.<ServicesResponse>builder()
-                .result(servicesService.updateServices(serviceName, servicesUpdateRequest))
+                .success(true)
+                .message("Service updated successfully")
+                .result(serviceResponse)
                 .build();
     }
 
-    @PutMapping("/deactive/{serviceName}")
-    ApiResponse<String> deactivateService(@PathVariable String serviceName) {
+    @PutMapping("/deactive/{serviceId}")
+    ApiResponse<String> deactivateService(@PathVariable long serviceId) {
         return ApiResponse.<String>builder()
-                .result(servicesService.deactivateServices(serviceName))
+                .result(servicesService.deactivateServices(serviceId))
                 .build();
     }
 
     @PutMapping("/active/{serviceName}")
-    ApiResponse<String> activateService(@PathVariable String serviceName) {
+    ApiResponse<String> activateService(@PathVariable long serviceId) {
         return ApiResponse.<String>builder()
-                .result(servicesService.activateServices(serviceName))
+                .result(servicesService.activateServices(serviceId))
                 .build();
     }
 }

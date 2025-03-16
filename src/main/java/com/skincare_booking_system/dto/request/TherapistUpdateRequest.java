@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,7 @@ public class TherapistUpdateRequest {
 
     @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "PHONENUMBER_INVALID")
     String phone;
+    MultipartFile imgUrl;
 
     String address;
     String gender;
