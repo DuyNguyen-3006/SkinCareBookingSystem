@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -25,8 +26,5 @@ public class BlogUpdateRequest {
     @Size(min = 100, message = "CONTEXT_INVALID")
     String content;
 
-    @NotBlank(message = "IMG_URL_REQUIRED")
-    @Size(max = 500, message = "IMG_URL_TOO_LONG")
-    @ImageURL(message = "IMG_URL_INVALID")
-    String imageUrl;
+    MultipartFile imgUrl;
 }

@@ -9,11 +9,9 @@ import org.springframework.stereotype.Repository;
 import com.skincare_booking_system.entities.Blog;
 
 @Repository
-public interface BlogRepository extends JpaRepository<Blog, String> {
+public interface BlogRepository extends JpaRepository<Blog, Long> {
 
     boolean existsBlogByTitle(String title);
-
-    Optional<Blog> findBlogByTitle(String title);
 
     List<Blog> findByActiveTrue();
 

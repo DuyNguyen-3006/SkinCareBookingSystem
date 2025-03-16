@@ -1,6 +1,7 @@
 package com.skincare_booking_system.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +32,13 @@ public class BlogService {
         Blog blog = blogMapper.toBlog(blogRequest);
         blog.setActive(false);
         return blogMapper.toBlogResponse(blogRepository.save(blog));
+    }
+    public BlogResponse getBlogByBLogId(Long blogId) {
+        Optional<Blog> blogs = blogRepository.findById(blogId);
+        if (blogs.isEmpty()) {
+            throw new AppException(ErrorCode.BLOG_NOT_FOUND);
+        }
+        return blogMapper.toBlogResponse(blogs.get());
     }
 
     public List<BlogResponse> getBlogByTitleCUS(String title) {
@@ -73,22 +81,22 @@ public class BlogService {
         return publishBlogs.stream().map(blogMapper::toBlogResponse).toList();
     }
 
-    public String publishBlog(String title) {
-        Blog blog = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+    public String publishBlog(Long id) {
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blog.setActive(true);
         blogRepository.save(blog);
         return "Blog publish successfully";
     }
 
-    public String unpublishBlog(String title) {
-        Blog blog = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+    public String unpublishBlog(Long id) {
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blog.setActive(false);
         blogRepository.save(blog);
         return "Blog unpublish successfully";
     }
 
-    public BlogResponse updateBlog(String title, BlogUpdateRequest blogUpdateRequest) {
-        Blog b = blogRepository.findBlogByTitle(title).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
+    public BlogResponse updateBlog(Long id, BlogUpdateRequest blogUpdateRequest) {
+        Blog b = blogRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_FOUND));
         blogMapper.updateBlog(b, blogUpdateRequest);
         return blogMapper.toBlogResponse(blogRepository.save(b));
     }
