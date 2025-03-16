@@ -57,7 +57,7 @@ public enum ErrorCode {
     IMG_URL_REQUIRED("Image URL is required", HttpStatus.BAD_REQUEST),
     IMG_URL_TOO_LONG("Image URL must not exceed 500 characters", HttpStatus.BAD_REQUEST),
     IMG_URL_INVALID("Invalid image URL. Only accepted formats: jpg, jpeg, png, gif", HttpStatus.BAD_REQUEST),
-    STYLIST_SCHEDULE_EXIST("Stylist already have schedule in this day", HttpStatus.BAD_REQUEST),
+    THERAPIST_SCHEDULE_EXIST("Stylist already have schedule in this day", HttpStatus.BAD_REQUEST),
     SLOT_TIME_ALREADY_EXISTS("Slot time already exists", HttpStatus.BAD_REQUEST),
     TITLE_NOT_EMPTY("Title cannot be empty", HttpStatus.BAD_REQUEST),
     TITLE_INVALID("Title must be between 10 and 200 characters", HttpStatus.BAD_REQUEST),
@@ -74,7 +74,7 @@ public enum ErrorCode {
     INVALID_PAYMENT_AMOUNT("Invalid payment amount", HttpStatus.BAD_REQUEST),
     EXCEPTION("Error", HttpStatus.INTERNAL_SERVER_ERROR),
     SERVICES_ALREADY_BOOKED("Service is already booked", HttpStatus.BAD_REQUEST),
-    STYLIST_UNAVAILABLE("Stylist is not available", HttpStatus.BAD_REQUEST),
+    THERAPIST_UNAVAILABLE("Stylist is not available", HttpStatus.BAD_REQUEST),
     ;
 
     private final String message;

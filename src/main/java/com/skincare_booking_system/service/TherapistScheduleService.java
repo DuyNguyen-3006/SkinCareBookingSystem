@@ -49,7 +49,7 @@ public class TherapistScheduleService {
         TherapistSchedule schedule =
                 therapistSchedulerepository.getTherapistScheduleId(list.getTherapistId(), list.getWorkingDate());
         if (schedule != null) {
-            throw new AppException(ErrorCode.STYLIST_SCHEDULE_EXIST);
+            throw new AppException(ErrorCode.THERAPIST_SCHEDULE_EXIST);
         }
 
         Therapist therapist = therapistRepository.findTherapistById(list.getTherapistId());
