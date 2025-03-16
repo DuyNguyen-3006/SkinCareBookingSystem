@@ -52,7 +52,7 @@ public class TherapistScheduleService {
             throw new AppException(ErrorCode.THERAPIST_SCHEDULE_EXIST);
         }
 
-        Therapist therapist = therapistRepository.findTherapistById(list.getTherapistId());
+        Therapist therapist = therapistRepository.findTherapistsById(list.getTherapistId());
 
         Set<Shift> shiftSet = new HashSet<>();
         for (Long id : list.getShiftId()) {
@@ -114,7 +114,7 @@ public class TherapistScheduleService {
             }
         }
         therapistSchedulerepository.deleteSpecificSchedule(schedule.getTherapistScheduleId());
-        Therapist therapist = therapistRepository.findTherapistById(request.getTherapistId());
+        Therapist therapist = therapistRepository.findTherapistsById(request.getTherapistId());
         schedule.setShifts(shifts);
         schedule.setTherapist(therapist);
         schedule.setWorkingDay(request.getWorkingDate());

@@ -86,7 +86,7 @@ public class TherapistService {
 
     public TherapistResponse getTherapistbyId(Long id) {
         return therapistMapper.toTherapistResponse(
-                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public List<TherapistResponse> searchTherapistsByName(String name) {
@@ -100,14 +100,14 @@ public class TherapistService {
 
     public void deleteTherapistbyId(Long id) {
         Therapist therapist =
-                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(false);
         therapistRepository.save(therapist);
     }
 
     public void restoreTherapistById(Long id) {
         Therapist therapist =
-                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(true);
         therapistRepository.save(therapist);
     }
@@ -125,7 +125,7 @@ public class TherapistService {
 
     public TherapistUpdateResponse updateTherapist(Long id, TherapistUpdateRequest request) {
         Therapist therapist =
-                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapistMapper.toUpdateTherapist(therapist, request);
         return therapistMapper.toTherapistUpdateResponse(therapistRepository.save(therapist));
     }
@@ -206,7 +206,7 @@ public class TherapistService {
 
     public void resetPassword(ResetPasswordRequest request, Long id) {
         Therapist the =
-                therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
@@ -260,7 +260,7 @@ public class TherapistService {
         int sizeBookings = countBooking(therapistId, yearAndMonth);
 
         // Lấy thông tin về therapist
-        Therapist therapist = therapistRepository.findTherapistById(therapistId);
+        Therapist therapist = therapistRepository.findTherapistsById(therapistId);
         if (therapist == null) { // Kiểm tra nếu therapist không tồn tại
             throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
         }

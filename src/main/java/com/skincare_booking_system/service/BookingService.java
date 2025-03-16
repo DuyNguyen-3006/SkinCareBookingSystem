@@ -568,7 +568,7 @@ public class BookingService {
             serviceId.add(service.getServiceId());
         }
 
-        Therapist therapist = therapistRepository.findTherapistById(
+        Therapist therapist = therapistRepository.findTherapistsById(
                 booking.getTherapistSchedule().getTherapist().getId());
         BookingResponse bookingResponse = new BookingResponse();
         bookingResponse.setId(booking.getBookingId());

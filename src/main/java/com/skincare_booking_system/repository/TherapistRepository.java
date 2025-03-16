@@ -24,7 +24,9 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
 
     Optional<Therapist> findByUsername(String username);
 
-    Therapist findTherapistById(Long id);
+    Therapist findTherapistsById(Long id);
+
+    Optional<Therapist> findTherapistById(Long id);
 
     Therapist findTherapistByUsername(String username);
 
