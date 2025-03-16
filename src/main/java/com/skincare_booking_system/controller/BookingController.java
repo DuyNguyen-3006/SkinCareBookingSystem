@@ -124,7 +124,7 @@ public class BookingController {
                 .build();
     }
 
-    @GetMapping("/stylist/{date}/{therapistId}")
+    @GetMapping("/therapist/{date}/{therapistId}")
     public ApiResponse<List<BookingResponse>> getTodayBookingForTherapist(
             @PathVariable Long therapistId, @PathVariable String date) {
         LocalDate localDate = LocalDate.parse(date);

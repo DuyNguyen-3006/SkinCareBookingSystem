@@ -84,7 +84,7 @@ public class TherapistService {
                 .toList();
     }
 
-    public TherapistResponse getTherapistbyPhone(String id) {
+    public TherapistResponse getTherapistbyId(Long id) {
         return therapistMapper.toTherapistResponse(
                 therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
@@ -98,14 +98,14 @@ public class TherapistService {
         return therapists.stream().map(therapistMapper::toTherapistResponse).toList();
     }
 
-    public void deleteTherapistbyPhone(String id) {
+    public void deleteTherapistbyId(Long id) {
         Therapist therapist =
                 therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(false);
         therapistRepository.save(therapist);
     }
 
-    public void restoreTherapistByPhone(String id) {
+    public void restoreTherapistById(Long id) {
         Therapist therapist =
                 therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(true);
@@ -123,7 +123,7 @@ public class TherapistService {
         return therapistMapper.toInfoTherapist(therapist);
     }
 
-    public TherapistUpdateResponse updateTherapist(String id, TherapistUpdateRequest request) {
+    public TherapistUpdateResponse updateTherapist(Long id, TherapistUpdateRequest request) {
         Therapist therapist =
                 therapistRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapistMapper.toUpdateTherapist(therapist, request);
@@ -237,8 +237,8 @@ public class TherapistService {
         int month = Integer.parseInt(parts[1]);
 
         List<Booking> bookings = bookingRepository.findBookingByTherapistIdAndMonthYear(therapistId, month, year);
-        log.info("Bookings for stylist ID {} in month {} of year {}: {}", therapistId, month, year, bookings);
-        log.info("Number of bookings for stylist ID {}: {}", therapistId, bookings.size());
+        log.info("Bookings for therapist ID {} in month {} of year {}: {}", therapistId, month, year, bookings);
+        log.info("Number of bookings for therapist ID {}: {}", therapistId, bookings.size());
 
         double totalPayment = bookings.stream()
                 .filter(booking -> booking.getPayment() != null

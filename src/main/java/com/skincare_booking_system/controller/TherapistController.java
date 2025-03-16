@@ -53,15 +53,15 @@ public class TherapistController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<TherapistResponse> getTherapist(@PathVariable("id") String phone) {
+    ApiResponse<TherapistResponse> getTherapist(@PathVariable("id") long id) {
         return ApiResponse.<TherapistResponse>builder()
-                .result(therapistService.getTherapistbyPhone(phone))
+                .result(therapistService.getTherapistbyId(id))
                 .build();
     }
 
     @PutMapping("/updateTherapist/{id}")
     ApiResponse<TherapistUpdateResponse> updateUser(
-            @PathVariable String id, @RequestBody TherapistUpdateRequest request) {
+            @PathVariable long id, @RequestBody TherapistUpdateRequest request) {
         return ApiResponse.<TherapistUpdateResponse>builder()
                 .result(therapistService.updateTherapist(id, request))
                 .build();
@@ -75,14 +75,14 @@ public class TherapistController {
     }
 
     @PutMapping("/delete/{id}")
-    public ResponseEntity<String> deleteTherapist(@PathVariable String id) {
-        therapistService.deleteTherapistbyPhone(id);
+    public ResponseEntity<String> deleteTherapist(@PathVariable long id) {
+        therapistService.deleteTherapistbyId(id);
         return ResponseEntity.ok("Therapist has been deleted");
     }
 
     @PutMapping("/restore/{id}")
-    public ResponseEntity<String> restoreTherapist(@PathVariable String id) {
-        therapistService.restoreTherapistByPhone(id);
+    public ResponseEntity<String> restoreTherapist(@PathVariable long id) {
+        therapistService.restoreTherapistById(id);
         return ResponseEntity.ok("Therapist restored successfully");
     }
 
@@ -100,13 +100,13 @@ public class TherapistController {
     }
 
     @PutMapping("/reset-password/{id}")
-    public ApiResponse<String> resetPassword(@PathVariable Long id, @RequestBody ResetPasswordRequest request) {
+    public ApiResponse<String> resetPassword(@PathVariable long id, @RequestBody ResetPasswordRequest request) {
         therapistService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
 
     @GetMapping("/{therapistId}/revenue/{yearAndMonth}")
-    public ApiResponse<TherapistRevenueResponse> getStylistsRevenue(
+    public ApiResponse<TherapistRevenueResponse> getTherapistRevenue(
             @PathVariable long therapistId, @PathVariable String yearAndMonth) {
         TherapistRevenueResponse totalRevenue = therapistService.getTherapistRevenue(therapistId, yearAndMonth);
         return ApiResponse.<TherapistRevenueResponse>builder()

@@ -230,7 +230,7 @@ public class BookingService {
                 return allSlot;
             }
         }
-        // lấy được tất cả booking trong ngày của stylist đc truyền vào
+        // lấy được tất cả booking trong ngày của therapist đc truyền vào
         List<Booking> allBookingInDay = bookingRepository.getBookingsByTherapistInDayForUpdate(
                 bookingSlots.getDate(), bookingSlots.getTherapistId(), bookingId);
         // lấy ra tất cả các slot có trong database
@@ -249,7 +249,7 @@ public class BookingService {
                 break;
             }
         }
-        // nếu stylist đó chưa có booking nào trong ngày
+        // nếu therapist đó chưa có booking nào trong ngày
         if (allBookingInDay.isEmpty()) {
             // xóa tất cả thằng có trong slotToRemove
             allSlot.removeAll(slotToRemove);
@@ -348,10 +348,10 @@ public class BookingService {
                 therapistsToRemove.add(therapist);
             }
             if (bookingNearestOverTime != null) {
-                // lấy đc thời gian của cái booking có sẵn của stylist đó
+                // lấy đc thời gian của cái booking có sẵn của therapist đó
                 Slot slotTimeBooking = slotRepository.findSlotBySlotid(
                         bookingNearestOverTime.getSlot().getSlotid());
-                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì stylist đó ko
+                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
                 // thỏa
                 if (timeToCheckValid.isAfter(slotTimeBooking.getSlottime())) {
                     therapistsToRemove.add(therapist);
@@ -360,7 +360,7 @@ public class BookingService {
             if (bookingNearestBeforeTime != null) {
                 LocalTime totalTimeServiceForBooking =
                         servicesRepository.getTotalTime(bookingNearestBeforeTime.getBookingId());
-                // lấy đc thời gian của cái booking có sẵn của stylist đó
+                // lấy đc thời gian của cái booking có sẵn của therapist đó
                 Slot slotTimeBooking = slotRepository.findSlotBySlotid(
                         bookingNearestBeforeTime.getSlot().getSlotid());
                 LocalTime totalTimeFinishBooking = slotTimeBooking
@@ -368,15 +368,15 @@ public class BookingService {
                         .plusHours(totalTimeServiceForBooking.getHour())
                         .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì stylist đó ko
+                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
                 // thỏa
                 if (totalTimeFinishBooking.isAfter(slotBookingUpdate.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
             }
             if (!bookings.isEmpty()) {
-                boolean checkStylist = shiftsHaveFullBooking(bookings, slotBookingUpdate);
-                if (checkStylist) {
+                boolean checkTherapist = shiftsHaveFullBooking(bookings, slotBookingUpdate);
+                if (checkTherapist) {
                     therapistsToRemove.add(therapist);
                 }
             }
@@ -823,7 +823,7 @@ public class BookingService {
                 booking.getSlot().getSlotid(),
                 booking.getBookingDay());
         log.info(
-                "Stylist Account ID: {}",
+                "Therapist Account ID: {}",
                 booking.getTherapistSchedule().getTherapist().getId());
         log.info("Current Slot Time: {}", booking.getSlot().getSlotid());
         log.info("Booking Day: {}", booking.getBookingDay());
@@ -842,8 +842,8 @@ public class BookingService {
             log.info("Available Time until next booking: {} minutes", availableTime);
 
             if (newServicesDuration.getHour() * 60 + newServicesDuration.getMinute() > availableTime) {
-                log.warn("Stylist is unavailable for the requested services due to a scheduling conflict.");
-                throw new AppException(ErrorCode.STYLIST_UNAVAILABLE);
+                log.warn("Therapist is unavailable for the requested services due to a scheduling conflict.");
+                throw new AppException(ErrorCode.THERAPIST_UNAVAILABLE);
             }
         }
 
@@ -870,9 +870,9 @@ public class BookingService {
 
         if (isNonConsecutive) {
             // lấy ca làm việc
-            List<Shift> stylistShifts = shiftRepository.getShiftsFromSpecificTherapistSchedule(
+            List<Shift> therapistShifts = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                     booking.getTherapistSchedule().getTherapist().getId(), booking.getBookingDay());
-            stylistShifts.sort(Comparator.comparing(Shift::getStartTime));
+            therapistShifts.sort(Comparator.comparing(Shift::getStartTime));
 
             // Lấy thời gian booking đặt
             LocalTime bookingStartTime = booking.getSlot().getSlottime();
@@ -887,16 +887,16 @@ public class BookingService {
             LocalTime endTime = LocalTime.MIN;
             LocalTime nextStartTime = LocalTime.MIN;
             LocalTime nextEndTime = LocalTime.MIN;
-            if (!stylistShifts.isEmpty()) {
-                startTime = stylistShifts.get(0).getStartTime();
-                endTime = stylistShifts.get(0).getEndTime();
+            if (!therapistShifts.isEmpty()) {
+                startTime = therapistShifts.get(0).getStartTime();
+                endTime = therapistShifts.get(0).getEndTime();
                 log.info("First shift start time: {}", startTime);
                 log.info("First shift end time: {}", endTime);
 
                 // If there is a second shift, get the next startTime and next endTime
-                if (stylistShifts.size() > 1) {
-                    nextStartTime = stylistShifts.get(1).getStartTime();
-                    nextEndTime = stylistShifts.get(1).getEndTime();
+                if (therapistShifts.size() > 1) {
+                    nextStartTime = therapistShifts.get(1).getStartTime();
+                    nextEndTime = therapistShifts.get(1).getEndTime();
                     log.info("Next shift start time: {}", nextStartTime);
                     log.info("Next shift end time: {}", nextEndTime);
                 }
@@ -905,7 +905,7 @@ public class BookingService {
             if ((bookingEndTime.isAfter(endTime) && bookingEndTime.isBefore(nextStartTime))
                     || bookingEndTime.isAfter(nextEndTime)
                     || bookingEndTime.isBefore(LocalTime.of(6, 0))) {
-                throw new AppException(ErrorCode.STYLIST_UNAVAILABLE);
+                throw new AppException(ErrorCode.THERAPIST_UNAVAILABLE);
             } else {
                 log.info("Booking end time is within shift time.");
             }
@@ -920,9 +920,9 @@ public class BookingService {
             log.info("Final Booking before saving: {}", booking);
 
         } else {
-            // Liên hàm này sẽ xét ca làm của Stylist xem có xung đột hay không
+            // Liên hàm này sẽ xét ca làm của Therapist xem có xung đột hay không
 
-            // Lấy giờ kết thúc của ca làm việc của stylist trong ngày booking
+            // Lấy giờ kết thúc của ca làm việc của Therapist trong ngày booking
             LocalTime shiftEndTime = therapistSchedulerepository
                     .findShiftEndTime(booking.getTherapistSchedule().getTherapistScheduleId(), booking.getBookingDay())
                     .orElseThrow(() -> new AppException(ErrorCode.SHIFT_NOT_EXIST));
@@ -938,7 +938,7 @@ public class BookingService {
             log.info("Booking end time: {}", bookingEndTime);
             log.info("Shift end time: {}", shiftEndTime);
 
-            // Kiểm tra nếu thời gian kết thúc booking vượt quá giờ kết thúc ca làm việc của stylist
+            // Kiểm tra nếu thời gian kết thúc booking vượt quá giờ kết thúc ca làm việc của Therapist
             // bookingEndTime.isAfter(shiftEndTime)bắt giữ các trường hợp bookingEndTimevượt quá 23:00.
             // bookingEndTime.isBefore(LocalTime.of(6, 0))(giả sử các nhà tạo mẫu tóc không làm việc sau nửa đêm cho đến
             // sáng sớm)
@@ -946,7 +946,7 @@ public class BookingService {
             // ngoài phạm vi.
             if (bookingEndTime.isAfter(shiftEndTime) || bookingEndTime.isBefore(LocalTime.of(6, 0))) {
                 log.error("Booking end time {} exceeds shift end time {}", bookingEndTime, shiftEndTime);
-                throw new AppException(ErrorCode.STYLIST_UNAVAILABLE);
+                throw new AppException(ErrorCode.THERAPIST_UNAVAILABLE);
             } else {
                 log.info("Booking end time is within shift time.");
             }

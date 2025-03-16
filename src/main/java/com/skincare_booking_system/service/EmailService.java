@@ -118,7 +118,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("name", reminderBooking.getTo());
             context.setVariable("date", reminderBooking.getDate());
-            context.setVariable("stylistName", reminderBooking.getTherapistName());
+            context.setVariable("therapistName", reminderBooking.getTherapistName());
             context.setVariable("time", reminderBooking.getTime());
             String template = templateEngine.process("ReminderBooking", context);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
