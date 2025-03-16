@@ -162,7 +162,6 @@ public class TherapistService {
         List<BookingResponse> responses = new ArrayList<>();
 
         for (Booking booking : bookings) {
-            // Set<String> serviceNames = serviceRepository.getServiceNameByBooking(booking.getBookingId());
             Set<Long> serviceId = servicesRepository.getServiceIdByBooking(booking.getBookingId());
 
             BookingResponse bookingResponse = new BookingResponse();

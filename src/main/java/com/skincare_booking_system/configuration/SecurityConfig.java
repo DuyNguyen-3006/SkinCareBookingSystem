@@ -48,13 +48,17 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
+//                .oauth2Login(oauth2 -> oauth2
+//                        .defaultSuccessUrl("/authentication/log-in-google", true) // Chuyển hướng sau khi đăng nhập thành công
+//                )
                 .oauth2ResourceServer(
                         oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                                         .decoder(customJwtDecoder)
                                         .jwtAuthenticationConverter(jwtConverter()))
                                 .authenticationEntryPoint(
                                         new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                        );
+                )
+        ;
 
         return httpSecurity.build();
     }

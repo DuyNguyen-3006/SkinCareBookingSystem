@@ -352,7 +352,6 @@ public class BookingService {
                 Slot slotTimeBooking = slotRepository.findSlotBySlotid(
                         bookingNearestOverTime.getSlot().getSlotid());
                 // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
-                // thỏa
                 if (timeToCheckValid.isAfter(slotTimeBooking.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
@@ -369,7 +368,6 @@ public class BookingService {
                         .plusMinutes(totalTimeServiceForBooking.getMinute());
 
                 // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
-                // thỏa
                 if (totalTimeFinishBooking.isAfter(slotBookingUpdate.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
