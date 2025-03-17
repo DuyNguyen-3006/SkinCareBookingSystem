@@ -567,7 +567,6 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-
     public BookingResponse getBookingById(long bookingId) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
 

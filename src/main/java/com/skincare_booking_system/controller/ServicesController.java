@@ -104,7 +104,7 @@ public class ServicesController {
                 .build();
     }
 
-    @PutMapping("/active/{serviceName}")
+    @PutMapping("/active/{serviceId}")
     ApiResponse<String> activateService(@PathVariable long serviceId) {
         return ApiResponse.<String>builder()
                 .result(servicesService.activateServices(serviceId))
