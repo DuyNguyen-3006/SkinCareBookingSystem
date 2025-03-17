@@ -6,9 +6,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +27,9 @@ public class TherapistRequest {
 
     @Email(message = "EMAIL_INVALID")
     String email;
+
     MultipartFile imgUrl;
+
     @Pattern(regexp = "^(84|0[35789])\\d{8}$", message = "Your phone number is not valid")
     String phone;
 

@@ -1,6 +1,5 @@
 package com.skincare_booking_system.service;
 
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
@@ -9,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.skincare_booking_system.dto.response.ServicesResponse;
 import com.skincare_booking_system.entities.Package;
@@ -18,21 +18,29 @@ import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.ServicesMapper;
 import com.skincare_booking_system.repository.PackageRepository;
 import com.skincare_booking_system.repository.ServicesRepository;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ServicesService {
     @Autowired
     private ServicesRepository servicesRepository;
+
     @Autowired
     private ImagesService imagesService;
+
     @Autowired
     private ServicesMapper servicesMapper;
+
     @Autowired
     private PackageRepository packageRepository;
 
-    public ServicesResponse createServices(String serviceName,
-                                           String description, Double price,LocalTime duration, Boolean isActive, MultipartFile imgUrl) throws IOException {
+    public ServicesResponse createServices(
+            String serviceName,
+            String description,
+            Double price,
+            LocalTime duration,
+            Boolean isActive,
+            MultipartFile imgUrl)
+            throws IOException {
         // Upload image only if provided
         String imageUrl = (imgUrl != null && !imgUrl.isEmpty()) ? imagesService.uploadImage(imgUrl) : null;
 
@@ -48,6 +56,7 @@ public class ServicesService {
         servicesRepository.save(service);
         return servicesMapper.toServicesResponse(service);
     }
+
     public ServicesResponse searchServiceId(long serviceId) {
         Optional<Services> service = servicesRepository.findByServiceId(serviceId);
         ServicesResponse response = new ServicesResponse();
@@ -103,9 +112,16 @@ public class ServicesService {
         return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
     }
 
-    public ServicesResponse updateServices(long serviceId, String serviceName,
-                                           String description, Double price, LocalTime duration, MultipartFile imgUrl) throws IOException {
-        Services service = servicesRepository.findByServiceId(serviceId)
+    public ServicesResponse updateServices(
+            long serviceId,
+            String serviceName,
+            String description,
+            Double price,
+            LocalTime duration,
+            MultipartFile imgUrl)
+            throws IOException {
+        Services service = servicesRepository
+                .findByServiceId(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service with ID '" + serviceId + "' not found"));
         String imageUrl = imagesService.uploadImage(imgUrl);
         service.setServiceName(serviceName);

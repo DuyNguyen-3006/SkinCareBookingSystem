@@ -29,7 +29,8 @@ public class Therapist {
     String phone;
     String address;
     String gender;
-    String imgUrl;;
+    String imgUrl;
+    ;
     LocalDate birthDate;
     Boolean status;
     Integer yearExperience;

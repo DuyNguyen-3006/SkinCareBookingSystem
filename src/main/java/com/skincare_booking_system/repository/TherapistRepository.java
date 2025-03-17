@@ -18,7 +18,6 @@ public interface TherapistRepository extends JpaRepository<Therapist, Long> {
 
     List<Therapist> findByStatusFalse();
 
-
     List<Therapist> findByFullNameContainingIgnoreCase(String fullName);
 
     Optional<Therapist> findByUsername(String username);
