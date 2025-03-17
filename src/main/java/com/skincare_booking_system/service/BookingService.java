@@ -5,6 +5,7 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.skincare_booking_system.mapper.BookingMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
+    private final BookingMapper bookingMapper;
 
     public BookingService(
             BookingRepository bookingRepository,
@@ -53,7 +55,7 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository) {
+            PaymentRepository paymentRepository, BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -69,6 +71,7 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
+        this.bookingMapper = bookingMapper;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -556,6 +559,14 @@ public class BookingService {
         bookingRepository.save(booking);
         return "Booking deleted";
     }
+
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll()
+                .stream()
+                .map(bookingMapper:: toBookingResponse)
+                .collect(Collectors.toList());
+    }
+
 
     public BookingResponse getBookingById(long bookingId) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
