@@ -28,7 +28,7 @@ public class TherapistController {
     private TherapistService therapistService;
 
     @PostMapping()
-    ApiResponse<TherapistResponse> createTherapist(@RequestParam("userName") String userName,
+    ApiResponse<TherapistResponse> createTherapist(@RequestParam("username") String userName,
                                                    @RequestParam("password") String password,
                                                    @RequestParam("fullName") String fullName,
                                                    @RequestParam("email") String email,

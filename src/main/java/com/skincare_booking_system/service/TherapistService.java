@@ -51,11 +51,11 @@ public class TherapistService {
     @Autowired
     private ImagesService imagesService;
 
-    public TherapistResponse createTherapist(String userName, String password,
+    public TherapistResponse createTherapist(String username, String password,
                                              String fullName, String email, String phone,
                                              String address,String gender,LocalDate birthDate,
                                              Integer yearExperience, MultipartFile imgUrl) throws IOException {
-        if (therapistRepository.existsByUsername(userName)) {
+        if (therapistRepository.existsByUsername(username)) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         if (therapistRepository.existsByPhone(phone)) {
@@ -66,7 +66,7 @@ public class TherapistService {
         }
         String imageUrl = (imgUrl != null && !imgUrl.isEmpty()) ? imagesService.uploadImage(imgUrl) : null;
         Therapist therapist = Therapist.builder()
-                .username(userName)
+                .username(username)
                 .password(passwordEncoder.encode(password))
                 .fullName(fullName)
                 .email(email)
