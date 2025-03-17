@@ -25,13 +25,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
-        "/users",
-        "/authentication/log-in",
-        "/authentication/introspect",
-        "/authentication/logout",
-        "/authentication/refresh",
-        "/forgot-password/**",
-        "/feedback/**",
+            "/users",
+            "/authentication/log-in",
+            "/authentication/introspect",
+            "/authentication/logout",
+            "/authentication/refresh",
+            "/forgot-password/**",
+            "/feedback/**",
+            "/booking/checkout",
+            "/authentication/log-in-google",
     };
 
     @Autowired
@@ -48,13 +50,17 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest()
                         .authenticated())
+//                .oauth2Login(oauth2 -> oauth2
+//                        .defaultSuccessUrl("/authentication/log-in-google", true) // Chuyển hướng sau khi đăng nhập thành công
+//                )
                 .oauth2ResourceServer(
                         oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                                         .decoder(customJwtDecoder)
                                         .jwtAuthenticationConverter(jwtConverter()))
                                 .authenticationEntryPoint(
                                         new JwtAuthenticationEntryPoint()) // dieu huong khi xay ra loi
-                        );
+                )
+        ;
 
         return httpSecurity.build();
     }

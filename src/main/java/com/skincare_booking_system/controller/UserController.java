@@ -54,22 +54,23 @@ public class UserController {
                 .build();
     }
 
-    @PutMapping("/update")
-    ApiResponse<UserResponse> updateUser(@Valid @RequestBody UserUpdateRequest request) {
+    @PutMapping("/update/{userId}")
+    ApiResponse<UserResponse> updateUser(@Valid @RequestBody UserUpdateRequest request, @PathVariable long userId ) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.updateUser(request))
+                .result(userService.updateUser(request, userId))
+                .message("User updated successfully")
                 .build();
     }
 
     @PutMapping("/{id}")
-    String deleteUser(@PathVariable String id) {
+    String deleteUser(@PathVariable long id) {
         System.out.println("Deleting user with ID: " + id);
         userService.deleteUser(id);
         return "User has been deleted";
     }
 
     @PutMapping("/active/{id}")
-    String activeUser(@PathVariable String id) {
+    String activeUser(@PathVariable long id) {
         userService.activeUser(id);
         return "Active user successfully";
     }
@@ -81,7 +82,7 @@ public class UserController {
     }
 
     @PutMapping("/reset-password/{id}")
-    public ApiResponse<String> resetPassword(@PathVariable String id, @RequestBody ResetPasswordRequest request) {
+    public ApiResponse<String> resetPassword(@PathVariable long id, @RequestBody ResetPasswordRequest request) {
         userService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }

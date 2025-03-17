@@ -18,8 +18,8 @@ import net.minidev.json.annotate.JsonIgnore;
 public class Voucher {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String voucherId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long voucherId;
 
     @Column(unique = true)
     String voucherName;

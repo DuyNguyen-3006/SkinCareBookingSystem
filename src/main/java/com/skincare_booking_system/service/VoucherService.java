@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.skincare_booking_system.dto.request.BlogUpdateRequest;
+import com.skincare_booking_system.dto.response.BlogResponse;
+import com.skincare_booking_system.entities.Blog;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.VoucherRequest;
@@ -71,6 +74,25 @@ public class VoucherService {
 
         return voucherMapper.toVoucherResponse(voucher);
     }
+    public VoucherResponse getVoucherById(Long id) {
+        Voucher voucher = voucherRepository
+                .findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+
+        if (!voucher.getIsActive()) {
+            throw new AppException(ErrorCode.VOUCHER_NOT_ACTIVE);
+        }
+
+        if (voucher.getExpiryDate().isBefore(LocalDate.now())) {
+            throw new AppException(ErrorCode.VOUCHER_EXPIRED);
+        }
+
+        if (voucher.getQuantity() <= 0) {
+            throw new AppException(ErrorCode.VOUCHER_OUT_OF_STOCK);
+        }
+
+        return voucherMapper.toVoucherResponse(voucher);
+    }
 
     public List<VoucherResponse> getActiveVouchers() {
         List<Voucher> vouchers = voucherRepository.findByIsActiveTrue();
@@ -92,9 +114,9 @@ public class VoucherService {
         return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
 
-    public String deactivateVoucher(String voucherCode) {
+    public String deactivateVoucher(Long id) {
         Voucher voucher = voucherRepository
-                .findByVoucherCode(voucherCode)
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
@@ -106,9 +128,9 @@ public class VoucherService {
         return "Voucher deactivated successfully";
     }
 
-    public String activateVoucher(String voucherCode) {
+    public String activateVoucher(Long id) {
         Voucher voucher = voucherRepository
-                .findByVoucherCode(voucherCode)
+                .findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (voucher.getIsActive()) {
@@ -126,6 +148,11 @@ public class VoucherService {
         voucher.setIsActive(true);
         voucherRepository.save(voucher);
         return "Voucher activated successfully";
+    }
+    public VoucherResponse updateVoucher(Long id, VoucherRequest voucherRequest) {
+        Voucher v = voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        voucherMapper.updateVoucher(v, voucherRequest);
+        return voucherMapper.toVoucherResponse(voucherRepository.save(v));
     }
 
     public String useVoucher(String voucherCode) {

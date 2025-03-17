@@ -1,6 +1,7 @@
 package com.skincare_booking_system.dto.request;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -29,4 +31,5 @@ public class ServicesUpdateRequest {
 
     @NotNull(message = "DURATION_REQUIRED")
     LocalTime duration;
+    MultipartFile imgUrl;
 }

@@ -17,11 +17,11 @@ import lombok.experimental.FieldDefaults;
 @Entity
 public class Blog {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
     String title;
     String content;
-    String imageUrl;
+    String imgUrl;
     boolean active;
 }

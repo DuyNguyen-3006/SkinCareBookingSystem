@@ -26,7 +26,7 @@ public class Services {
     String description;
 
     @Column(nullable = false)
-    int price;
+    Double price;
 
     Boolean isActive;
 

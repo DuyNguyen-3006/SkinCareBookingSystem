@@ -57,6 +57,12 @@ public class BlogController {
                 .result(blogService.getBlogByTitleCUS(title))
                 .build();
     }
+    @GetMapping("/{blogId}")
+    ApiResponse<BlogResponse> getBlogById(@PathVariable Long blogId) {
+        return ApiResponse.<BlogResponse>builder()
+                .result(blogService.getBlogByBLogId(blogId))
+                .build();
+    }
 
     @GetMapping("/searchByTitle")
     ApiResponse<List<BlogResponse>> getBlogByTitle(@RequestParam String title) {
@@ -65,25 +71,25 @@ public class BlogController {
                 .build();
     }
 
-    @PutMapping("/update/{title}")
+    @PutMapping("/update/{id}")
     ApiResponse<BlogResponse> updateBlog(
-            @PathVariable String title, @Valid @RequestBody BlogUpdateRequest blogUpdateRequest) {
+            @PathVariable Long id, @Valid @RequestBody BlogUpdateRequest blogUpdateRequest) {
         return ApiResponse.<BlogResponse>builder()
-                .result(blogService.updateBlog(title, blogUpdateRequest))
+                .result(blogService.updateBlog(id, blogUpdateRequest))
                 .build();
     }
 
-    @PutMapping("/publish/{title}")
-    ApiResponse<String> publishBlog(@PathVariable String title) {
+    @PutMapping("/publish/{id}")
+    ApiResponse<String> publishBlog(@PathVariable Long id) {
         return ApiResponse.<String>builder()
-                .result(blogService.publishBlog(title))
+                .result(blogService.publishBlog(id))
                 .build();
     }
 
-    @PutMapping("/unpublish/{title}")
-    ApiResponse<String> unpublishBlog(@PathVariable String title) {
+    @PutMapping("/unpublish/{id}")
+    ApiResponse<String> unpublishBlog(@PathVariable Long id) {
         return ApiResponse.<String>builder()
-                .result(blogService.unpublishBlog(title))
+                .result(blogService.unpublishBlog(id))
                 .build();
     }
 }

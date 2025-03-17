@@ -26,10 +26,13 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
-    @GetMapping("/log-in-google")
-    public Map<String, Object> signInGoogle(OAuth2AuthenticationToken oAuth2AuthenticationToken) {
-        return oAuth2AuthenticationToken.getPrincipal().getAttributes();
-    }
+//    @PostMapping("/login-google")
+//    public ApiResponse<AuthenticationResponse> loginWithGoogle(@RequestBody LoginGG request) {
+//        return ApiResponse.<AuthenticationResponse>builder()
+//                .result(authenticationService.loginGoogle(request.getToken()))
+//                .build();
+//    }
+
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)

@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingSlots {
     Set<Long> serviceId;
-    long therapistId;
+    Long therapistId;
     LocalDate date;
 }

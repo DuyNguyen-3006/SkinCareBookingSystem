@@ -106,6 +106,51 @@ public class AuthenticationService {
         throw new AppException(ErrorCode.USER_NOT_EXISTED); // Không tìm thấy tài khoản nào
     }
 
+//    public AuthenticationResponse loginGoogle (String token) {
+//        try {
+//            // Gửi token lên Google để xác thực
+//            String googleUrl = "https://oauth2.googleapis.com/tokeninfo?id_token=" + token;
+//            RestTemplate restTemplate = new RestTemplate();
+//            ResponseEntity<String> response = restTemplate.getForEntity(googleUrl, String.class);
+//
+//            if (response.getStatusCode() != HttpStatus.OK) {
+//                throw new RuntimeException("Invalid Google token");
+//            }
+//
+//            // Parse JSON từ Google API
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            JsonNode userInfo = objectMapper.readTree(response.getBody());
+//
+//            String email = userInfo.get("email").asText();
+//            String name = userInfo.get("name").asText();
+//
+//            // Kiểm tra user trong DB
+//            User user = userRepository.findByEmail(email);
+//            if (user == null) {
+//                User newUser = new User();
+//                newUser.setEmail(email);
+//                newUser.setUsername(email);
+//                newUser.setFirstName(name);
+//                newUser.setRole(Roles.CUSTOMER);
+//                user = userRepository.save(newUser);
+//            }
+//
+//            if (!user.getStatus()) {
+//                throw new AppException(ErrorCode.CUSTOMER_DE_ACTIVE);
+//            }
+//
+//            // Tạo JWT Token để trả về
+//            AuthenticationResponse authResponse = new AuthenticationResponse();
+//            authResponse.setToken(generateToken(user));
+//            authResponse.setRole(user.getRole());
+//            return authResponse;
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new RuntimeException("Google Authentication Failed");
+//        }
+//    }
+
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
 
@@ -113,6 +158,7 @@ public class AuthenticationService {
                 .subject(user.getUsername())
                 .issuer("SkinCareBooking")
                 .issueTime(new Date())
+                .claim("role", user.getRole().name())
                 .expirationTime(
                         new Date(Instant.now().plus(24, ChronoUnit.HOURS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())

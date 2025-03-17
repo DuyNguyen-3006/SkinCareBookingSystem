@@ -1,13 +1,15 @@
 package com.skincare_booking_system.service;
 
+
+import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.skincare_booking_system.dto.request.ServicesRequest;
-import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
 import com.skincare_booking_system.entities.Package;
 import com.skincare_booking_system.entities.Services;
@@ -16,24 +18,47 @@ import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.ServicesMapper;
 import com.skincare_booking_system.repository.PackageRepository;
 import com.skincare_booking_system.repository.ServicesRepository;
-
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 public class ServicesService {
-    ServicesRepository servicesRepository;
-    PackageRepository packageRepository;
-    ServicesMapper servicesMapper;
+    @Autowired
+    private ServicesRepository servicesRepository;
+    @Autowired
+    private ImagesService imagesService;
+    @Autowired
+    private ServicesMapper servicesMapper;
+    @Autowired
+    private PackageRepository packageRepository;
 
-    public ServicesResponse createServices(ServicesRequest servicesRequest) {
-        if (servicesRepository.existsByServiceName(servicesRequest.getServiceName())) {
-            throw new AppException(ErrorCode.SERVICE_EXIST);
-        }
-        Services services = servicesMapper.toServices(servicesRequest);
-        return servicesMapper.toServicesResponse(servicesRepository.save(services));
+    public ServicesResponse createServices(String serviceName,
+                                           String description, Double price,LocalTime duration, Boolean isActive, MultipartFile imgUrl) throws IOException {
+        // Upload image only if provided
+        String imageUrl = (imgUrl != null && !imgUrl.isEmpty()) ? imagesService.uploadImage(imgUrl) : null;
+
+        Services service = Services.builder()
+                .serviceName(serviceName)
+                .description(description)
+                .price(price)
+                .duration(duration)
+                .imgUrl(imageUrl)
+                .isActive(isActive)
+                .build();
+
+        servicesRepository.save(service);
+        return servicesMapper.toServicesResponse(service);
+    }
+    public ServicesResponse searchServiceId(long serviceId) {
+        Optional<Services> service = servicesRepository.findByServiceId(serviceId);
+        ServicesResponse response = new ServicesResponse();
+        response.setServiceName(service.get().getServiceName());
+        response.setDescription(service.get().getDescription());
+        response.setServiceId(service.get().getServiceId());
+        response.setDuration(service.get().getDuration());
+        response.setImgUrl(service.get().getImgUrl());
+        response.setPrice(service.get().getPrice());
+        response.setIsActive(service.get().getIsActive());
+        return response;
     }
 
     public List<ServicesResponse> getAllServices() {
@@ -78,34 +103,23 @@ public class ServicesService {
         return services.stream().map(servicesMapper::toServicesResponse).collect(Collectors.toList());
     }
 
-    public ServicesResponse updateServices(String serviceName, ServicesUpdateRequest servicesUpdateRequest) {
-        Services services = servicesRepository
-                .findByServiceName(serviceName)
-                .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
-        LocalTime lt = services.getDuration();
-        LocalTime lt1 = servicesUpdateRequest.getDuration();
-        List<Package> packages = packageRepository.findByServicesIn(List.of(services));
-        if (lt != lt1) {
-            for (Package p : packages) {
-                LocalTime lt3 = p.getDuration();
-                LocalTime newTime = lt3.minusHours(lt.getHour())
-                        .minusMinutes(lt.getMinute())
-                        .minusSeconds(lt.getSecond())
-                        .plusHours(lt1.getHour())
-                        .plusMinutes(lt1.getMinute())
-                        .plusSeconds(lt1.getSecond());
-                p.setDuration(newTime);
-                packageRepository.save(p);
-            }
-        }
-        servicesMapper.updateServices(services, servicesUpdateRequest);
-
-        return servicesMapper.toServicesResponse(servicesRepository.save(services));
+    public ServicesResponse updateServices(long serviceId, String serviceName,
+                                           String description, Double price, LocalTime duration, MultipartFile imgUrl) throws IOException {
+        Services service = servicesRepository.findByServiceId(serviceId)
+                .orElseThrow(() -> new RuntimeException("Service with ID '" + serviceId + "' not found"));
+        String imageUrl = imagesService.uploadImage(imgUrl);
+        service.setServiceName(serviceName);
+        service.setPrice(price);
+        service.setDescription(description);
+        service.setDuration(duration);
+        service.setImgUrl(imageUrl);
+        servicesRepository.save(service);
+        return servicesMapper.toServicesResponse(service);
     }
 
-    public String deactivateServices(String serviceName) {
+    public String deactivateServices(long serviceId) {
         Services services = servicesRepository
-                .findByServiceName(serviceName)
+                .findByServiceId(serviceId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
         services.setIsActive(false);
         servicesRepository.save(services);
@@ -117,9 +131,9 @@ public class ServicesService {
         return "Services deactivated successfully";
     }
 
-    public String activateServices(String serviceName) {
+    public String activateServices(long serviceId) {
         Services services = servicesRepository
-                .findByServiceName(serviceName)
+                .findByServiceId(serviceId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_FOUND));
         services.setIsActive(true);
         servicesRepository.save(services);

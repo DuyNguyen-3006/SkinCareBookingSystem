@@ -63,7 +63,7 @@ public class ForgotPasswordService {
     }
 
     public ForgotPasswordResponse verifyOTP(Integer otp, String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
         ForgotPassword fp = forgotPasswordRepository.findForgotPasswordByOtpAndUser(otp, user);
         if (fp == null) {
             throw new AppException(ErrorCode.INVALID_OTP);
@@ -78,7 +78,7 @@ public class ForgotPasswordService {
         if (!request.getPassword().equals(request.getRepassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);
         }
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
+        User user = userRepository.findUserByEmail(email).orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_EXISTED));
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);

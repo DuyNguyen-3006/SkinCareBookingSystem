@@ -5,6 +5,7 @@ server:
 
 spring:
   datasource:
+
 #    url: jdbc:mysql://localhost:3306/SkincareBookingTest
 #    username: root
 #    password: root
@@ -40,10 +41,6 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
-
-
-
-
 
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"

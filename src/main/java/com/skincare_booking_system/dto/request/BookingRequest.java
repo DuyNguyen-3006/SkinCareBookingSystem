@@ -17,5 +17,5 @@ public class BookingRequest {
     LocalDate bookingDate;
     Set<Long> serviceId;
     long therapistId;
-    String voucherId;
+    Long voucherId;
 }

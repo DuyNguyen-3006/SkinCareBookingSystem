@@ -5,6 +5,7 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.skincare_booking_system.mapper.BookingMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
+    private final BookingMapper bookingMapper;
 
     public BookingService(
             BookingRepository bookingRepository,
@@ -53,7 +55,7 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository) {
+            PaymentRepository paymentRepository, BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -69,6 +71,7 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
+        this.bookingMapper = bookingMapper;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -88,7 +91,7 @@ public class BookingService {
             response.setFeedbackScore(therapistService.calculateAverageFeedback(therapist.getId(), yearAndMonth));
             response.setId(therapist.getId());
             response.setFullName(therapist.getFullName());
-            response.setImage(therapist.getImage());
+            response.setImgUrl(therapist.getImgUrl());
             therapistForBooking.add(response);
         }
         return therapistForBooking;
@@ -311,7 +314,7 @@ public class BookingService {
             TherapistForBooking therapistBooking = new TherapistForBooking();
             therapistBooking.setId(therapist.getId());
             therapistBooking.setFullName(therapist.getFullName());
-            therapistBooking.setImage(therapist.getImage());
+            therapistBooking.setImgUrl(therapist.getImgUrl());
             therapistBooking.setFeedbackScore(therapistService.calculateAverageFeedback(therapist.getId(), "2025-03"));
             therapistsForBooking.add(therapistBooking);
         }
@@ -352,7 +355,6 @@ public class BookingService {
                 Slot slotTimeBooking = slotRepository.findSlotBySlotid(
                         bookingNearestOverTime.getSlot().getSlotid());
                 // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
-                // thỏa
                 if (timeToCheckValid.isAfter(slotTimeBooking.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
@@ -369,7 +371,6 @@ public class BookingService {
                         .plusMinutes(totalTimeServiceForBooking.getMinute());
 
                 // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
-                // thỏa
                 if (totalTimeFinishBooking.isAfter(slotBookingUpdate.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
@@ -557,6 +558,13 @@ public class BookingService {
         booking.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking);
         return "Booking deleted";
+    }
+
+    public List<BookingResponse> getAllBookings() {
+        return bookingRepository.findAll()
+                .stream()
+                .map(bookingMapper:: toBookingResponse)
+                .collect(Collectors.toList());
     }
 
     public BookingResponse getBookingById(long bookingId) {
@@ -981,7 +989,7 @@ public class BookingService {
         response.setTherapistId(booking.getTherapistSchedule().getTherapist().getId());
         response.setBookingDate(booking.getBookingDay());
         response.setVoucherId(
-                booking.getVoucher() != null ? booking.getVoucher().getVoucherId() : "");
+                booking.getVoucher() != null ? booking.getVoucher().getVoucherId() : 0);
         log.info("Returning updated booking response: {}", response);
         return response;
     }

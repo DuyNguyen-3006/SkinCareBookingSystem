@@ -1,9 +1,11 @@
 package com.skincare_booking_system.dto.response;
 
 import java.time.LocalTime;
+import java.util.Set;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor

@@ -9,10 +9,9 @@ import org.springframework.stereotype.Repository;
 import com.skincare_booking_system.entities.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
 
-    User findByRole(String role);
 
     boolean existsByPhone(String phone);
 
@@ -22,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByUsername(String username);
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findById(long id);
 
     User findUserById(long id);
 

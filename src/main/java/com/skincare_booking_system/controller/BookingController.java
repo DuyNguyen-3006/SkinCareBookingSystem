@@ -69,6 +69,13 @@ public class BookingController {
                 .build();
     }
 
+    @GetMapping("/getallBooking")
+    public ApiResponse<List<BookingResponse>> getAllBooking() {
+        return ApiResponse.<List<BookingResponse>>builder()
+                .result(bookingService.getAllBookings())
+                .build();
+    }
+
     @PutMapping("/update/{bookingId}")
     public ApiResponse<Booking> updateBooking(@PathVariable long bookingId, @RequestBody BookingRequest request) {
         ApiResponse apiResponse = new ApiResponse<>();
