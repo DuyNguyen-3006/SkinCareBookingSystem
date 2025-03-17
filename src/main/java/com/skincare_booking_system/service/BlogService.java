@@ -33,6 +33,7 @@ public class BlogService {
         blog.setActive(false);
         return blogMapper.toBlogResponse(blogRepository.save(blog));
     }
+
     public BlogResponse getBlogByBLogId(Long blogId) {
         Optional<Blog> blogs = blogRepository.findById(blogId);
         if (blogs.isEmpty()) {

@@ -5,7 +5,6 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.skincare_booking_system.mapper.BookingMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.*;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
+import com.skincare_booking_system.mapper.BookingMapper;
 import com.skincare_booking_system.repository.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,8 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository, BookingMapper bookingMapper) {
+            PaymentRepository paymentRepository,
+            BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -561,9 +562,8 @@ public class BookingService {
     }
 
     public List<BookingResponse> getAllBookings() {
-        return bookingRepository.findAll()
-                .stream()
-                .map(bookingMapper:: toBookingResponse)
+        return bookingRepository.findAll().stream()
+                .map(bookingMapper::toBookingResponse)
                 .collect(Collectors.toList());
     }
 
