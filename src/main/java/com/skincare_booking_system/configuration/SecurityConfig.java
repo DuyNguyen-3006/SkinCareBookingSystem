@@ -25,13 +25,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     public final String[] PUBLIC_ENDPOINTS = {
-        "/users",
-        "/authentication/log-in",
-        "/authentication/introspect",
-        "/authentication/logout",
-        "/authentication/refresh",
-        "/forgot-password/**",
-        "/feedback/**",
+            "/users",
+            "/authentication/log-in",
+            "/authentication/introspect",
+            "/authentication/logout",
+            "/authentication/refresh",
+            "/forgot-password/**",
+            "/feedback/**",
+            "/authentication/log-in-google",
     };
 
     @Autowired

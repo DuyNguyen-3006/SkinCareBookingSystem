@@ -67,7 +67,6 @@ public class UserService {
                 .toList();
     }
 
-    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserByPhoneNumber(String phoneNumber) {
         return userMapper.toUserResponse(userRepository
                 .findByPhone(phoneNumber)
@@ -94,13 +93,13 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public void deleteUser(String id) {
+    public void deleteUser(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setStatus(false);
         userRepository.save(user);
     }
 
-    public void activeUser(String id) {
+    public void activeUser(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setStatus(true);
         userRepository.save(user);
@@ -125,7 +124,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void resetPassword(ResetPasswordRequest request, String id) {
+    public void resetPassword(ResetPasswordRequest request, long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
