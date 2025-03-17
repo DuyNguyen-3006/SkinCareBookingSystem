@@ -311,7 +311,7 @@ public class BookingService {
             TherapistForBooking therapistBooking = new TherapistForBooking();
             therapistBooking.setId(therapist.getId());
             therapistBooking.setFullName(therapist.getFullName());
-            therapistBooking.setImage(therapist.getImage());
+            therapistBooking.setImgUrl(therapist.getImgUrl());
             therapistBooking.setFeedbackScore(therapistService.calculateAverageFeedback(therapist.getId(), "2025-03"));
             therapistsForBooking.add(therapistBooking);
         }
@@ -979,7 +979,7 @@ public class BookingService {
         response.setTherapistId(booking.getTherapistSchedule().getTherapist().getId());
         response.setBookingDate(booking.getBookingDay());
         response.setVoucherId(
-                booking.getVoucher() != null ? booking.getVoucher().getVoucherId() : "");
+                booking.getVoucher() != null ? booking.getVoucher().getVoucherId() : 0);
         log.info("Returning updated booking response: {}", response);
         return response;
     }
