@@ -1,10 +1,13 @@
 package com.skincare_booking_system.controller;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +15,10 @@ import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.InfoTherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistResponse;
 import com.skincare_booking_system.dto.response.TherapistRevenueResponse;
-import com.skincare_booking_system.dto.response.TherapistUpdateResponse;
 import com.skincare_booking_system.service.TherapistService;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -25,10 +28,19 @@ public class TherapistController {
     private TherapistService therapistService;
 
     @PostMapping()
-    ApiResponse<TherapistResponse> createTherapist(@RequestBody TherapistRequest therapistRequest) {
-        return ApiResponse.<TherapistResponse>builder()
-                .result(therapistService.createTherapist(therapistRequest))
-                .build();
+    ApiResponse<TherapistResponse> createTherapist(@RequestParam("userName") String userName,
+                                                   @RequestParam("password") String password,
+                                                   @RequestParam("fullName") String fullName,
+                                                   @RequestParam("email") String email,
+                                                   @RequestParam("phone") String phone,
+                                                   @RequestParam("address") String address,
+                                                   @RequestParam("gender") String gender,
+                                                   @RequestParam("birthDate")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate birthDate,
+                                                   @RequestParam("yearExperience") Integer yearExperience,
+                                                   @RequestParam("imgUrl") MultipartFile imgUrl) throws IOException {
+        TherapistResponse therapistResponse = therapistService.createTherapist(userName,password,fullName,email,phone,
+                address,gender,birthDate,yearExperience,imgUrl);
+        return ApiResponse.<TherapistResponse>builder().result(therapistResponse).build();
     }
 
     @GetMapping()
@@ -60,10 +72,18 @@ public class TherapistController {
     }
 
     @PutMapping("/updateTherapist/{id}")
-    ApiResponse<TherapistUpdateResponse> updateUser(
-            @PathVariable long id, @RequestBody TherapistUpdateRequest request) {
-        return ApiResponse.<TherapistUpdateResponse>builder()
-                .result(therapistService.updateTherapist(id, request))
+    ApiResponse<TherapistResponse> updateUser(
+            @PathVariable long id, @RequestParam("fullName") String fullName,
+            @RequestParam("email") String email,
+            @RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            @RequestParam("gender") String gender,
+            @RequestParam("birthDate") LocalDate birthDate,
+            @RequestParam("yearExperience") Integer yearExperience,
+            @RequestParam("imgUrl") MultipartFile imgUrl) throws IOException {
+
+        return ApiResponse.<TherapistResponse>builder()
+                .result(therapistService.updateTherapist(id, fullName,email,phone,address,gender,birthDate,yearExperience,imgUrl))
                 .build();
     }
 

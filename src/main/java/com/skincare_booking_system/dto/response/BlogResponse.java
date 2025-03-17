@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -14,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class BlogResponse {
     String title;
     String content;
-    String imageUrl;
+    String imgUrl;
     boolean active;
 }

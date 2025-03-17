@@ -41,9 +41,16 @@ spring:
     mode: HTML
     cache: false
 
-
-
-
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          google:
+#            client-id: 879292775037-2lof6m9m94kaqrqc201j5g6qcg3n64gs.apps.googleusercontent.com
+#            client-secret: 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
+#            scope:
+#              - email
+#              - profile
 
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"

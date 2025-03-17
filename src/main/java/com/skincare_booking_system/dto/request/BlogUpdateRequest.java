@@ -3,8 +3,6 @@ package com.skincare_booking_system.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-import com.skincare_booking_system.validator.ImageURL;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,8 +23,5 @@ public class BlogUpdateRequest {
     @Size(min = 100, message = "CONTEXT_INVALID")
     String content;
 
-    @NotBlank(message = "IMG_URL_REQUIRED")
-    @Size(max = 500, message = "IMG_URL_TOO_LONG")
-    @ImageURL(message = "IMG_URL_INVALID")
-    String imageUrl;
+    String imgUrl;
 }

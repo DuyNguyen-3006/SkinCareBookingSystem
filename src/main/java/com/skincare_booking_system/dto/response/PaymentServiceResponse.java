@@ -10,9 +10,9 @@ import lombok.experimental.FieldDefaults;
 public class PaymentServiceResponse {
     String serviceName;
     String image;
-    int price;
+    Double price;
 
-    public PaymentServiceResponse(String serviceName, String image, int price) {
+    public PaymentServiceResponse(String serviceName, String image, Double price) {
         this.serviceName = serviceName;
         this.image = image;
         this.price = price;
