@@ -32,6 +32,7 @@ public class SecurityConfig {
             "/authentication/refresh",
             "/forgot-password/**",
             "/feedback/**",
+            "/booking/checkout",
             "/authentication/log-in-google",
     };
 
