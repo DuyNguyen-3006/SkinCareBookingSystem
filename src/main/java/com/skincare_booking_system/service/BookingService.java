@@ -562,21 +562,22 @@ public class BookingService {
     }
 
     public List<BookingResponse> getAllBookings() {
-        return bookingRepository.findAll().stream().map(booking -> {
-            BookingResponse response = new BookingResponse();
-            response.setId(booking.getBookingId()
-            );
-            response.setUserId(booking.getUser().getId());
-            response.setUserName(booking.getUser().getUsername());
-            response.setUserPhone(booking.getUser().getPhone());
-            response.setTherapistName(booking.getTherapist().getFullName() != null ? booking.getTherapist().getFullName():"Not Assigned");
-            response.setDate(booking.getBookingDay());
-            response.setTime(booking.getSlot().getSlottime());
-            response.setVoucherCode(booking.getVoucher().getVoucherCode());
-            response.setServiceId(booking.getServices().stream().map(Services::getServiceId).collect(Collectors.toSet()));
-            response.setStatus(booking.getStatus());
-            return response;
-        }).collect(Collectors.toList());
+        return bookingRepository.findAll().stream()
+                .map(booking -> BookingResponse.builder()
+                        .id(booking.getBookingId())
+                        .userId(booking.getUser().getId())
+                        .userName(booking.getUser().getUsername())
+                        .userPhone(booking.getUser().getPhone())
+                        .therapistName(booking.getTherapist() != null ? booking.getTherapist().getFullName() : "Not Assigned")
+                        .date(booking.getBookingDay())
+                        .time(booking.getSlot().getSlottime())
+                        .voucherCode(booking.getVoucher() != null ? booking.getVoucher().getVoucherCode() : null)
+                        .serviceId(booking.getServices().stream()
+                                .map(Services::getServiceId)
+                                .collect(Collectors.toSet()))
+                        .status(booking.getStatus())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     public BookingResponse getBookingById(long bookingId) {
