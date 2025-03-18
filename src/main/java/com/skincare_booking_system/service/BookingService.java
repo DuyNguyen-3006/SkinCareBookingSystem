@@ -164,7 +164,7 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list);
 
             LocalTime minimunTimeToBooking = slot.getSlottime()
@@ -563,8 +563,21 @@ public class BookingService {
 
     public List<BookingResponse> getAllBookings() {
         return bookingRepository.findAll().stream()
-                .map(bookingMapper::toBookingResponse)
-                .collect(Collectors.toList());
+                .map(booking -> BookingResponse.builder()
+                        .id(booking.getBookingId())
+                        .userId(booking.getUser().getId())
+                        .userName(booking.getUser().getUsername())
+                        .userPhone(booking.getUser().getPhone())
+                        .therapistName(booking.getTherapist().getFullName() != null ? booking.getTherapist().getFullName() : "Not Assigned")
+                        .date(booking.getBookingDay())
+                        .time(booking.getSlot().getSlottime())
+                        .voucherCode(booking.getVoucher().getVoucherCode() != null ? booking.getVoucher().getVoucherCode() : null)
+                        .serviceId(booking.getServices().stream()
+                                .map(Services::getServiceId)
+                                .collect(Collectors.toSet()))
+                        .status(booking.getStatus())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     public BookingResponse getBookingById(long bookingId) {
@@ -582,13 +595,14 @@ public class BookingService {
         bookingResponse.setId(booking.getBookingId());
         bookingResponse.setDate(booking.getBookingDay());
         bookingResponse.setTime(booking.getSlot().getSlottime());
+        bookingResponse.setUserPhone(booking.getUser().getPhone());
         bookingResponse.setUserId(booking.getUser().getId());
         bookingResponse.setUserName(
                 booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
         bookingResponse.setServiceId(serviceId);
         bookingResponse.setTherapistName(therapist.getFullName());
 
-        if (booking.getVoucher() != null) {
+        if (booking.getVoucher().getVoucherId() != null) {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
 
