@@ -164,7 +164,7 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list);
 
             LocalTime minimunTimeToBooking = slot.getSlottime()
@@ -582,13 +582,14 @@ public class BookingService {
         bookingResponse.setId(booking.getBookingId());
         bookingResponse.setDate(booking.getBookingDay());
         bookingResponse.setTime(booking.getSlot().getSlottime());
+        bookingResponse.setUserPhone(booking.getUser().getPhone());
         bookingResponse.setUserId(booking.getUser().getId());
         bookingResponse.setUserName(
                 booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
         bookingResponse.setServiceId(serviceId);
         bookingResponse.setTherapistName(therapist.getFullName());
 
-        if (booking.getVoucher() != null) {
+        if (booking.getVoucher().getVoucherId() != null) {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
 

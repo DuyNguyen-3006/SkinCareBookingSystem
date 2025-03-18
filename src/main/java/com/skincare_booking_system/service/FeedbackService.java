@@ -71,7 +71,7 @@ public class FeedbackService {
         response.setScore(feedback.getScore());
         response.setContent(feedback.getContent());
         response.setDate(feedback.getDay());
-        response.setCustomerName(feedback.getUser().getUsername());
+        response.setCustomerName(feedback.getUser().getFirstName()+" "+feedback.getUser().getLastName());
         response.setBookingId(feedback.getBooking().getBookingId());
         return response;
     }
@@ -84,7 +84,7 @@ public class FeedbackService {
             response.setScore(feedback.getScore());
             response.setContent(feedback.getContent());
             response.setDate(feedback.getDay());
-            response.setCustomerName(feedback.getUser().getFirstName());
+            response.setCustomerName(feedback.getUser().getFirstName()+" "+feedback.getUser().getLastName());
             response.setBookingId(feedback.getBooking().getBookingId());
             responses.add(response);
         }
