@@ -4,20 +4,15 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.util.List;
 
-import jakarta.validation.Valid;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.skincare_booking_system.dto.request.ApiResponse;
-import com.skincare_booking_system.dto.request.ServicesRequest;
-import com.skincare_booking_system.dto.request.ServicesUpdateRequest;
 import com.skincare_booking_system.dto.response.ServicesResponse;
 import com.skincare_booking_system.service.ServicesService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/services")
@@ -27,18 +22,21 @@ public class ServicesController {
     ServicesService servicesService;
 
     @PostMapping
-    ApiResponse<ServicesResponse> createRequest(@RequestParam("serviceName") String serviceName,
-                                                @RequestParam("description") String description,
-                                                @RequestParam("price") Double price,
-                                                @RequestParam("isActive") Boolean isActive,
-                                                @RequestParam("duration") LocalTime duration,
-                                                @RequestParam("image") MultipartFile image) throws IOException {
-            ServicesResponse serviceResponse = servicesService.createServices(serviceName, description, price,duration ,isActive, image);
-            return ApiResponse.<ServicesResponse>builder()
-                    .success(true)
-                    .message("Service created successfully")
-                    .result(serviceResponse)
-                    .build();
+    ApiResponse<ServicesResponse> createRequest(
+            @RequestParam("serviceName") String serviceName,
+            @RequestParam("description") String description,
+            @RequestParam("price") Double price,
+            @RequestParam("isActive") Boolean isActive,
+            @RequestParam("duration") LocalTime duration,
+            @RequestParam("image") MultipartFile image)
+            throws IOException {
+        ServicesResponse serviceResponse =
+                servicesService.createServices(serviceName, description, price, duration, isActive, image);
+        return ApiResponse.<ServicesResponse>builder()
+                .success(true)
+                .message("Service created successfully")
+                .result(serviceResponse)
+                .build();
     }
 
     @GetMapping
@@ -47,11 +45,12 @@ public class ServicesController {
                 .result(servicesService.getAllServices())
                 .build();
     }
+
     @GetMapping("/{serviceId}")
     ApiResponse<ServicesResponse> SearchServiceById(@PathVariable long serviceId) {
         ApiResponse response = new ApiResponse<>();
         response.setResult(servicesService.searchServiceId(serviceId));
-        return response ;
+        return response;
     }
 
     @GetMapping("/active")
@@ -84,12 +83,15 @@ public class ServicesController {
 
     @PutMapping("/update/{serviceId}")
     ApiResponse<ServicesResponse> updateServices(
-            @PathVariable Long serviceId, @RequestParam("serviceName") String serviceName,
+            @PathVariable Long serviceId,
+            @RequestParam("serviceName") String serviceName,
             @RequestParam("description") String description,
             @RequestParam("price") Double price,
             @RequestParam("duration") LocalTime duration,
-            @RequestParam("image") MultipartFile image) throws IOException {
-        ServicesResponse serviceResponse = servicesService.updateServices(serviceId, serviceName, description, price,duration, image);
+            @RequestParam("image") MultipartFile image)
+            throws IOException {
+        ServicesResponse serviceResponse =
+                servicesService.updateServices(serviceId, serviceName, description, price, duration, image);
         return ApiResponse.<ServicesResponse>builder()
                 .success(true)
                 .message("Service updated successfully")

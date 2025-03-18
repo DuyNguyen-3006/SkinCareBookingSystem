@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.ChangePasswordRequest;
@@ -29,7 +30,6 @@ import com.skincare_booking_system.repository.ServicesRepository;
 import com.skincare_booking_system.repository.TherapistRepository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Slf4j
@@ -48,13 +48,22 @@ public class TherapistService {
 
     @Autowired
     private ServicesRepository servicesRepository;
+
     @Autowired
     private ImagesService imagesService;
 
-    public TherapistResponse createTherapist(String username, String password,
-                                             String fullName, String email, String phone,
-                                             String address,String gender,LocalDate birthDate,
-                                             Integer yearExperience, MultipartFile imgUrl) throws IOException {
+    public TherapistResponse createTherapist(
+            String username,
+            String password,
+            String fullName,
+            String email,
+            String phone,
+            String address,
+            String gender,
+            LocalDate birthDate,
+            Integer yearExperience,
+            MultipartFile imgUrl)
+            throws IOException {
         if (therapistRepository.existsByUsername(username)) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -102,8 +111,9 @@ public class TherapistService {
     }
 
     public TherapistResponse getTherapistbyId(Long id) {
-        return therapistMapper.toTherapistResponse(
-                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return therapistMapper.toTherapistResponse(therapistRepository
+                .findTherapistById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
     public List<TherapistResponse> searchTherapistsByName(String name) {
@@ -116,15 +126,17 @@ public class TherapistService {
     }
 
     public void deleteTherapistbyId(Long id) {
-        Therapist therapist =
-                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Therapist therapist = therapistRepository
+                .findTherapistById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(false);
         therapistRepository.save(therapist);
     }
 
     public void restoreTherapistById(Long id) {
-        Therapist therapist =
-                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Therapist therapist = therapistRepository
+                .findTherapistById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         therapist.setStatus(true);
         therapistRepository.save(therapist);
     }
@@ -140,11 +152,19 @@ public class TherapistService {
         return therapistMapper.toInfoTherapist(therapist);
     }
 
-    public TherapistResponse updateTherapist(Long id,
-                                                   String fullName, String email, String phone,
-                                                   String address, String gender, LocalDate birthDate,
-                                                   Integer yearExperience, MultipartFile imgUrl) throws IOException {
-        Therapist therapist = therapistRepository.findTherapistById(id)
+    public TherapistResponse updateTherapist(
+            Long id,
+            String fullName,
+            String email,
+            String phone,
+            String address,
+            String gender,
+            LocalDate birthDate,
+            Integer yearExperience,
+            MultipartFile imgUrl)
+            throws IOException {
+        Therapist therapist = therapistRepository
+                .findTherapistById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         String imageUrl = therapist.getImgUrl(); // Giữ ảnh cũ nếu không upload mới
@@ -164,7 +184,6 @@ public class TherapistService {
         therapistRepository.save(therapist);
         return therapistMapper.toTherapistResponse(therapist);
     }
-
 
     public double calculateAverageFeedback(Long therapistId, String yearAndMonth) {
         String[] parts = yearAndMonth.split("-");
@@ -240,8 +259,9 @@ public class TherapistService {
     }
 
     public void resetPassword(ResetPasswordRequest request, Long id) {
-        Therapist the =
-                therapistRepository.findTherapistById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        Therapist the = therapistRepository
+                .findTherapistById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
             throw new AppException(ErrorCode.PASSWORD_NOT_MATCH);

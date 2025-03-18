@@ -38,7 +38,7 @@ public class StaffController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<StaffResponse>getActiveStaffs(@PathVariable Long id) {
+    ApiResponse<StaffResponse> getActiveStaffs(@PathVariable Long id) {
         return ApiResponse.<StaffResponse>builder()
                 .result(staffService.getStaffById(id))
                 .build();

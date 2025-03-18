@@ -1,10 +1,8 @@
 package com.skincare_booking_system.controller;
 
 import java.text.ParseException;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.JOSEException;
@@ -26,13 +24,12 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
-//    @PostMapping("/login-google")
-//    public ApiResponse<AuthenticationResponse> loginWithGoogle(@RequestBody LoginGG request) {
-//        return ApiResponse.<AuthenticationResponse>builder()
-//                .result(authenticationService.loginGoogle(request.getToken()))
-//                .build();
-//    }
-
+    //    @PostMapping("/login-google")
+    //    public ApiResponse<AuthenticationResponse> loginWithGoogle(@RequestBody LoginGG request) {
+    //        return ApiResponse.<AuthenticationResponse>builder()
+    //                .result(authenticationService.loginGoogle(request.getToken()))
+    //                .build();
+    //    }
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)

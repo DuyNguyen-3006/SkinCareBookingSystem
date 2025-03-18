@@ -57,6 +57,7 @@ public class BlogController {
                 .result(blogService.getBlogByTitleCUS(title))
                 .build();
     }
+
     @GetMapping("/{blogId}")
     ApiResponse<BlogResponse> getBlogById(@PathVariable Long blogId) {
         return ApiResponse.<BlogResponse>builder()
@@ -81,9 +82,7 @@ public class BlogController {
 
     @PutMapping("/publish/{id}")
     ApiResponse<String> publishBlog(@PathVariable Long id) {
-        return ApiResponse.<String>builder()
-                .result(blogService.publishBlog(id))
-                .build();
+        return ApiResponse.<String>builder().result(blogService.publishBlog(id)).build();
     }
 
     @PutMapping("/unpublish/{id}")

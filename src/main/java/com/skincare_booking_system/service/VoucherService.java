@@ -4,9 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.skincare_booking_system.dto.request.BlogUpdateRequest;
-import com.skincare_booking_system.dto.response.BlogResponse;
-import com.skincare_booking_system.entities.Blog;
 import org.springframework.stereotype.Service;
 
 import com.skincare_booking_system.dto.request.VoucherRequest;
@@ -74,10 +71,10 @@ public class VoucherService {
 
         return voucherMapper.toVoucherResponse(voucher);
     }
+
     public VoucherResponse getVoucherById(Long id) {
-        Voucher voucher = voucherRepository
-                .findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        Voucher voucher =
+                voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_ACTIVE);
@@ -115,9 +112,8 @@ public class VoucherService {
     }
 
     public String deactivateVoucher(Long id) {
-        Voucher voucher = voucherRepository
-                .findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        Voucher voucher =
+                voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (!voucher.getIsActive()) {
             throw new AppException(ErrorCode.VOUCHER_ALREADY_INACTIVE);
@@ -129,9 +125,8 @@ public class VoucherService {
     }
 
     public String activateVoucher(Long id) {
-        Voucher voucher = voucherRepository
-                .findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        Voucher voucher =
+                voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
 
         if (voucher.getIsActive()) {
             throw new AppException(ErrorCode.VOUCHER_ALREADY_ACTIVE);
@@ -149,6 +144,7 @@ public class VoucherService {
         voucherRepository.save(voucher);
         return "Voucher activated successfully";
     }
+
     public VoucherResponse updateVoucher(Long id, VoucherRequest voucherRequest) {
         Voucher v = voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
         voucherMapper.updateVoucher(v, voucherRequest);

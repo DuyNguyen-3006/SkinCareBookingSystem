@@ -5,7 +5,6 @@ import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.skincare_booking_system.mapper.BookingMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.*;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
+import com.skincare_booking_system.mapper.BookingMapper;
 import com.skincare_booking_system.repository.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -55,7 +55,8 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository, BookingMapper bookingMapper) {
+            PaymentRepository paymentRepository,
+            BookingMapper bookingMapper) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -163,7 +164,7 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list);
 
             LocalTime minimunTimeToBooking = slot.getSlottime()
@@ -561,10 +562,21 @@ public class BookingService {
     }
 
     public List<BookingResponse> getAllBookings() {
-        return bookingRepository.findAll()
-                .stream()
-                .map(bookingMapper:: toBookingResponse)
-                .collect(Collectors.toList());
+        return bookingRepository.findAll().stream().map(booking -> {
+            BookingResponse response = new BookingResponse();
+            response.setId(booking.getBookingId()
+            );
+            response.setUserId(booking.getUser().getId());
+            response.setUserName(booking.getUser().getUsername());
+            response.setUserPhone(booking.getUser().getPhone());
+            response.setTherapistName(booking.getTherapist().getFullName() != null ? booking.getTherapist().getFullName():"Not Assigned");
+            response.setDate(booking.getBookingDay());
+            response.setTime(booking.getSlot().getSlottime());
+            response.setVoucherCode(booking.getVoucher().getVoucherCode());
+            response.setServiceId(booking.getServices().stream().map(Services::getServiceId).collect(Collectors.toSet()));
+            response.setStatus(booking.getStatus());
+            return response;
+        }).collect(Collectors.toList());
     }
 
     public BookingResponse getBookingById(long bookingId) {
@@ -582,13 +594,14 @@ public class BookingService {
         bookingResponse.setId(booking.getBookingId());
         bookingResponse.setDate(booking.getBookingDay());
         bookingResponse.setTime(booking.getSlot().getSlottime());
+        bookingResponse.setUserPhone(booking.getUser().getPhone());
         bookingResponse.setUserId(booking.getUser().getId());
         bookingResponse.setUserName(
                 booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
         bookingResponse.setServiceId(serviceId);
         bookingResponse.setTherapistName(therapist.getFullName());
 
-        if (booking.getVoucher() != null) {
+        if (booking.getVoucher().getVoucherId() != null) {
             bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
         }
 

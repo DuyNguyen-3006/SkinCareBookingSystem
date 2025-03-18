@@ -2,8 +2,6 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.dto.request.BlogUpdateRequest;
-import com.skincare_booking_system.dto.response.BlogResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +42,13 @@ public class VoucherController {
                 .result(voucherService.getVoucherByCode(voucherCode))
                 .build();
     }
+
     @GetMapping("/{id}")
     ApiResponse<VoucherResponse> getVoucherById(@PathVariable Long id) {
         return ApiResponse.<VoucherResponse>builder()
                 .result(voucherService.getVoucherById(id))
                 .build();
     }
-
 
     @GetMapping("/active")
     ApiResponse<List<VoucherResponse>> getActiveVouchers() {
@@ -86,9 +84,9 @@ public class VoucherController {
                 .result(voucherService.useVoucher(voucherCode))
                 .build();
     }
+
     @PutMapping("/update/{id}")
-    ApiResponse<VoucherResponse> updateVoucher(
-            @PathVariable Long id, @Valid @RequestBody VoucherRequest request) {
+    ApiResponse<VoucherResponse> updateVoucher(@PathVariable Long id, @Valid @RequestBody VoucherRequest request) {
         return ApiResponse.<VoucherResponse>builder()
                 .result(voucherService.updateVoucher(id, request))
                 .build();
