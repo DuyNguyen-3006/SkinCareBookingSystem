@@ -2,6 +2,7 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
+import com.skincare_booking_system.entities.Booking;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -109,4 +110,19 @@ public class StaffController {
         staffService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
     }
-}
+
+    @PostMapping("/customer")
+    public ApiResponse<StaffCreateCustomerRequest> staffCreateCustomer(@Valid @RequestBody StaffCreateCustomerRequest request) {
+        return ApiResponse.<StaffCreateCustomerRequest>builder()
+                .result(staffService.staffCreateCustomer(request))
+                .build();
+    }
+    @PostMapping("/booking")
+    public ApiResponse<Booking> createBookingByStaff(@Valid @RequestBody StaffCreateBookingRequest request) {
+        ApiResponse response = new ApiResponse<>();
+        response.setResult(staffService.createBookingByStaff(request));
+        response.setSuccess(true);
+        return response;
+    }
+    }
+

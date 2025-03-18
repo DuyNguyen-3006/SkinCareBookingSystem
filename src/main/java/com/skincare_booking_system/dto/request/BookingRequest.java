@@ -16,6 +16,6 @@ public class BookingRequest {
     long slotId;
     LocalDate bookingDate;
     Set<Long> serviceId;
-    long therapistId;
+    Long therapistId;
     Long voucherId;
 }
