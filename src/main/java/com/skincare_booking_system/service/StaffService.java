@@ -154,7 +154,7 @@ public class StaffService {
     }
 
     public  StaffCreateCustomerRequest staffCreateCustomer(StaffCreateCustomerRequest request) {
-        User user = userRepository.findByPhoneNumber(request.getPhone());
+        User user = userRepository.findUserByPhone(request.getPhone());
         if(user != null){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
@@ -170,7 +170,7 @@ public class StaffService {
     }
 
     public StaffCreateBookingRequest createBookingByStaff(StaffCreateBookingRequest request){
-        User account = userRepository.findByPhoneNumber(request.getPhoneNumber());
+        User account = userRepository.findUserByPhone(request.getPhoneNumber());
         if(account == null){
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
