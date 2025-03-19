@@ -36,6 +36,7 @@ public class ServicesService {
     public ServicesResponse createServices(
             String serviceName,
             String description,
+            String category,
             Double price,
             LocalTime duration,
             Boolean isActive,
@@ -47,6 +48,7 @@ public class ServicesService {
         Services service = Services.builder()
                 .serviceName(serviceName)
                 .description(description)
+                .category(category)
                 .price(price)
                 .duration(duration)
                 .imgUrl(imageUrl)
@@ -62,6 +64,7 @@ public class ServicesService {
         ServicesResponse response = new ServicesResponse();
         response.setServiceName(service.get().getServiceName());
         response.setDescription(service.get().getDescription());
+        response.setCategory(service.get().getCategory());
         response.setServiceId(service.get().getServiceId());
         response.setDuration(service.get().getDuration());
         response.setImgUrl(service.get().getImgUrl());
@@ -116,6 +119,7 @@ public class ServicesService {
             long serviceId,
             String serviceName,
             String description,
+            String category,
             Double price,
             LocalTime duration,
             MultipartFile imgUrl)
@@ -127,6 +131,7 @@ public class ServicesService {
         service.setServiceName(serviceName);
         service.setPrice(price);
         service.setDescription(description);
+        service.setCategory(category);
         service.setDuration(duration);
         service.setImgUrl(imageUrl);
         servicesRepository.save(service);

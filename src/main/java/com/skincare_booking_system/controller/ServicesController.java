@@ -25,13 +25,14 @@ public class ServicesController {
     ApiResponse<ServicesResponse> createRequest(
             @RequestParam("serviceName") String serviceName,
             @RequestParam("description") String description,
+            @RequestParam("category") String category,
             @RequestParam("price") Double price,
             @RequestParam("isActive") Boolean isActive,
             @RequestParam("duration") LocalTime duration,
             @RequestParam("image") MultipartFile image)
             throws IOException {
         ServicesResponse serviceResponse =
-                servicesService.createServices(serviceName, description, price, duration, isActive, image);
+                servicesService.createServices(serviceName, description, category, price, duration, isActive, image);
         return ApiResponse.<ServicesResponse>builder()
                 .success(true)
                 .message("Service created successfully")
@@ -86,12 +87,13 @@ public class ServicesController {
             @PathVariable Long serviceId,
             @RequestParam("serviceName") String serviceName,
             @RequestParam("description") String description,
+            @RequestParam("category") String category,
             @RequestParam("price") Double price,
             @RequestParam("duration") LocalTime duration,
             @RequestParam("image") MultipartFile image)
             throws IOException {
         ServicesResponse serviceResponse =
-                servicesService.updateServices(serviceId, serviceName, description, price, duration, image);
+                servicesService.updateServices(serviceId, serviceName, description, category, price, duration, image);
         return ApiResponse.<ServicesResponse>builder()
                 .success(true)
                 .message("Service updated successfully")

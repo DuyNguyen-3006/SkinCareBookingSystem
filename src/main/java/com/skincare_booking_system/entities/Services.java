@@ -24,6 +24,7 @@ public class Services {
 
     String serviceName;
     String description;
+    String category;
 
     @Column(nullable = false)
     Double price;

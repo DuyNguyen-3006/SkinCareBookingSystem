@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.StaffResponse;
+import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.service.StaffService;
 
 import lombok.RequiredArgsConstructor;
@@ -108,5 +109,21 @@ public class StaffController {
     public ApiResponse<String> resetPassword(@PathVariable long id, @RequestBody ResetPasswordRequest request) {
         staffService.resetPassword(request, id);
         return ApiResponse.<String>builder().result("Password has been reset").build();
+    }
+
+    @PostMapping("/customer")
+    public ApiResponse<StaffCreateCustomerRequest> staffCreateCustomer(
+            @Valid @RequestBody StaffCreateCustomerRequest request) {
+        return ApiResponse.<StaffCreateCustomerRequest>builder()
+                .result(staffService.staffCreateCustomer(request))
+                .build();
+    }
+
+    @PostMapping("/booking")
+    public ApiResponse<Booking> createBookingByStaff(@Valid @RequestBody StaffCreateBookingRequest request) {
+        ApiResponse response = new ApiResponse<>();
+        response.setResult(staffService.createBookingByStaff(request));
+        response.setSuccess(true);
+        return response;
     }
 }
