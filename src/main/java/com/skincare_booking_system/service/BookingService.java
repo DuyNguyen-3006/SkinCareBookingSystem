@@ -3,6 +3,7 @@ package com.skincare_booking_system.service;
 import java.sql.Date;
 import java.time.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -15,7 +16,6 @@ import com.skincare_booking_system.dto.response.*;
 import com.skincare_booking_system.entities.*;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
-import com.skincare_booking_system.mapper.BookingMapper;
 import com.skincare_booking_system.repository.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,8 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
-    private final BookingMapper bookingMapper;
+    private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
+
 
     public BookingService(
             BookingRepository bookingRepository,
@@ -55,8 +56,8 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository,
-            BookingMapper bookingMapper) {
+            PaymentRepository paymentRepository
+          ) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -72,7 +73,7 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
-        this.bookingMapper = bookingMapper;
+
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -99,8 +100,12 @@ public class BookingService {
     }
 
     public List<Slot> getListSlot(BookingSlots bookingSlots) {
+        log.info("Getting available slots for booking request: {}", bookingSlots);
         List<Slot> allSlots = slotRepository.getAllSlotActive();
         List<Slot> slotToRemove = new ArrayList<>();
+        if (bookingSlots.getTherapistId() == null) {
+            return getAvailableSlotsForAutoAssign(bookingSlots, allSlots);
+        }
         List<Shift> shifts = new ArrayList<>();
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
@@ -164,7 +169,7 @@ public class BookingService {
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
             slotToRemove.addAll(list);
 
             LocalTime minimunTimeToBooking = slot.getSlottime()
@@ -185,7 +190,8 @@ public class BookingService {
         for (Shift shift : shiftsReachedBookingLimit) {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
                     shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
-            // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện ra
+            // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện
+            // ra
             if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
                 break;
             }
@@ -195,6 +201,171 @@ public class BookingService {
         }
         allSlots.removeAll(slotToRemove);
         return allSlots;
+    }
+
+    private List<Slot> getAvailableSlotsForAutoAssign(BookingSlots bookingSlots, List<Slot> allSlots) {
+        List<Slot> availableSlots = new ArrayList<>();
+
+        // Lấy ca sáng (shift 1) và ca chiều (shift 2)
+        List<Shift> shifts = shiftRepository.findAll();
+        if (shifts.size() != 2) {
+            log.error("Expected 2 shifts but found: {}", shifts.size());
+            throw new AppException(ErrorCode.SHIFT_NOT_EXIST);
+        }
+
+        // Xử lý cho từng ca
+        for (Shift shift : shifts) {
+            // Tìm therapist tốt nhất cho ca này
+            Optional<TherapistAvailability> bestTherapist =
+                    findBestTherapistForShift(shift, bookingSlots.getDate(), bookingSlots.getServiceId());
+
+            if (bestTherapist.isPresent()) {
+                // Tạo bookingSlots mới với therapist đã chọn
+                BookingSlots therapistBookingSlots = new BookingSlots();
+                therapistBookingSlots.setDate(bookingSlots.getDate());
+                therapistBookingSlots.setServiceId(bookingSlots.getServiceId());
+                therapistBookingSlots.setTherapistId(
+                        bestTherapist.get().getTherapist().getId());
+
+                // Sử dụng logic cũ để tính slots available cho therapist này
+                List<Slot> slotsForTherapist = getAvailableSlotsForTherapist(therapistBookingSlots, allSlots);
+
+                // Lưu thông tin phân công
+                for (Slot slot : slotsForTherapist) {
+                    String key = generateSlotKey(bookingSlots.getDate(), slot.getSlotid());
+                    slotTherapistMap.put(key, bestTherapist.get().getTherapist().getId());
+                }
+
+                availableSlots.addAll(slotsForTherapist);
+            }
+        }
+
+        return availableSlots.stream()
+                .sorted(Comparator.comparing(Slot::getSlottime))
+                .collect(Collectors.toList());
+    }
+
+    private List<Slot> getAvailableSlotsForTherapist(BookingSlots bookingSlots, List<Slot> allSlots) {
+        List<Slot> slotToRemove = new ArrayList<>();
+        List<Shift> shifts = new ArrayList<>();
+
+        // Copy logic cũ từ getListSlot
+        List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
+                bookingSlots.getTherapistId(), bookingSlots.getDate());
+
+        LocalTime lastShiftEndTime = LocalTime.MIN;
+        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+                lastShiftEndTime = shift.getEndTime();
+            }
+        }
+
+        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        for (Slot slot : allSlots) {
+            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+                slotToRemove.add(slot);
+            }
+        }
+
+        // Thêm các điều kiện kiểm tra khác
+        List<Shift> shiftMissingInSpecificTherapistSchedule =
+                shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
+        LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
+
+        // Kiểm tra slot hết thời gian
+        slotToRemove.addAll(getSlotsExperiedTime(totalTimeServiceNewBooking, shiftsFromSpecificTherapistSchedule));
+
+        // Kiểm tra ca làm việc thiếu
+        if (!shiftMissingInSpecificTherapistSchedule.isEmpty()) {
+            for (Shift shift : shiftMissingInSpecificTherapistSchedule) {
+                List<Slot> slot = slotRepository.getSlotsInShift(shift.getShiftId());
+                slotToRemove.addAll(slot);
+            }
+            if (slotToRemove.size() == allSlots.size()) {
+                allSlots.removeAll(slotToRemove);
+                return allSlots;
+            }
+        }
+
+        // Kiểm tra booking hiện tại
+        List<Booking> allBookingInDay =
+                bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
+
+        // Kiểm tra thời gian hiện tại
+        for (Slot slot : allSlots) {
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
+            if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
+                if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
+                    slotToRemove.add(slot);
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        if (allBookingInDay.isEmpty()) {
+            allSlots.removeAll(slotToRemove);
+            return allSlots;
+        }
+
+        // Kiểm tra xung đột với các booking hiện có
+        for (Booking booking : allBookingInDay) {
+            LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
+            Slot slot = slotRepository.findSlotBySlotid(booking.getSlot().getSlotid());
+
+            LocalTime TimeFinishBooking = slot.getSlottime()
+                    .plusHours(totalTimeServiceForBooking.getHour())
+                    .plusMinutes(totalTimeServiceForBooking.getMinute());
+
+            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
+            slotToRemove.addAll(list);
+
+            LocalTime minimunTimeToBooking = slot.getSlottime()
+                    .minusHours(totalTimeServiceNewBooking.getHour())
+                    .minusMinutes(totalTimeServiceNewBooking.getMinute());
+
+            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
+            slotToRemove.addAll(list1);
+            slotToRemove.add(slot);
+
+            List<Shift> bookingBelongToShifts =
+                    shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
+            shifts.addAll(bookingBelongToShifts);
+        }
+
+        // Kiểm tra giới hạn booking trong ca
+        List<Shift> shiftsReachedBookingLimit = shiftReachedBookingLimit(shifts);
+        for (Shift shift : shiftsReachedBookingLimit) {
+            int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
+                    shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
+            if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
+                break;
+            }
+            List<Slot> slots = slotRepository.getSlotsInShift(shift.getShiftId());
+            slotToRemove.addAll(slots);
+        }
+
+        List<Slot> availableSlots = new ArrayList<>(allSlots);
+        availableSlots.removeAll(slotToRemove);
+        return availableSlots;
+    }
+
+    private Optional<TherapistAvailability> findBestTherapistForShift(
+            Shift shift, LocalDate date, Set<Long> serviceIds) {
+
+        List<Therapist> therapists = therapistRepository.getTherapistForBooking(date, shift.getShiftId());
+
+        return therapists.stream()
+                .map(therapist -> new TherapistAvailability(
+                        therapist,
+                        calculateAvailableSlotCount(therapist, shift, date),
+                        therapistService.calculateAverageFeedback(
+                                therapist.getId(), String.format("%d-%02d", date.getYear(), date.getMonthValue()))))
+                .filter(ta -> ta.getAvailableSlots() > 0)
+                .max(Comparator.comparingInt(TherapistAvailability::getAvailableSlots)
+                        .thenComparingDouble(TherapistAvailability::getRating));
     }
 
     public List<Slot> getSlotsUpdateByCustomer(BookingSlots bookingSlots, long bookingId) {
@@ -387,7 +558,22 @@ public class BookingService {
         return therapistsForBooking;
     }
 
+
     public BookingRequest createNewBooking(BookingRequest request) {
+
+        // Nếu không có therapistId, lấy từ slotTherapistMap
+        if (request.getTherapistId() == null) {
+            String key = generateSlotKey(request.getBookingDate(), request.getSlotId());
+            Long therapistId = slotTherapistMap.get(key);
+            if (therapistId == null) {
+                log.error(
+                        "No therapist assigned for slot {} on date {}", request.getSlotId(), request.getBookingDate());
+                throw new AppException(ErrorCode.THERAPIST_NOT_FOUND);
+            }
+            request.setTherapistId(therapistId);
+            log.info("Auto-assigned therapist {} for booking", therapistId);
+        }
+
         User user = userRepository.findUserById(request.getUserId());
         Set<Services> services = new HashSet<>();
         for (Long id : request.getServiceId()) {
@@ -411,9 +597,9 @@ public class BookingService {
             throw new AppException(ErrorCode.SLOT_NOT_VALID);
         }
         Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
-        //        if(voucher.getQuantity()==0){
-        //            voucher = null;
-        //        }
+        // if(voucher.getQuantity()==0){
+        // voucher = null;
+        // }
         if (voucher != null) {
             voucherService.useVoucher(voucher.getVoucherCode());
         }
@@ -451,6 +637,7 @@ public class BookingService {
 
         return request;
     }
+
 
     public BookingRequest updateBooking(long bookingId, BookingRequest request) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
@@ -1034,6 +1221,23 @@ public class BookingService {
             return "false";
         }
         return "true";
+    }
+
+    private int calculateAvailableSlotCount(Therapist therapist, Shift shift, LocalDate date) {
+        List<Booking> existingBookings = bookingRepository.getBookingsByTherapistInDay(date, therapist.getId());
+        List<Slot> slotsInShift = slotRepository.getSlotsInShift(shift.getShiftId());
+
+        Set<Long> bookedSlotIds = existingBookings.stream()
+                .map(booking -> booking.getSlot().getSlotid())
+                .collect(Collectors.toSet());
+
+        return (int) slotsInShift.stream()
+                .filter(slot -> !bookedSlotIds.contains(slot.getSlotid()))
+                .count();
+    }
+
+    private String generateSlotKey(LocalDate date, Long slotId) {
+        return date.toString() + "_" + slotId;
     }
 
     public Long countAllBookingsCompleted(String yearAndMonth) {
