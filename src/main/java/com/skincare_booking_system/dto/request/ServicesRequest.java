@@ -25,6 +25,8 @@ public class ServicesRequest {
     @Size(min = 3, max = 150, message = "DESCRIPTION_REQUIRED")
     String description;
 
+    String category;
+
     @Min(value = 0, message = "PRICE_INVALID")
     Double price;
 

@@ -40,7 +40,6 @@ public class BookingService {
     private final PaymentRepository paymentRepository;
     private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
 
-
     public BookingService(
             BookingRepository bookingRepository,
             ServicesRepository servicesRepository,
@@ -56,8 +55,7 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository
-          ) {
+            PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -73,7 +71,6 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
-
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -558,7 +555,6 @@ public class BookingService {
         return therapistsForBooking;
     }
 
-
     public BookingRequest createNewBooking(BookingRequest request) {
 
         // Nếu không có therapistId, lấy từ slotTherapistMap
@@ -637,7 +633,6 @@ public class BookingService {
 
         return request;
     }
-
 
     public BookingRequest updateBooking(long bookingId, BookingRequest request) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
@@ -755,16 +750,22 @@ public class BookingService {
                         .userId(booking.getUser().getId())
                         .userName(booking.getUser().getUsername())
                         .userPhone(booking.getUser().getPhone())
-                        .therapistName(booking.getTherapist().getFullName() != null ? booking.getTherapist().getFullName() : "Not Assigned")
+                        .therapistName(
+                                booking.getTherapist().getFullName() != null
+                                        ? booking.getTherapist().getFullName()
+                                        : "Not Assigned")
                         .date(booking.getBookingDay())
                         .time(booking.getSlot().getSlottime())
-                        .voucherCode(booking.getVoucher().getVoucherCode() != null ? booking.getVoucher().getVoucherCode() : null)
+                        .voucherCode(
+                                booking.getVoucher().getVoucherCode() != null
+                                        ? booking.getVoucher().getVoucherCode()
+                                        : null)
                         .serviceId(booking.getServices().stream()
                                 .map(Services::getServiceId)
                                 .collect(Collectors.toSet()))
                         .status(booking.getStatus())
-                        .build()
-                ).collect(Collectors.toList());
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public BookingResponse getBookingById(long bookingId) {

@@ -14,6 +14,7 @@ public class ServicesResponse {
     Long serviceId;
     String serviceName;
     String description;
+    String category;
     Double price;
     Boolean isActive;
     LocalTime duration;

@@ -2,7 +2,6 @@ package com.skincare_booking_system.controller;
 
 import java.util.List;
 
-import com.skincare_booking_system.entities.Booking;
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.StaffResponse;
+import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.service.StaffService;
 
 import lombok.RequiredArgsConstructor;
@@ -112,11 +112,13 @@ public class StaffController {
     }
 
     @PostMapping("/customer")
-    public ApiResponse<StaffCreateCustomerRequest> staffCreateCustomer(@Valid @RequestBody StaffCreateCustomerRequest request) {
+    public ApiResponse<StaffCreateCustomerRequest> staffCreateCustomer(
+            @Valid @RequestBody StaffCreateCustomerRequest request) {
         return ApiResponse.<StaffCreateCustomerRequest>builder()
                 .result(staffService.staffCreateCustomer(request))
                 .build();
     }
+
     @PostMapping("/booking")
     public ApiResponse<Booking> createBookingByStaff(@Valid @RequestBody StaffCreateBookingRequest request) {
         ApiResponse response = new ApiResponse<>();
@@ -124,5 +126,4 @@ public class StaffController {
         response.setSuccess(true);
         return response;
     }
-    }
-
+}

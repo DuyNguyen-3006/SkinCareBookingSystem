@@ -1,6 +1,7 @@
 package com.skincare_booking_system.dto.request;
 
 import jakarta.validation.constraints.Pattern;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 public class StaffCreateCustomerRequest {
     String firstName;
     String lastName;
-    @Pattern(regexp = "(84|0[35789])\\d{8}\\b",message = "INVALID_PHONE")
+
+    @Pattern(regexp = "(84|0[35789])\\d{8}\\b", message = "INVALID_PHONE")
     String phone;
 }

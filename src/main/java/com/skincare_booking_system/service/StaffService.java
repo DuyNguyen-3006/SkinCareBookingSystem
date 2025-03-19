@@ -4,9 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.skincare_booking_system.constant.BookingStatus;
-import com.skincare_booking_system.entities.*;
-import com.skincare_booking_system.repository.*;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.Authentication;
@@ -15,12 +12,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.skincare_booking_system.constant.BookingStatus;
 import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.*;
 import com.skincare_booking_system.dto.response.StaffResponse;
+import com.skincare_booking_system.entities.*;
 import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.mapper.StaffMapper;
+import com.skincare_booking_system.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -153,9 +153,9 @@ public class StaffService {
         staffRepository.save(staff);
     }
 
-    public  StaffCreateCustomerRequest staffCreateCustomer(StaffCreateCustomerRequest request) {
+    public StaffCreateCustomerRequest staffCreateCustomer(StaffCreateCustomerRequest request) {
         User user = userRepository.findUserByPhone(request.getPhone());
-        if(user != null){
+        if (user != null) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User newAccount = new User();
@@ -169,22 +169,23 @@ public class StaffService {
         return request;
     }
 
-    public StaffCreateBookingRequest createBookingByStaff(StaffCreateBookingRequest request){
+    public StaffCreateBookingRequest createBookingByStaff(StaffCreateBookingRequest request) {
         User account = userRepository.findUserByPhone(request.getPhoneNumber());
-        if(account == null){
+        if (account == null) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
         Set<Services> serviceSet = new HashSet<>();
-        for(Long id: request.getServiceId()){
+        for (Long id : request.getServiceId()) {
             Services service = servicesRepository.getServiceById(id);
             serviceSet.add(service);
         }
         Slot slot = slotRepository.findSlotBySlotid(request.getSlotId());
-        if(slot == null){
+        if (slot == null) {
             throw new AppException(ErrorCode.SLOT_NOT_FOUND);
         }
-        TherapistSchedule therapistSchedule = therapistSchedulerepository.getTherapistScheduleId(request.getTherapistId(), request.getBookingDate());
-        if(therapistSchedule == null){
+        TherapistSchedule therapistSchedule =
+                therapistSchedulerepository.getTherapistScheduleId(request.getTherapistId(), request.getBookingDate());
+        if (therapistSchedule == null) {
             throw new AppException(ErrorCode.THERAPIST_UNAVAILABLE);
         }
         Booking booking = new Booking();
@@ -194,10 +195,11 @@ public class StaffService {
         booking.setUser(account);
         booking.setSlot(slot);
         booking.setTherapistSchedule(therapistSchedule);
-        Booking newBooking =  bookingRepository.save(booking);
-        for(Services service : serviceSet){
-            bookingRepository.updateBookingDetail(service.getPrice(),newBooking.getBookingId(),service.getServiceId());
+        Booking newBooking = bookingRepository.save(booking);
+        for (Services service : serviceSet) {
+            bookingRepository.updateBookingDetail(
+                    service.getPrice(), newBooking.getBookingId(), service.getServiceId());
         }
         return request;
     }
-    }
+}
