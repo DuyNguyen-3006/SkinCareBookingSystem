@@ -23,7 +23,7 @@ public class BookingResponse {
     LocalDate date;
     LocalTime time;
 
-    String voucherCode;
+    Long voucherId;
 
     Set<Long> serviceId;
 

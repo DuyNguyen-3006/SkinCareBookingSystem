@@ -758,9 +758,9 @@ public class BookingService {
                                         : "Not Assigned")
                         .date(booking.getBookingDay())
                         .time(booking.getSlot().getSlottime())
-                        .voucherCode(
-                                booking.getVoucher().getVoucherCode() != null
-                                        ? booking.getVoucher().getVoucherCode()
+                        .voucherId(
+                                booking.getVoucher().getVoucherId() != null
+                                        ? booking.getVoucher().getVoucherId()
                                         : null)
                         .serviceId(booking.getServices().stream()
                                 .map(Services::getServiceId)
@@ -796,7 +796,7 @@ public class BookingService {
         bookingResponse.setTherapistName(therapist.getFullName());
 
         if (booking.getVoucher().getVoucherId() != null) {
-            bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
+            bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
         }
 
         return bookingResponse;
