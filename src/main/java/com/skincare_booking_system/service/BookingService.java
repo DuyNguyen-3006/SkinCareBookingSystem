@@ -743,7 +743,9 @@ public class BookingService {
         return "Booking deleted";
     }
 
-    public List<BookingResponse> getAllBookings() {
+    public List<BookingResponse> getAllBookings() throws Exception {
+        log.info("Start getAllBookings");
+        try{
         return bookingRepository.findAll().stream()
                 .map(booking -> BookingResponse.builder()
                         .id(booking.getBookingId())
@@ -765,7 +767,10 @@ public class BookingService {
                                 .collect(Collectors.toSet()))
                         .status(booking.getStatus())
                         .build())
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());}
+        catch (Exception e) {
+            throw new Exception("error at get all booking " + e.getMessage());
+        }
     }
 
     public BookingResponse getBookingById(long bookingId) {
