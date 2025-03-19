@@ -759,9 +759,12 @@ public class BookingService {
                         .date(booking.getBookingDay())
                         .time(booking.getSlot().getSlottime())
                         .voucherId(
-                                booking.getVoucher().getVoucherId() != null
-                                        ? booking.getVoucher().getVoucherId()
+                                booking.getVoucher() != null
+                                ? (booking.getVoucher().getVoucherId() != null
+                                        ?booking.getVoucher().getVoucherId()
                                         : null)
+                                        : null
+                               )
                         .serviceId(booking.getServices().stream()
                                 .map(Services::getServiceId)
                                 .collect(Collectors.toSet()))
