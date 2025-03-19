@@ -70,18 +70,23 @@ public class BookingController {
     }
 
     @GetMapping("/getallBooking")
-    public ApiResponse<List<BookingResponse>> getAllBooking() {
+    public ApiResponse<List<BookingResponse>> getAllBooking() throws Exception {
+        try{
         return ApiResponse.<List<BookingResponse>>builder()
                 .result(bookingService.getAllBookings())
-                .build();
+                .build();}
+        catch(Exception e){
+            return ApiResponse.<List<BookingResponse>>builder()
+                    .message(e.getMessage())
+                    .build();
+        }
     }
 
     @PutMapping("/update/{bookingId}")
-    public ApiResponse<Booking> updateBooking(@PathVariable long bookingId, @RequestBody BookingRequest request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(bookingService.updateBooking(bookingId, request));
-        apiResponse.setSuccess(true);
-        return apiResponse;
+    public ApiResponse<BookingRequest> updateBooking(@PathVariable long bookingId, @RequestBody BookingRequest request) {
+        return ApiResponse.<BookingRequest>builder()
+                .result(bookingService.updateBooking(bookingId, request))
+                .build();
     }
 
     @DeleteMapping("/delete/{bookingId}")
