@@ -231,7 +231,7 @@ public class TherapistService {
             bookingResponse.setUserName(
                     booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
             if (booking.getVoucher() != null) {
-                bookingResponse.setVoucherCode(booking.getVoucher().getVoucherCode());
+                bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
             }
             responses.add(bookingResponse);
         }
