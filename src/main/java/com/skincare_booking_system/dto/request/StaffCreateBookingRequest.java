@@ -18,6 +18,6 @@ public class StaffCreateBookingRequest {
     long slotId;
     LocalDate bookingDate;
     Set<Long> serviceId;
-    long therapistId;
+    Long therapistId;
     long voucherId;
 }

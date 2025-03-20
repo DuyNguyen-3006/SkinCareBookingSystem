@@ -195,6 +195,7 @@ public class StaffService {
         booking.setUser(account);
         booking.setSlot(slot);
         booking.setTherapistSchedule(therapistSchedule);
+        booking.setTherapist(therapistSchedule.getTherapist());
         Booking newBooking = bookingRepository.save(booking);
         for (Services service : serviceSet) {
             bookingRepository.updateBookingDetail(
