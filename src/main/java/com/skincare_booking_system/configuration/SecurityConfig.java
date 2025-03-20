@@ -33,7 +33,7 @@ public class SecurityConfig {
         "/forgot-password/**",
         "/feedback/**",
         "/booking/checkout",
-        "/authentication/log-in-google",
+        "/services",
     };
 
     @Autowired
@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest()
                         .authenticated())
                 //                .oauth2Login(oauth2 -> oauth2
