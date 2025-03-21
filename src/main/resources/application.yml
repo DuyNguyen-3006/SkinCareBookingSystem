@@ -11,11 +11,6 @@ spring:
 #    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://5vpsce.stackhero-network.com:7666/dd62um1g91bup1w
-    username: root
-    password: jAEH7iIUpNvI7QBi8i4fIajFfymlBATk
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
@@ -41,6 +36,11 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+  fcm:
+    credentials:
+      file:
+        path: bambospa-c430d-firebase-adminsdk-fbsvc-b079851dce.json
+
 
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"

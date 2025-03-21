@@ -24,12 +24,12 @@ public class AuthenticationController {
         return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
-    //    @PostMapping("/login-google")
-    //    public ApiResponse<AuthenticationResponse> loginWithGoogle(@RequestBody LoginGG request) {
-    //        return ApiResponse.<AuthenticationResponse>builder()
-    //                .result(authenticationService.loginGoogle(request.getToken()))
-    //                .build();
-    //    }
+    @PostMapping("/login-gg")
+    private ApiResponse<AuthenticationResponse> checkLoginGoogle(@RequestBody LoginGG loginGG){
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.loginGoogle(loginGG.getToken()))
+                .build();
+    }
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
