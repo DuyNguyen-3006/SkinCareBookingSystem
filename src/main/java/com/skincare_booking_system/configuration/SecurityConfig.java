@@ -28,13 +28,14 @@ public class SecurityConfig {
             "/users",
             "/authentication/log-in",
             "/authentication/introspect",
+            "/authentication/login-gg",
             "/authentication/logout",
             "/authentication/refresh",
             "/forgot-password/**",
             "/feedback/**",
             "/booking/checkout",
             "/services/active",
-            "/therapists/activeTherapists"
+            "/therapists/activeTherapists",
     };
 
     @Autowired
