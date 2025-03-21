@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
 
-#    url: jdbc:mysql://localhost:3306/SkincareBookingTest
+#    url: jdbc:mysql://localhost:3306/SkincareBookingTest1
 #    username: root
 #    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
@@ -41,6 +41,11 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
+  fcm:
+    credentials:
+      file:
+        path: bambospa-c430d-firebase-adminsdk-fbsvc-b079851dce.json
+
 
 jwt:
   signerKey: "WpNCZp8lxQ3kmkhy66PYLlrZXjPWUNWkkL1kNUktafsDr53o2dmGb4wB1AX6Tz2S"
