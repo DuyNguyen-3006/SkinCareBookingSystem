@@ -6,10 +6,15 @@ server:
 spring:
   datasource:
 
-#    url: jdbc:mysql://localhost:3306/SkincareBookingTest
+#    url: jdbc:mysql://localhost:3306/SkincareBookingTest1
 #    username: root
 #    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    url: jdbc:mysql://5vpsce.stackhero-network.com:7666/dd62um1g91bup1w
+    username: root
+    password: jAEH7iIUpNvI7QBi8i4fIajFfymlBATk
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
