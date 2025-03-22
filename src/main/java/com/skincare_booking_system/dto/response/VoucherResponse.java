@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VoucherResponse {
 
-    long id;
+    Long id;
     String voucherName;
     String voucherCode;
     Double percentDiscount;
