@@ -17,9 +17,7 @@ import lombok.experimental.FieldDefaults;
 public class BookingResponse {
     long id;
     long userId;
-    String userName;
-    String userPhone;
-    String therapistName;
+    long therapistId;
     LocalDate date;
     LocalTime time;
 
