@@ -750,12 +750,7 @@ public class BookingService {
                 .map(booking -> BookingResponse.builder()
                         .id(booking.getBookingId())
                         .userId(booking.getUser().getId())
-                        .userName(booking.getUser().getUsername())
-                        .userPhone(booking.getUser().getPhone())
-                        .therapistName(
-                                booking.getTherapist().getFullName() != null
-                                        ? booking.getTherapist().getFullName()
-                                        : "Not Assigned")
+                        .therapistId(booking.getTherapist().getId())
                         .date(booking.getBookingDay())
                         .time(booking.getSlot().getSlottime())
                         .voucherId(
@@ -791,13 +786,9 @@ public class BookingService {
         bookingResponse.setId(booking.getBookingId());
         bookingResponse.setDate(booking.getBookingDay());
         bookingResponse.setTime(booking.getSlot().getSlottime());
-        bookingResponse.setUserPhone(booking.getUser().getPhone());
         bookingResponse.setUserId(booking.getUser().getId());
-        bookingResponse.setUserName(
-                booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
+        bookingResponse.setTherapistId(therapist.getId());
         bookingResponse.setServiceId(serviceId);
-        bookingResponse.setTherapistName(therapist.getFullName());
-
         if (booking.getVoucher().getVoucherId() != null) {
             bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
         }

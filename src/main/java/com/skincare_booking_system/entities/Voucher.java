@@ -19,7 +19,7 @@ public class Voucher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long voucherId;
+    Long voucherId;
 
     @Column(unique = true)
     String voucherName;
