@@ -20,7 +20,6 @@ import com.skincare_booking_system.exception.AppException;
 import com.skincare_booking_system.exception.ErrorCode;
 import com.skincare_booking_system.repository.BookingRepository;
 import com.skincare_booking_system.repository.PaymentRepository;
-import com.skincare_booking_system.repository.UserRepository;
 
 @Service
 public class PaymentService {
@@ -78,7 +77,7 @@ public class PaymentService {
         String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        cld.add(Calendar.MINUTE, 15);
+        cld.add(Calendar.HOUR, 48);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
