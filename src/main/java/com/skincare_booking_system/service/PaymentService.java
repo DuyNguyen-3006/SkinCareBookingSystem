@@ -28,13 +28,11 @@ public class PaymentService {
 
     private final BookingRepository bookingRepository;
     private final PaymentRepository paymentRepository;
-    private final UserRepository userRepository;
 
     public PaymentService(
-            BookingRepository bookingRepository, PaymentRepository paymentRepository, UserRepository userRepository) {
+            BookingRepository bookingRepository, PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.paymentRepository = paymentRepository;
-        this.userRepository = userRepository;
     }
 
     public String generatePaymentUrl(Long bookingId, HttpServletRequest req) throws UnsupportedEncodingException {

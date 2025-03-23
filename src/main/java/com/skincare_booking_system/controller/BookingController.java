@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import com.skincare_booking_system.dto.request.*;
@@ -22,13 +23,11 @@ import com.skincare_booking_system.service.TherapistService;
 public class BookingController {
     private final TherapistService therapistService;
     private final BookingService bookingService;
-    private final ServicesService servicesService;
 
     public BookingController(
-            TherapistService therapistService, BookingService bookingService, ServicesService servicesService) {
+            TherapistService therapistService, BookingService bookingService) {
         this.therapistService = therapistService;
         this.bookingService = bookingService;
-        this.servicesService = servicesService;
     }
 
     @PostMapping("/therapists")
@@ -178,6 +177,13 @@ public class BookingController {
     public ApiResponse<Long> countAllBookingsComplete(@PathVariable String yearAndMonth) {
         return ApiResponse.<Long>builder()
                 .result(bookingService.countAllBookingsCompleted(yearAndMonth))
+                .build();
+    }
+
+    @PostMapping("/getBooking/{date}")
+    public ApiResponse<List<BookingResponse>> getBookingByDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ApiResponse.<List<BookingResponse>> builder()
+                .result(bookingService.getAllBookingsByDate(date))
                 .build();
     }
 }
