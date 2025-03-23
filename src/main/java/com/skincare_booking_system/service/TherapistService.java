@@ -221,15 +221,12 @@ public class TherapistService {
 
             BookingResponse bookingResponse = new BookingResponse();
             bookingResponse.setId(booking.getBookingId());
-            bookingResponse.setTherapistName(
-                    booking.getTherapistSchedule().getTherapist().getFullName());
+            bookingResponse.setTherapistId(therapistId);
             bookingResponse.setTime(booking.getSlot().getSlottime());
             bookingResponse.setDate(booking.getBookingDay());
             bookingResponse.setServiceId(serviceId);
             bookingResponse.setStatus(booking.getStatus());
             bookingResponse.setUserId(booking.getUser().getId());
-            bookingResponse.setUserName(
-                    booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
             if (booking.getVoucher() != null) {
                 bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
             }

@@ -1207,6 +1207,30 @@ public class BookingService {
         return responses;
     }
 
+    public List<BookingResponse> getAllBookingsByDate(LocalDate date) {
+        List<Booking> bookings = bookingRepository.findAllByBookingDay(date);
+
+        return bookings.stream().map(booking -> {
+            Set<Long> serviceId = servicesRepository.getServiceIdByBooking(booking.getBookingId());
+
+            BookingResponse bookingResponse = new BookingResponse();
+            bookingResponse.setId(booking.getBookingId());
+            bookingResponse.setUserId(booking.getUser().getId());
+            bookingResponse.setTherapistId(booking.getTherapistSchedule().getTherapist().getId());
+            bookingResponse.setTime(booking.getSlot().getSlottime());
+            bookingResponse.setDate(booking.getBookingDay());
+            bookingResponse.setServiceId(serviceId);
+            bookingResponse.setStatus(booking.getStatus());
+
+            if (booking.getVoucher() != null) {
+                bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
+            }
+
+            return bookingResponse;
+        }).collect(Collectors.toList());
+    }
+
+
     public Long countAllBookingsInMonth(int month) {
         return bookingRepository.countAllBookingsInMonth(month);
     }
