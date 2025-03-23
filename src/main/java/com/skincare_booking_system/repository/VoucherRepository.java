@@ -1,5 +1,6 @@
 package com.skincare_booking_system.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,5 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     List<Voucher> findByIsActiveFalse();
 
     Voucher findVoucherByVoucherId(Long id);
+    List<Voucher> findByIsActiveTrueAndQuantityGreaterThanAndExpiryDateAfter(int quantity, LocalDate expiryDate);
 }
