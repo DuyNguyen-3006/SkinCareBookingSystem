@@ -72,8 +72,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with phone number " + phoneNumber + " not found")));
     }
 
-    public UserResponse updateUser(@Valid @RequestBody UserUpdateRequest request, long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse updateUser(@Valid @RequestBody UserUpdateRequest request) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.toUpdateUser(user, request);
 
         return userMapper.toUserResponse(userRepository.save(user));
