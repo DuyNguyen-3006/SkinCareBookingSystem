@@ -164,6 +164,9 @@ public class StaffService {
         newAccount.setLastName(request.getLastName());
         newAccount.setUsername(request.getPhone());
         newAccount.setPassword(passwordEncoder.encode(request.getPhone()));
+        newAccount.setStatus(true);
+        newAccount.setBirthDate(request.getBirthDate());
+        newAccount.setGender(request.getGender());
         newAccount.setRole(Roles.CUSTOMER);
         userRepository.save(newAccount);
         return request;
