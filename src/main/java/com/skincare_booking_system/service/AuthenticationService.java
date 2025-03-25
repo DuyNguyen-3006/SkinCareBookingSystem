@@ -141,7 +141,6 @@ public class AuthenticationService {
         return null;
     }
 
-
     private String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512); // create for set in JWSObject
 
