@@ -144,7 +144,7 @@ public class EmailService {
             LocalTime newTime = booking.getSlot().getSlottime().minusMinutes(15);
             if ((newTime.getHour() == now.getHour()) && (newTime.getMinute() == now.getMinute())) {
                 ReminderBooking reminderBooking = ReminderBooking.builder()
-                        .to(booking.getUser().getEmail())
+                        .to(booking.getUser().getFirstName() + " " + booking.getUser().getLastName())
                         .subject("Reminder Your Booking")
                         .therapistName(
                                 booking.getTherapistSchedule().getTherapist().getFullName())

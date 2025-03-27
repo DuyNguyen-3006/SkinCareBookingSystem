@@ -625,7 +625,7 @@ public class BookingService {
         CreateNewBookingSuccess success = new CreateNewBookingSuccess();
         success.setDate(booking.getBookingDay());
         success.setTime(booking.getSlot().getSlottime());
-        success.setTo(currentUser.getEmail());
+        success.setTo(currentUser.getFirstName() + " " + currentUser.getLastName());
         success.setSubject("Create booking successfully");
         success.setTherapistName(booking.getTherapistSchedule().getTherapist().getFullName());
 
@@ -718,7 +718,7 @@ public class BookingService {
             ChangeTherapist success = new ChangeTherapist();
             success.setDate(booking.getBookingDay());
             success.setTime(booking.getSlot().getSlottime());
-            success.setTo(booking.getUser().getEmail());
+            success.setTo(booking.getUser().getFirstName() + " " + booking.getUser().getLastName());
             success.setSubject("Change Therapist");
             success.setTherapistName(
                     booking.getTherapistSchedule().getTherapist().getFullName());
