@@ -60,7 +60,7 @@ public class Booking {
     @JsonIgnore
     Feedback feedback;
 
-    @OneToOne(mappedBy = "booking")
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
     @JsonIgnore
     Payment payment;
 }
