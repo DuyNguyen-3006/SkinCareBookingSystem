@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -878,7 +877,6 @@ public class BookingService {
         return "check-in success";
     }
 
-    @Transactional
     public PaymentResponse finishedService(long bookingId) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
         if (booking == null) {
@@ -900,10 +898,11 @@ public class BookingService {
         }
         Payment existingPayment = paymentRepository.findPaymentByBooking(booking);
         if (existingPayment != null) {
+            booking.setPayment(null);
+            bookingRepository.save(booking);
             // Delete the existing payment
             paymentRepository.delete(existingPayment);
         }
-
         String therapistName = booking.getTherapistSchedule().getTherapist().getFullName();
 
         Payment payment = Payment.builder()
@@ -912,7 +911,12 @@ public class BookingService {
                 .paymentStatus("Pending")
                 .booking(booking)
                 .build();
+
+
         paymentRepository.save(payment);
+
+        booking.setPayment(payment);
+        bookingRepository.save(booking);
         return new PaymentResponse(
                 booking.getBookingId(),
                 booking.getBookingDay(),
