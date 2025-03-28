@@ -18,6 +18,8 @@ public class InfoTherapistResponse {
     String phone;
     String address;
     String gender;
+    String imgUrl;
     LocalDate birthDate;
+    Boolean status;
     Integer yearExperience;
 }
