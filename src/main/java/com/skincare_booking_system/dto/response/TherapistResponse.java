@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TherapistResponse {
-    String id;
+    Long id;
     String username;
     String fullName;
     String email;
