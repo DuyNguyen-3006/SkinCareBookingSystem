@@ -71,6 +71,9 @@ public class AuthenticationService {
 
         if (userRepository.existsByUsername(username)) {
             User user = userRepository.findUserByUsername(username);
+            if(!user.getStatus()){
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), user.getPassword())) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
