@@ -37,6 +37,8 @@ public class StaffService {
     SlotRepository slotRepository;
     TherapistSchedulerepository therapistSchedulerepository;
     private final BookingRepository bookingRepository;
+    private final VoucherRepository voucherRepository;
+    private final VoucherService voucherService;
 
     public StaffResponse createStaff(StaffRequest request) {
         if (staffRepository.existsByUsername(request.getUsername())) {
@@ -191,6 +193,11 @@ public class StaffService {
         if (therapistSchedule == null) {
             throw new AppException(ErrorCode.THERAPIST_UNAVAILABLE);
         }
+
+        Voucher voucher = voucherRepository.findVoucherByVoucherId(request.getVoucherId());
+        if (voucher != null) {
+            voucherService.useVoucher(voucher.getVoucherCode());
+        }
         Booking booking = new Booking();
         booking.setServices(serviceSet);
         booking.setBookingDay(request.getBookingDate());
@@ -199,6 +206,7 @@ public class StaffService {
         booking.setSlot(slot);
         booking.setTherapistSchedule(therapistSchedule);
         booking.setTherapist(therapistSchedule.getTherapist());
+        booking.setVoucher(voucher);
         Booking newBooking = bookingRepository.save(booking);
         for (Services service : serviceSet) {
             bookingRepository.updateBookingDetail(
