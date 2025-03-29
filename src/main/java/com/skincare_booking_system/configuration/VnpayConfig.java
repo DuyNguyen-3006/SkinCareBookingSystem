@@ -16,7 +16,7 @@ public class VnpayConfig {
     public static String vnp_ReturnUrl = "http://localhost:3000/checkout";
     public static String vnp_TmnCode = "K8ML0YE6";
     public static String secretKey = "RLIR7U7TDFH29OK0W1JZ3KORHZGNZ2DM";
-    //    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
+    public static String vnp_ApiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
 
     public static String md5(String message) {
         String digest = null;
