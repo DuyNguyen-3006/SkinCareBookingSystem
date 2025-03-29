@@ -127,7 +127,10 @@ public class ServicesService {
         Services service = servicesRepository
                 .findByServiceId(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service with ID '" + serviceId + "' not found"));
-        String imageUrl = imagesService.uploadImage(imgUrl);
+        String imageUrl = service.getImgUrl(); // Giữ ảnh cũ nếu không upload mới
+        if (imgUrl != null && !imgUrl.isEmpty()) {
+            imageUrl = imagesService.uploadImage(imgUrl);
+        }
         service.setServiceName(serviceName);
         service.setPrice(price);
         service.setDescription(description);
