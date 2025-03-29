@@ -71,6 +71,9 @@ public class AuthenticationService {
 
         if (userRepository.existsByUsername(username)) {
             User user = userRepository.findUserByUsername(username);
+            if(!user.getStatus()){
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), user.getPassword())) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
@@ -84,6 +87,9 @@ public class AuthenticationService {
 
         if (therapistRepository.existsByUsername(username)) {
             Therapist therapist = therapistRepository.findTherapistByUsername(username);
+            if(!therapist.getStatus()) {
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), therapist.getPassword())) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
@@ -97,6 +103,9 @@ public class AuthenticationService {
 
         if (staffRepository.existsByUsername(username)) {
             Staff staff = staffRepository.findStaffByUsername(username);
+             if(!staff.getStatus()) {
+                 throw new AppException(ErrorCode.LOGIN_FAILED);
+             }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), staff.getPassword())) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
