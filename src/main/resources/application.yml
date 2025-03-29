@@ -47,7 +47,7 @@ spring:
   fcm:
     credentials:
       file:
-        path: bambospa-c430d-firebase-adminsdk-fbsvc-b079851dce.json
+        path: classpath:bambospa-c430d-firebase-adminsdk-fbsvc-b079851dce.json
 
 
 jwt:
