@@ -745,28 +745,27 @@ public class BookingService {
 
     public List<BookingResponse> getAllBookings() throws Exception {
         log.info("Start getAllBookings");
-        try{
-        return bookingRepository.findAll().stream()
-                .map(booking -> BookingResponse.builder()
-                        .id(booking.getBookingId())
-                        .userId(booking.getUser().getId())
-                        .therapistId(booking.getTherapist().getId())
-                        .date(booking.getBookingDay())
-                        .time(booking.getSlot().getSlottime())
-                        .voucherId(
-                                booking.getVoucher() != null
-                                ? (booking.getVoucher().getVoucherId() != null
-                                        ?booking.getVoucher().getVoucherId()
-                                        : null)
-                                        : null
-                               )
-                        .serviceId(booking.getServices().stream()
-                                .map(Services::getServiceId)
-                                .collect(Collectors.toSet()))
-                        .status(booking.getStatus())
-                        .build())
-                .collect(Collectors.toList());}
-        catch (Exception e) {
+        try {
+            return bookingRepository.findAll().stream()
+                    .map(booking -> BookingResponse.builder()
+                            .id(booking.getBookingId())
+                            .userId(booking.getUser().getId())
+                            .therapistId(booking.getTherapist().getId())
+                            .date(booking.getBookingDay())
+                            .time(booking.getSlot().getSlottime())
+                            .voucherId(
+                                    booking.getVoucher() != null
+                                            ? (booking.getVoucher().getVoucherId() != null
+                                                    ? booking.getVoucher().getVoucherId()
+                                                    : null)
+                                            : null)
+                            .serviceId(booking.getServices().stream()
+                                    .map(Services::getServiceId)
+                                    .collect(Collectors.toSet()))
+                            .status(booking.getStatus())
+                            .build())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
             throw new Exception("error at get all booking " + e.getMessage());
         }
     }
@@ -924,7 +923,6 @@ public class BookingService {
                 .paymentStatus("Pending")
                 .booking(booking)
                 .build();
-
 
         paymentRepository.save(payment);
 
@@ -1230,26 +1228,28 @@ public class BookingService {
     public List<BookingResponse> getAllBookingsByDate(LocalDate date) {
         List<Booking> bookings = bookingRepository.findAllByBookingDay(date);
 
-        return bookings.stream().map(booking -> {
-            Set<Long> serviceId = servicesRepository.getServiceIdByBooking(booking.getBookingId());
+        return bookings.stream()
+                .map(booking -> {
+                    Set<Long> serviceId = servicesRepository.getServiceIdByBooking(booking.getBookingId());
 
-            BookingResponse bookingResponse = new BookingResponse();
-            bookingResponse.setId(booking.getBookingId());
-            bookingResponse.setUserId(booking.getUser().getId());
-            bookingResponse.setTherapistId(booking.getTherapistSchedule().getTherapist().getId());
-            bookingResponse.setTime(booking.getSlot().getSlottime());
-            bookingResponse.setDate(booking.getBookingDay());
-            bookingResponse.setServiceId(serviceId);
-            bookingResponse.setStatus(booking.getStatus());
+                    BookingResponse bookingResponse = new BookingResponse();
+                    bookingResponse.setId(booking.getBookingId());
+                    bookingResponse.setUserId(booking.getUser().getId());
+                    bookingResponse.setTherapistId(
+                            booking.getTherapistSchedule().getTherapist().getId());
+                    bookingResponse.setTime(booking.getSlot().getSlottime());
+                    bookingResponse.setDate(booking.getBookingDay());
+                    bookingResponse.setServiceId(serviceId);
+                    bookingResponse.setStatus(booking.getStatus());
 
-            if (booking.getVoucher() != null) {
-                bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
-            }
+                    if (booking.getVoucher() != null) {
+                        bookingResponse.setVoucherId(booking.getVoucher().getVoucherId());
+                    }
 
-            return bookingResponse;
-        }).collect(Collectors.toList());
+                    return bookingResponse;
+                })
+                .collect(Collectors.toList());
     }
-
 
     public Long countAllBookingsInMonth(int month) {
         return bookingRepository.countAllBookingsInMonth(month);

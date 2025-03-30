@@ -25,7 +25,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login-gg")
-    private ApiResponse<AuthenticationResponse> checkLoginGoogle(@RequestBody LoginGG loginGG){
+    private ApiResponse<AuthenticationResponse> checkLoginGoogle(@RequestBody LoginGG loginGG) {
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.loginGoogle(loginGG.getToken()))
                 .build();

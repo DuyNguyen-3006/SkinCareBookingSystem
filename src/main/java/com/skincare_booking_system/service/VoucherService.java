@@ -92,15 +92,14 @@ public class VoucherService {
     }
 
     public List<VoucherResponse> getActiveVouchers() {
-        List<Voucher> vouchers = voucherRepository.findByIsActiveTrueAndQuantityGreaterThanAndExpiryDateAfter(0, LocalDate.now());
+        List<Voucher> vouchers =
+                voucherRepository.findByIsActiveTrueAndQuantityGreaterThanAndExpiryDateAfter(0, LocalDate.now());
 
         if (vouchers.isEmpty()) {
             throw new AppException(ErrorCode.VOUCHER_NOT_FOUND);
         }
 
-        return vouchers.stream()
-                .map(voucherMapper::toVoucherResponse)
-                .toList();
+        return vouchers.stream().map(voucherMapper::toVoucherResponse).toList();
     }
 
     public List<VoucherResponse> getInactiveVouchers() {

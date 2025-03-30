@@ -28,8 +28,7 @@ public class PaymentService {
     private final BookingRepository bookingRepository;
     private final PaymentRepository paymentRepository;
 
-    public PaymentService(
-            BookingRepository bookingRepository, PaymentRepository paymentRepository) {
+    public PaymentService(BookingRepository bookingRepository, PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.paymentRepository = paymentRepository;
     }

@@ -1,13 +1,14 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.QuestionRequest;
-import com.skincare_booking_system.dto.response.QuestionResponse;
-import com.skincare_booking_system.service.QuestionService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.QuestionRequest;
+import com.skincare_booking_system.dto.response.QuestionResponse;
+import com.skincare_booking_system.service.QuestionService;
 
 @RestController
 @RequestMapping("/questions")
@@ -32,7 +33,8 @@ public class QuestionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<QuestionResponse> updateQuestion(@PathVariable Long id, @RequestBody QuestionRequest questionRequest) {
+    public ResponseEntity<QuestionResponse> updateQuestion(
+            @PathVariable Long id, @RequestBody QuestionRequest questionRequest) {
         return ResponseEntity.ok(questionService.updateQuestion(id, questionRequest));
     }
 

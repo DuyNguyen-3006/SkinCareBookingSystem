@@ -194,5 +194,4 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "SELECT * FROM booking WHERE booking_day = ?1 ORDER BY status DESC, slot_id ASC", nativeQuery = true)
     List<Booking> findAllByBookingDay(LocalDate date);
-
 }

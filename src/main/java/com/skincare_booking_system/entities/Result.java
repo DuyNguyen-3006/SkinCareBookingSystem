@@ -1,11 +1,12 @@
 package com.skincare_booking_system.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "results")

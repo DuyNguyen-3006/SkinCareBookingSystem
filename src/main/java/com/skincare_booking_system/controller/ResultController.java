@@ -1,14 +1,15 @@
 package com.skincare_booking_system.controller;
 
-import com.skincare_booking_system.dto.request.AnswerSelectionRequest;
-import com.skincare_booking_system.dto.request.ResultRequest;
-import com.skincare_booking_system.dto.response.ResultResponse;
-import com.skincare_booking_system.service.ResultService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.skincare_booking_system.dto.request.AnswerSelectionRequest;
+import com.skincare_booking_system.dto.request.ResultRequest;
+import com.skincare_booking_system.dto.response.ResultResponse;
+import com.skincare_booking_system.service.ResultService;
 
 @RestController
 @RequestMapping("/results")
@@ -38,7 +39,8 @@ public class ResultController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResultResponse> updateResult(@PathVariable Long id, @RequestBody ResultRequest resultRequest) {
+    public ResponseEntity<ResultResponse> updateResult(
+            @PathVariable Long id, @RequestBody ResultRequest resultRequest) {
         return ResponseEntity.ok(resultService.updateResult(id, resultRequest));
     }
 
@@ -67,4 +69,4 @@ public class ResultController {
             return ResponseEntity.notFound().build();
         }
     }
-} 
+}

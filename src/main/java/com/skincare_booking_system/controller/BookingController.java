@@ -15,7 +15,6 @@ import com.skincare_booking_system.dto.response.TotalMoneyByBookingDay;
 import com.skincare_booking_system.entities.Booking;
 import com.skincare_booking_system.entities.Slot;
 import com.skincare_booking_system.service.BookingService;
-import com.skincare_booking_system.service.ServicesService;
 import com.skincare_booking_system.service.TherapistService;
 
 @RestController
@@ -24,8 +23,7 @@ public class BookingController {
     private final TherapistService therapistService;
     private final BookingService bookingService;
 
-    public BookingController(
-            TherapistService therapistService, BookingService bookingService) {
+    public BookingController(TherapistService therapistService, BookingService bookingService) {
         this.therapistService = therapistService;
         this.bookingService = bookingService;
     }
@@ -70,11 +68,11 @@ public class BookingController {
 
     @GetMapping("/getallBooking")
     public ApiResponse<List<BookingResponse>> getAllBooking() throws Exception {
-        try{
-        return ApiResponse.<List<BookingResponse>>builder()
-                .result(bookingService.getAllBookings())
-                .build();}
-        catch(Exception e){
+        try {
+            return ApiResponse.<List<BookingResponse>>builder()
+                    .result(bookingService.getAllBookings())
+                    .build();
+        } catch (Exception e) {
             return ApiResponse.<List<BookingResponse>>builder()
                     .message(e.getMessage())
                     .build();
@@ -82,7 +80,8 @@ public class BookingController {
     }
 
     @PutMapping("/update/{bookingId}")
-    public ApiResponse<BookingRequest> updateBooking(@PathVariable long bookingId, @RequestBody BookingRequest request) {
+    public ApiResponse<BookingRequest> updateBooking(
+            @PathVariable long bookingId, @RequestBody BookingRequest request) {
         return ApiResponse.<BookingRequest>builder()
                 .result(bookingService.updateBooking(bookingId, request))
                 .build();
@@ -189,8 +188,9 @@ public class BookingController {
     }
 
     @PostMapping("/getBooking/{date}")
-    public ApiResponse<List<BookingResponse>> getBookingByDate(@PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ApiResponse.<List<BookingResponse>> builder()
+    public ApiResponse<List<BookingResponse>> getBookingByDate(
+            @PathVariable("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ApiResponse.<List<BookingResponse>>builder()
                 .result(bookingService.getAllBookingsByDate(date))
                 .build();
     }
