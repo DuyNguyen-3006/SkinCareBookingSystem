@@ -867,6 +867,19 @@ public class BookingService {
         return getBookingResponses(status);
     }
 
+    public List<CustomerBookingResponse> getBookingByStatusCancelByCustomer(Long userId) {
+        User user = new User();
+        user.setId(userId);
+        List<Booking> status = new ArrayList<>();
+        List<Booking> bookings = bookingRepository.getBookingsByUserIdAndStatus(userId, BookingStatus.CANCELLED.name());
+        for (Booking booking : bookings) {
+            Set<Services> service = servicesRepository.getServiceForBooking(booking.getBookingId());
+            booking.setServices(service);
+            status.add(booking);
+        }
+        return getBookingResponses(status);
+    }
+
     public String checkIn(long bookingId) {
         Booking booking = bookingRepository.findBookingByBookingId(bookingId);
         if (booking == null) {
