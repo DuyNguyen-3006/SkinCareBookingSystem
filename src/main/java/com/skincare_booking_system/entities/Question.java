@@ -1,6 +1,7 @@
 package com.skincare_booking_system.entities;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -44,10 +44,11 @@ spring:
     suffix: .html
     mode: HTML
     cache: false
-  fcm:
+
+fcm:
     credentials:
       file:
-        path: bambospa-c430d-firebase-adminsdk-fbsvc-b079851dce.json
+        path: ServiceKey.json
 
 
 jwt:

@@ -6,19 +6,19 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.UUID;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseToken;
-import com.skincare_booking_system.constant.Roles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import com.skincare_booking_system.constant.Roles;
 import com.skincare_booking_system.dto.request.AuthenticationRequest;
 import com.skincare_booking_system.dto.request.IntrospectRequest;
 import com.skincare_booking_system.dto.request.LogoutRequest;
@@ -71,7 +71,7 @@ public class AuthenticationService {
 
         if (userRepository.existsByUsername(username)) {
             User user = userRepository.findUserByUsername(username);
-            if(!user.getStatus()){
+            if (!user.getStatus()) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), user.getPassword())) {
@@ -87,7 +87,7 @@ public class AuthenticationService {
 
         if (therapistRepository.existsByUsername(username)) {
             Therapist therapist = therapistRepository.findTherapistByUsername(username);
-            if(!therapist.getStatus()) {
+            if (!therapist.getStatus()) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), therapist.getPassword())) {
@@ -103,9 +103,9 @@ public class AuthenticationService {
 
         if (staffRepository.existsByUsername(username)) {
             Staff staff = staffRepository.findStaffByUsername(username);
-             if(!staff.getStatus()) {
-                 throw new AppException(ErrorCode.LOGIN_FAILED);
-             }
+            if (!staff.getStatus()) {
+                throw new AppException(ErrorCode.LOGIN_FAILED);
+            }
             if (!new BCryptPasswordEncoder(10).matches(request.getPassword(), staff.getPassword())) {
                 throw new AppException(ErrorCode.LOGIN_FAILED);
             }
@@ -134,7 +134,7 @@ public class AuthenticationService {
                 newUser.setRole(Roles.CUSTOMER);
                 user = userRepository.save(newUser);
             }
-            if(!user.getStatus()){
+            if (!user.getStatus()) {
                 throw new AppException(ErrorCode.CUSTOMER_DE_ACTIVE);
             }
             log.info("response ");
@@ -142,8 +142,7 @@ public class AuthenticationService {
             response.setToken(generateToken(user));
             response.setRole(user.getRole());
             return response;
-        } catch (FirebaseAuthException e)
-        {
+        } catch (FirebaseAuthException e) {
             log.info("FirebaseAuthException");
             e.printStackTrace();
         }
