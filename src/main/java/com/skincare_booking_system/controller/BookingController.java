@@ -120,6 +120,14 @@ public class BookingController {
         return apiResponse;
     }
 
+    @GetMapping("/customer/{userId}/cancel")
+    public ApiResponse<List<Booking>> getCancelBookings(@PathVariable Long userId) {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setResult(bookingService.getBookingByStatusCancelByCustomer(userId));
+        apiResponse.setSuccess(true);
+        return apiResponse;
+    }
+
     @PutMapping("/{bookingId}/checkin")
     public ApiResponse<String> checkIn(@PathVariable Long bookingId) {
         return ApiResponse.<String>builder()
