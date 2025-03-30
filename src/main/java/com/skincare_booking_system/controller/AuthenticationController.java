@@ -28,6 +28,7 @@ public class AuthenticationController {
     private ApiResponse<AuthenticationResponse> checkLoginGoogle(@RequestBody LoginGG loginGG) {
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(authenticationService.loginGoogle(loginGG.getToken()))
+                .success(true)
                 .build();
     }
 

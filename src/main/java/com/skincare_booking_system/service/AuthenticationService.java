@@ -132,6 +132,7 @@ public class AuthenticationService {
                 newUser.setUsername(email);
                 newUser.setFirstName(decodeToken.getName());
                 newUser.setRole(Roles.CUSTOMER);
+                newUser.setStatus(true);
                 user = userRepository.save(newUser);
             }
             if (!user.getStatus()) {
