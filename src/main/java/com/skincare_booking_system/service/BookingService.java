@@ -145,11 +145,7 @@ public class BookingService {
             if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
                 if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
-                } else {
-                    break;
                 }
-            } else {
-                break;
             }
         }
         if (allBookingInDay.isEmpty()) {
