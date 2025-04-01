@@ -2,6 +2,7 @@ package com.skincare_booking_system.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -138,7 +139,7 @@ public class EmailService {
     @Transactional
     public void sendAutomatic() {
         LocalDate date = LocalDate.now();
-        LocalTime now = LocalTime.now();
+        LocalTime now = LocalTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
         List<Booking> bookings = bookingRepository.getBookingByDateAndStatusPending(date);
 
         for (Booking booking : bookings) {
