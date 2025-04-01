@@ -25,7 +25,7 @@ spring:
       hibernate:
         format_sql: true
         jdbc:
-          time_zone: Asia/Ho_Chi_Minh
+#          time_zone: Asia/Ho_Chi_Minh
 
   mail:
     host: smtp.gmail.com

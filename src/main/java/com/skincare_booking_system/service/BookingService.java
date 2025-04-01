@@ -148,7 +148,8 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
+            //            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            LocalDateTime localDateTime = LocalDateTime.now();
             if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
                 if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
@@ -195,7 +196,6 @@ public class BookingService {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
                     shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
             // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện
-            // ra
             if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
                 break;
             }
@@ -280,7 +280,8 @@ public class BookingService {
         List<Slot> slotToRemove = new ArrayList<>();
 
         // Kiểm tra thời gian hiện tại
-        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        //        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalDateTime currentDateTime = LocalDateTime.now();
         if (currentDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
             LocalTime currentTime = currentDateTime.toLocalTime();
             slotsToCheck.stream()
