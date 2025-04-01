@@ -29,10 +29,10 @@ public class ServicesController {
             @RequestParam("price") Double price,
             @RequestParam("isActive") Boolean isActive,
             @RequestParam("duration") LocalTime duration,
-            @RequestParam("image") MultipartFile image)
+            @RequestParam("imgUrl") MultipartFile imgUrl)
             throws IOException {
         ServicesResponse serviceResponse =
-                servicesService.createServices(serviceName, description, category, price, duration, isActive, image);
+                servicesService.createServices(serviceName, description, category, price, duration, isActive, imgUrl);
         return ApiResponse.<ServicesResponse>builder()
                 .success(true)
                 .message("Service created successfully")
@@ -90,10 +90,10 @@ public class ServicesController {
             @RequestParam("category") String category,
             @RequestParam("price") Double price,
             @RequestParam("duration") LocalTime duration,
-            @RequestParam("image") MultipartFile image)
+            @RequestParam("imgUrl") MultipartFile imgUrl)
             throws IOException {
         ServicesResponse serviceResponse =
-                servicesService.updateServices(serviceId, serviceName, description, category, price, duration, image);
+                servicesService.updateServices(serviceId, serviceName, description, category, price, duration, imgUrl);
         return ApiResponse.<ServicesResponse>builder()
                 .success(true)
                 .message("Service updated successfully")
