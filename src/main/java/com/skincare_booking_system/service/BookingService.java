@@ -6,8 +6,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityManager;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,7 +38,6 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
-    private final EntityManager entityManager;
 
     private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
 
@@ -59,8 +56,7 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository,
-            EntityManager entityManager) {
+            PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -76,7 +72,6 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
-        this.entityManager = entityManager;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
