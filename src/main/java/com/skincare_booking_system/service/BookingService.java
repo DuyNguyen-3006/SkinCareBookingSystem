@@ -114,7 +114,9 @@ public class BookingService {
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
 
-        LocalTime lastShiftEndTime = LocalTime.MIN;
+        //        LocalTime lastShiftEndTime = LocalTime.MIN;
+        LocalTime lastShiftEndTime =
+                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalTime().MIN;
         for (Shift shift : shiftsFromSpecificTherapistSchedule) {
             if (shift.getEndTime().isAfter(lastShiftEndTime)) {
                 lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
@@ -961,7 +963,9 @@ public class BookingService {
     }
 
     private LocalTime totalTimeServiceBooking(Set<Long> serviceId) {
-        LocalTime totalTimeDuration = LocalTime.of(0, 0, 0);
+        //        LocalTime totalTimeDuration = LocalTime.of(0, 0, 0);
+        LocalTime totalTimeDuration =
+                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalTime().of(0, 0, 0);
         for (Long id : serviceId) {
             Services service = servicesRepository.getServiceById(id);
             LocalTime duration = service.getDuration();
