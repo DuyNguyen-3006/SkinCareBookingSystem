@@ -145,7 +145,11 @@ public class BookingService {
             if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
                 if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
+                } else {
+                    break;
                 }
+            } else {
+                break;
             }
         }
         if (allBookingInDay.isEmpty()) {
@@ -155,6 +159,7 @@ public class BookingService {
 
         for (Booking booking : allBookingInDay) {
             LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
+            // lấy ra đc slot cụ thể của từng booking vd: slot 1 -> thời gian là 7:00:00
             Slot slot = slotRepository.findSlotBySlotid(booking.getSlot().getSlotid());
 
             LocalTime TimeFinishBooking = slot.getSlottime()
@@ -168,10 +173,12 @@ public class BookingService {
                     .minusHours(totalTimeServiceNewBooking.getHour())
                     .minusMinutes(totalTimeServiceNewBooking.getMinute());
 
+            // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
             List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
+            // tìm ra list ca làm mà cái booking đó thuộc về
             List<Shift> bookingBelongToShifts =
                     shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
             shifts.addAll(bookingBelongToShifts);
