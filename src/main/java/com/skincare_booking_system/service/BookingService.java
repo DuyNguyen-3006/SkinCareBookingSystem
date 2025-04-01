@@ -115,20 +115,20 @@ public class BookingService {
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
 
         //        LocalTime lastShiftEndTime = LocalTime.MIN;
-        LocalTime lastShiftEndTime =
-                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalTime().MIN;
-        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
-            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
-                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
-            }
-        }
-
-        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
-        for (Slot slot : allSlots) {
-            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
-                slotToRemove.add(slot);
-            }
-        }
+        //        LocalTime lastShiftEndTime =
+        //                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalTime().MIN;
+        //        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+        //            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+        //                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+        //            }
+        //        }
+        //
+        //        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        //        for (Slot slot : allSlots) {
+        //            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+        //                slotToRemove.add(slot);
+        //            }
+        //        }
 
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
@@ -151,9 +151,12 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
-            if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
-                if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
+            // duyệt qua từng slot xét xem coi thời gian thực có qua thời gian của slot đó chưa
+            LocalTime localTime = LocalTime.now();
+            LocalDate date = LocalDate.now();
+            if (date.isEqual(bookingSlots.getDate())) {
+                // nếu thời gian thực qua thời gian của slot đó r thì add slot đó vào 1 cái list slotToRemove
+                if (localTime.isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
                 } else {
                     break;
