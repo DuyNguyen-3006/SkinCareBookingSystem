@@ -142,6 +142,7 @@ public class BookingService {
             }
             if (slotToRemove.size() == allSlots.size()) {
                 allSlots.removeAll(slotToRemove);
+                log.info("Response for available slots after removing missing shifts: {}", allSlots);
                 return allSlots;
             }
         }
@@ -163,6 +164,7 @@ public class BookingService {
         }
         if (allBookingInDay.isEmpty()) {
             allSlots.removeAll(slotToRemove);
+            log.info("Response for available slots after removing expired slots: {}", allSlots);
             return allSlots;
         }
 
@@ -205,6 +207,8 @@ public class BookingService {
             slotToRemove.addAll(slots);
         }
         allSlots.removeAll(slotToRemove);
+
+        log.info("Final response for available slots after all checks: {}", allSlots); // Log final response
         return allSlots;
     }
 
