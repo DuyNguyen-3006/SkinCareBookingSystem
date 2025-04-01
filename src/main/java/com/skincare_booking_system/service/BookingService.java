@@ -6,6 +6,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityManager;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,6 +41,10 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
+
+    @Autowired
+    private EntityManager entityManager;
+
     private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
 
     public BookingService(
@@ -98,6 +105,7 @@ public class BookingService {
 
     public List<Slot> getListSlot(BookingSlots bookingSlots) {
         log.info("Getting available slots for booking request: {}", bookingSlots);
+        entityManager.clear();
         List<Slot> allSlots = slotRepository.getAllSlotActive();
         List<Slot> slotToRemove = new ArrayList<>();
         if (bookingSlots.getTherapistId() == null) {
