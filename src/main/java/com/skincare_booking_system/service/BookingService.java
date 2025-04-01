@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityManager;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -41,9 +40,7 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
-
-    @Autowired
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
 
@@ -62,7 +59,8 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository) {
+            PaymentRepository paymentRepository,
+            EntityManager entityManager) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -78,6 +76,7 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
+        this.entityManager = entityManager;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -149,7 +148,7 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
             if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
                 if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
