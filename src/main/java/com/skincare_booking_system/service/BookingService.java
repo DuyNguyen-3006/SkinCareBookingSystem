@@ -159,7 +159,6 @@ public class BookingService {
 
         for (Booking booking : allBookingInDay) {
             LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
-            // lấy ra đc slot cụ thể của từng booking vd: slot 1 -> thời gian là 7:00:00
             Slot slot = slotRepository.findSlotBySlotid(booking.getSlot().getSlotid());
 
             LocalTime TimeFinishBooking = slot.getSlottime()
@@ -173,12 +172,10 @@ public class BookingService {
                     .minusHours(totalTimeServiceNewBooking.getHour())
                     .minusMinutes(totalTimeServiceNewBooking.getMinute());
 
-            // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
             List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list1);
             slotToRemove.add(slot);
 
-            // tìm ra list ca làm mà cái booking đó thuộc về
             List<Shift> bookingBelongToShifts =
                     shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
             shifts.addAll(bookingBelongToShifts);
@@ -202,151 +199,123 @@ public class BookingService {
 
     private List<Slot> getAvailableSlotsForAutoAssign(BookingSlots bookingSlots, List<Slot> allSlots) {
         List<Slot> availableSlots = new ArrayList<>();
+        log.info("Starting auto-assign for date: {} with {} total slots", bookingSlots.getDate(), allSlots.size());
 
-        // Lấy ca sáng (shift 1) và ca chiều (shift 2)
-        List<Shift> shifts = shiftRepository.findAll();
+        // Lấy tất cả ca làm việc và sắp xếp theo thời gian
+        List<Shift> shifts = shiftRepository.findAll().stream()
+                .sorted(Comparator.comparing(Shift::getStartTime))
+                .collect(Collectors.toList());
+
         if (shifts.size() != 2) {
             log.error("Expected 2 shifts but found: {}", shifts.size());
             throw new AppException(ErrorCode.SHIFT_NOT_EXIST);
         }
 
-        // Xử lý cho từng ca
+        // Xử lý từng ca riêng biệt
         for (Shift shift : shifts) {
+            log.info("Processing shift {}: {} to {}", shift.getShiftId(), shift.getStartTime(), shift.getEndTime());
+
+            // Lọc ra slots thuộc ca hiện tại
+            List<Slot> slotsInShift =
+                    allSlots.stream().filter(slot -> isSlotInShift(slot, shift)).collect(Collectors.toList());
+
+            log.info("Found {} slots in shift {}", slotsInShift.size(), shift.getShiftId());
+
             // Tìm therapist tốt nhất cho ca này
             Optional<TherapistAvailability> bestTherapist =
                     findBestTherapistForShift(shift, bookingSlots.getDate(), bookingSlots.getServiceId());
 
             if (bestTherapist.isPresent()) {
-                // Tạo bookingSlots mới với therapist đã chọn
+                log.info(
+                        "Found best therapist {} for shift {}",
+                        bestTherapist.get().getTherapist().getId(),
+                        shift.getShiftId());
+
                 BookingSlots therapistBookingSlots = new BookingSlots();
                 therapistBookingSlots.setDate(bookingSlots.getDate());
                 therapistBookingSlots.setServiceId(bookingSlots.getServiceId());
                 therapistBookingSlots.setTherapistId(
                         bestTherapist.get().getTherapist().getId());
 
-                // Sử dụng logic cũ để tính slots available cho therapist này
-                List<Slot> slotsForTherapist = getAvailableSlotsForTherapist(therapistBookingSlots, allSlots);
+                // Chỉ kiểm tra availability cho slots trong ca này
+                List<Slot> availableSlotsForTherapist =
+                        getAvailableSlotsForTherapist(therapistBookingSlots, slotsInShift);
 
-                // Lưu thông tin phân công
-                for (Slot slot : slotsForTherapist) {
+                log.info(
+                        "Found {} available slots for therapist {} in shift {}",
+                        availableSlotsForTherapist.size(),
+                        bestTherapist.get().getTherapist().getId(),
+                        shift.getShiftId());
+
+                // Thêm vào kết quả và lưu mapping
+                for (Slot slot : availableSlotsForTherapist) {
                     String key = generateSlotKey(bookingSlots.getDate(), slot.getSlotid());
                     slotTherapistMap.put(key, bestTherapist.get().getTherapist().getId());
-                }
-
-                availableSlots.addAll(slotsForTherapist);
-            }
-        }
-
-        return availableSlots.stream()
-                .sorted(Comparator.comparing(Slot::getSlottime))
-                .collect(Collectors.toList());
-    }
-
-    private List<Slot> getAvailableSlotsForTherapist(BookingSlots bookingSlots, List<Slot> allSlots) {
-        List<Slot> slotToRemove = new ArrayList<>();
-        List<Shift> shifts = new ArrayList<>();
-
-        // Copy logic cũ từ getListSlot
-        List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
-                bookingSlots.getTherapistId(), bookingSlots.getDate());
-
-        LocalTime lastShiftEndTime = LocalTime.MIN;
-        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
-            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
-                lastShiftEndTime = shift.getEndTime();
-            }
-        }
-
-        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
-        for (Slot slot : allSlots) {
-            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
-                slotToRemove.add(slot);
-            }
-        }
-
-        // Thêm các điều kiện kiểm tra khác
-        List<Shift> shiftMissingInSpecificTherapistSchedule =
-                shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
-        LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
-
-        // Kiểm tra slot hết thời gian
-        slotToRemove.addAll(getSlotsExperiedTime(totalTimeServiceNewBooking, shiftsFromSpecificTherapistSchedule));
-
-        // Kiểm tra ca làm việc thiếu
-        if (!shiftMissingInSpecificTherapistSchedule.isEmpty()) {
-            for (Shift shift : shiftMissingInSpecificTherapistSchedule) {
-                List<Slot> slot = slotRepository.getSlotsInShift(shift.getShiftId());
-                slotToRemove.addAll(slot);
-            }
-            if (slotToRemove.size() == allSlots.size()) {
-                allSlots.removeAll(slotToRemove);
-                return allSlots;
-            }
-        }
-
-        // Kiểm tra booking hiện tại
-        List<Booking> allBookingInDay =
-                bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
-
-        // Kiểm tra thời gian hiện tại
-        for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
-            if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
-                if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
-                    slotToRemove.add(slot);
-                } else {
-                    break;
+                    availableSlots.add(slot);
                 }
             } else {
-                break;
+                log.warn("No available therapist found for shift {}", shift.getShiftId());
             }
         }
 
-        if (allBookingInDay.isEmpty()) {
-            allSlots.removeAll(slotToRemove);
-            return allSlots;
+        List<Slot> sortedSlots = availableSlots.stream()
+                .sorted(Comparator.comparing(Slot::getSlottime))
+                .collect(Collectors.toList());
+
+        log.info("Final result: {} available slots across all shifts", sortedSlots.size());
+        return sortedSlots;
+    }
+
+    private List<Slot> getAvailableSlotsForTherapist(BookingSlots bookingSlots, List<Slot> slotsToCheck) {
+        List<Slot> slotToRemove = new ArrayList<>();
+
+        // Kiểm tra thời gian hiện tại
+        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
+        if (currentDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
+            LocalTime currentTime = currentDateTime.toLocalTime();
+            slotsToCheck.stream()
+                    .filter(slot -> slot.getSlottime().isBefore(currentTime)
+                            || slot.getSlottime().equals(currentTime))
+                    .forEach(slotToRemove::add);
         }
 
-        // Kiểm tra xung đột với các booking hiện có
-        for (Booking booking : allBookingInDay) {
-            LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
-            Slot slot = slotRepository.findSlotBySlotid(booking.getSlot().getSlotid());
+        // Kiểm tra booking hiện có
+        List<Booking> existingBookings =
+                bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
-            LocalTime TimeFinishBooking = slot.getSlottime()
-                    .plusHours(totalTimeServiceForBooking.getHour())
-                    .plusMinutes(totalTimeServiceForBooking.getMinute());
+        if (!existingBookings.isEmpty()) {
+            LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
 
-            List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
-            slotToRemove.addAll(list);
+            for (Booking booking : existingBookings) {
+                LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
+                Slot bookedSlot = booking.getSlot();
 
-            LocalTime minimunTimeToBooking = slot.getSlottime()
-                    .minusHours(totalTimeServiceNewBooking.getHour())
-                    .minusMinutes(totalTimeServiceNewBooking.getMinute());
+                // Tính thời gian kết thúc booking hiện tại
+                LocalTime bookingEndTime = bookedSlot
+                        .getSlottime()
+                        .plusHours(totalTimeServiceForBooking.getHour())
+                        .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-            List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking.minusSeconds(1));
-            slotToRemove.addAll(list1);
-            slotToRemove.add(slot);
-
-            List<Shift> bookingBelongToShifts =
-                    shiftRepository.getShiftForBooking(slot.getSlottime(), TimeFinishBooking, booking.getBookingId());
-            shifts.addAll(bookingBelongToShifts);
-        }
-
-        // Kiểm tra giới hạn booking trong ca
-        List<Shift> shiftsReachedBookingLimit = shiftReachedBookingLimit(shifts);
-        for (Shift shift : shiftsReachedBookingLimit) {
-            int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
-                    shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
-            if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
-                break;
+                // Loại bỏ các slot xung đột
+                slotsToCheck.stream()
+                        .filter(slot -> {
+                            LocalTime slotEndTime = slot.getSlottime()
+                                    .plusHours(totalTimeServiceNewBooking.getHour())
+                                    .plusMinutes(totalTimeServiceNewBooking.getMinute());
+                            return isTimeOverlap(
+                                    slot.getSlottime(), slotEndTime, bookedSlot.getSlottime(), bookingEndTime);
+                        })
+                        .forEach(slotToRemove::add);
             }
-            List<Slot> slots = slotRepository.getSlotsInShift(shift.getShiftId());
-            slotToRemove.addAll(slots);
         }
 
-        List<Slot> availableSlots = new ArrayList<>(allSlots);
+        List<Slot> availableSlots = new ArrayList<>(slotsToCheck);
         availableSlots.removeAll(slotToRemove);
         return availableSlots;
+    }
+
+    private boolean isTimeOverlap(LocalTime start1, LocalTime end1, LocalTime start2, LocalTime end2) {
+        return !end1.isBefore(start2) && !end2.isBefore(start1);
     }
 
     private Optional<TherapistAvailability> findBestTherapistForShift(
@@ -407,11 +376,13 @@ public class BookingService {
                 bookingSlots.getDate(), bookingSlots.getTherapistId(), bookingId);
         // lấy ra tất cả các slot có trong database
         for (Slot slot : allSlot) {
-            // duyệt qua từng slot xét xem coi thời gian thực có qua thời gian của slot đó chưa
+            // duyệt qua từng slot xét xem coi thời gian thực có qua thời gian của slot đó
+            // chưa
             LocalTime localTime = LocalTime.now();
             LocalDate date = LocalDate.now();
             if (date.isEqual(bookingSlots.getDate())) {
-                // nếu thời gian thực qua thời gian của slot đó r thì add slot đó vào 1 cái list slotToRemove
+                // nếu thời gian thực qua thời gian của slot đó r thì add slot đó vào 1 cái list
+                // slotToRemove
                 if (localTime.isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
                 } else {
@@ -431,12 +402,14 @@ public class BookingService {
 
             LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
             Slot slot = slotRepository.findSlotBySlotid(booking.getSlot().getSlotid());
-            // thời gian dự kiến  hoàn thành của cái booking đó vd: 9:30:00 do slot bắt đầu là 8h
+            // thời gian dự kiến hoàn thành của cái booking đó vd: 9:30:00 do slot bắt đầu
+            // là 8h
             // và thời gian hoàn thành tất cả service là 1:30
             LocalTime TimeFinishBooking = slot.getSlottime()
                     .plusHours(totalTimeServiceForBooking.getHour())
                     .plusMinutes(totalTimeServiceForBooking.getMinute());
-            // Xét nếu thời gian của tất cả service của 1 booking đó có lớn hơn 1 tiếng không
+            // Xét nếu thời gian của tất cả service của 1 booking đó có lớn hơn 1 tiếng
+            // không
 
             List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking);
             slotToRemove.addAll(list);
@@ -460,7 +433,8 @@ public class BookingService {
             // đếm xem có bao nhiêu booking complete trong ca làm đó
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
                     shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
-            // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện ra
+            // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện
+            // ra
             if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
                 break;
             }
@@ -523,7 +497,8 @@ public class BookingService {
                 // lấy đc thời gian của cái booking có sẵn của therapist đó
                 Slot slotTimeBooking = slotRepository.findSlotBySlotid(
                         bookingNearestOverTime.getSlot().getSlotid());
-                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
+                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có
+                // sẵn thì therapist đó ko
                 if (timeToCheckValid.isAfter(slotTimeBooking.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
@@ -539,7 +514,8 @@ public class BookingService {
                         .plusHours(totalTimeServiceForBooking.getHour())
                         .plusMinutes(totalTimeServiceForBooking.getMinute());
 
-                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có sẵn thì therapist đó ko
+                // nếu tổng thời gian hoàn thành booking mới đó mà lố thời gian của booking có
+                // sẵn thì therapist đó ko
                 if (totalTimeFinishBooking.isAfter(slotBookingUpdate.getSlottime())) {
                     therapistsToRemove.add(therapist);
                 }
@@ -689,15 +665,15 @@ public class BookingService {
             bookingRepository.updateBookingDetail(service.getPrice(), booking.getBookingId(), service.getServiceId());
         }
 
-        //        Booking bookingToRemove = new Booking();
-        //        if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
-        //            for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
-        //                if (booking.getBookingId() == booking1.getBookingId()) {
-        //                    bookingToRemove = booking1;
-        //                    break;
-        //                }
-        //            }
-        //        }
+        // Booking bookingToRemove = new Booking();
+        // if (!therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
+        // for (Booking booking1 : therapistScheduleService.bookingByShiftNotWorking) {
+        // if (booking.getBookingId() == booking1.getBookingId()) {
+        // bookingToRemove = booking1;
+        // break;
+        // }
+        // }
+        // }
         Booking bookingToRemove = null;
         if (therapistScheduleService.bookingByShiftNotWorking != null
                 && !therapistScheduleService.bookingByShiftNotWorking.isEmpty()) {
@@ -1165,11 +1141,15 @@ public class BookingService {
             log.info("Booking end time: {}", bookingEndTime);
             log.info("Shift end time: {}", shiftEndTime);
 
-            // Kiểm tra nếu thời gian kết thúc booking vượt quá giờ kết thúc ca làm việc của Therapist
-            // bookingEndTime.isAfter(shiftEndTime)bắt giữ các trường hợp bookingEndTimevượt quá 23:00.
-            // bookingEndTime.isBefore(LocalTime.of(6, 0))(giả sử các nhà tạo mẫu tóc không làm việc sau nửa đêm cho đến
+            // Kiểm tra nếu thời gian kết thúc booking vượt quá giờ kết thúc ca làm việc của
+            // Therapist
+            // bookingEndTime.isAfter(shiftEndTime)bắt giữ các trường hợp bookingEndTimevượt
+            // quá 23:00.
+            // bookingEndTime.isBefore(LocalTime.of(6, 0))(giả sử các nhà tạo mẫu tóc không
+            // làm việc sau nửa đêm cho đến
             // sáng sớm)
-            // xử lý các trường hợp bookingEndTime kéo dài đến tận sáng sớm ngày hôm sau, điều này cũng được coi là
+            // xử lý các trường hợp bookingEndTime kéo dài đến tận sáng sớm ngày hôm sau,
+            // điều này cũng được coi là
             // ngoài phạm vi.
             if (bookingEndTime.isAfter(shiftEndTime) || bookingEndTime.isBefore(LocalTime.of(6, 0))) {
                 log.error("Booking end time {} exceeds shift end time {}", bookingEndTime, shiftEndTime);
@@ -1290,5 +1270,22 @@ public class BookingService {
         int month = Integer.parseInt(arr[1]);
 
         return bookingRepository.countAllBookingsCompleted(year, month);
+    }
+
+    private boolean isSlotInShift(Slot slot, Shift shift) {
+        // Kiểm tra xem slot có nằm trong khoảng thời gian của ca làm việc không
+        boolean isInShift = !slot.getSlottime().isBefore(shift.getStartTime())
+                && slot.getSlottime().isBefore(shift.getEndTime());
+
+        log.info(
+                "Checking slot {} ({}): {} for shift {} ({} - {})",
+                slot.getSlotid(),
+                slot.getSlottime(),
+                isInShift,
+                shift.getShiftId(),
+                shift.getStartTime(),
+                shift.getEndTime());
+
+        return isInShift;
     }
 }

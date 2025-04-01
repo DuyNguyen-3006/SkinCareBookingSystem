@@ -2,6 +2,7 @@ package com.skincare_booking_system.service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import jakarta.mail.MessagingException;
@@ -136,26 +137,37 @@ public class EmailService {
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void sendAutomatic() {
-        System.out.println("hello");
         LocalDate date = LocalDate.now();
-        List<Booking> bookings = bookingRepository.getBookingByDateAndStatusPending(date);
         LocalTime now = LocalTime.now();
+        List<Booking> bookings = bookingRepository.getBookingByDateAndStatusPending(date);
+
         for (Booking booking : bookings) {
-            LocalTime newTime = booking.getSlot().getSlottime().minusMinutes(15);
-            if ((newTime.getHour() == now.getHour()) && (newTime.getMinute() == now.getMinute())) {
+            LocalTime bookingTime = booking.getSlot().getSlottime();
+
+            long minutesUntilBooking = ChronoUnit.MINUTES.between(now, bookingTime);
+
+            log.info(
+                    "Booking time: {}, Current time: {}, Minutes until booking: {}",
+                    bookingTime,
+                    now,
+                    minutesUntilBooking);
+
+            if (minutesUntilBooking >= 14 && minutesUntilBooking <= 16) {
                 ReminderBooking reminderBooking = ReminderBooking.builder()
                         .to(booking.getUser().getEmail())
                         .subject("Reminder Your Booking")
                         .therapistName(
                                 booking.getTherapistSchedule().getTherapist().getFullName())
                         .date(booking.getBookingDay())
-                        .time(booking.getSlot().getSlottime())
+                        .time(bookingTime)
                         .build();
                 sendReminderMail(reminderBooking);
-                System.out.println("Send mail success");
+                log.info("Sent reminder email for booking at: {}", bookingTime);
             }
-            if (now.isAfter(booking.getSlot().getSlottime().plusMinutes(20))
-                    && booking.getStatus().equals(BookingStatus.PENDING)) {
+
+            long minutesAfterBooking = ChronoUnit.MINUTES.between(bookingTime, now);
+            if (minutesAfterBooking > 20 && booking.getStatus() == BookingStatus.PENDING) {
+                log.info("Cancelling booking. Minutes after booking time: {}", minutesAfterBooking);
                 booking.setStatus(BookingStatus.CANCELLED);
                 bookingRepository.save(booking);
             }
