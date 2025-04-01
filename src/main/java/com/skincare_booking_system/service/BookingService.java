@@ -6,8 +6,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityManager;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,7 +38,6 @@ public class BookingService {
     public final UserService userService;
     private final VoucherService voucherService;
     private final PaymentRepository paymentRepository;
-    private final EntityManager entityManager;
 
     private static final Map<String, Long> slotTherapistMap = new ConcurrentHashMap<>();
 
@@ -59,8 +56,7 @@ public class BookingService {
             EmailService emailService,
             UserService userService,
             VoucherService voucherService,
-            PaymentRepository paymentRepository,
-            EntityManager entityManager) {
+            PaymentRepository paymentRepository) {
         this.bookingRepository = bookingRepository;
         this.servicesRepository = servicesRepository;
         this.userRepository = userRepository;
@@ -76,7 +72,6 @@ public class BookingService {
         this.userService = userService;
         this.voucherService = voucherService;
         this.paymentRepository = paymentRepository;
-        this.entityManager = entityManager;
     }
 
     public Set<TherapistForBooking> getTherapistForBooking(BookingTherapist bookingTherapist) {
@@ -113,19 +108,19 @@ public class BookingService {
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
 
-        LocalTime lastShiftEndTime = LocalTime.MIN;
-        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
-            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
-                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
-            }
-        }
-
-        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
-        for (Slot slot : allSlots) {
-            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
-                slotToRemove.add(slot);
-            }
-        }
+        //        LocalTime lastShiftEndTime = LocalTime.MIN;
+        //        for (Shift shift : shiftsFromSpecificTherapistSchedule) {
+        //            if (shift.getEndTime().isAfter(lastShiftEndTime)) {
+        //                lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
+        //            }
+        //        }
+        //
+        //        // Loại bỏ các slot nằm sau giờ kết thúc ca làm việc
+        //        for (Slot slot : allSlots) {
+        //            if (slot.getSlottime().isAfter(lastShiftEndTime)) {
+        //                slotToRemove.add(slot);
+        //            }
+        //        }
 
         List<Shift> shiftMissingInSpecificTherapistSchedule =
                 shiftMissingInSpecificTherapistSchedule(shiftsFromSpecificTherapistSchedule);
@@ -139,6 +134,7 @@ public class BookingService {
             }
             if (slotToRemove.size() == allSlots.size()) {
                 allSlots.removeAll(slotToRemove);
+                log.info("Response for available slots after removing missing shifts: {}", allSlots);
                 return allSlots;
             }
         }
@@ -147,9 +143,12 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
-            if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
-                if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
+            // duyệt qua từng slot xét xem coi thời gian thực có qua thời gian của slot đó chưa
+            LocalTime localTime = LocalTime.now();
+            LocalDate date = LocalDate.now();
+            if (date.isEqual(bookingSlots.getDate())) {
+                // nếu thời gian thực qua thời gian của slot đó r thì add slot đó vào 1 cái list slotToRemove
+                if (localTime.isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
                 } else {
                     break;
@@ -194,7 +193,6 @@ public class BookingService {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
                     shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
             // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện
-            // ra
             if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
                 break;
             }
@@ -291,10 +289,8 @@ public class BookingService {
         // Kiểm tra booking hiện có
         List<Booking> existingBookings =
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
-
+        LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
         if (!existingBookings.isEmpty()) {
-            LocalTime totalTimeServiceNewBooking = totalTimeServiceBooking(bookingSlots.getServiceId());
-
             for (Booking booking : existingBookings) {
                 LocalTime totalTimeServiceForBooking = servicesRepository.getTotalTime(booking.getBookingId());
                 Slot bookedSlot = booking.getSlot();
@@ -317,7 +313,36 @@ public class BookingService {
                         .forEach(slotToRemove::add);
             }
         }
+        if (totalTimeServiceNewBooking.toSecondOfDay() / 60 > 60) {
+            int slotsToRemoveCount = 0;
+            long totalMinutes = totalTimeServiceNewBooking.toSecondOfDay() / 60;
 
+            if (totalMinutes <= 120) {
+                slotsToRemoveCount = 1;
+            } else if (totalMinutes <= 180) {
+                slotsToRemoveCount = 2;
+            } else if (totalMinutes <= 240) {
+                slotsToRemoveCount = 3;
+            } else if (totalMinutes < 300) {
+                slotsToRemoveCount = 4;
+            } else if (totalMinutes < 360) {
+                slotsToRemoveCount = 5;
+            } else if (totalMinutes <= 420) {
+                slotsToRemoveCount = 6;
+            } else if (totalMinutes <= 480) {
+                slotsToRemoveCount = 7;
+            } else if (totalMinutes <= 540) {
+                slotsToRemoveCount = 8;
+            }
+
+            // Xóa số lượng slot cuối cùng dựa vào điều kiện
+            for (int i = 0; i < slotsToRemoveCount; i++) {
+                if (!slotsToCheck.isEmpty()) {
+                    slotToRemove.add(slotsToCheck.get(slotsToCheck.size() - 1));
+                    slotsToCheck.remove(slotsToCheck.size() - 1);
+                }
+            }
+        }
         List<Slot> availableSlots = new ArrayList<>(slotsToCheck);
         availableSlots.removeAll(slotToRemove);
         return availableSlots;
