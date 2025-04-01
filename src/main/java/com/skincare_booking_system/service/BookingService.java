@@ -104,7 +104,6 @@ public class BookingService {
 
     public List<Slot> getListSlot(BookingSlots bookingSlots) {
         log.info("Getting available slots for booking request: {}", bookingSlots);
-        entityManager.clear();
         List<Slot> allSlots = slotRepository.getAllSlotActive();
         List<Slot> slotToRemove = new ArrayList<>();
         if (bookingSlots.getTherapistId() == null) {
@@ -114,9 +113,7 @@ public class BookingService {
         List<Shift> shiftsFromSpecificTherapistSchedule = shiftRepository.getShiftsFromSpecificTherapistSchedule(
                 bookingSlots.getTherapistId(), bookingSlots.getDate());
 
-        //        LocalTime lastShiftEndTime = LocalTime.MIN;
-        LocalTime lastShiftEndTime =
-                LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalTime().MIN;
+        LocalTime lastShiftEndTime = LocalTime.MIN;
         for (Shift shift : shiftsFromSpecificTherapistSchedule) {
             if (shift.getEndTime().isAfter(lastShiftEndTime)) {
                 lastShiftEndTime = shift.getEndTime(); // Lấy giờ kết thúc ca cuối cùng
@@ -142,7 +139,6 @@ public class BookingService {
             }
             if (slotToRemove.size() == allSlots.size()) {
                 allSlots.removeAll(slotToRemove);
-                log.info("Response for available slots after removing missing shifts: {}", allSlots);
                 return allSlots;
             }
         }
@@ -151,7 +147,7 @@ public class BookingService {
                 bookingRepository.getBookingsByTherapistInDay(bookingSlots.getDate(), bookingSlots.getTherapistId());
 
         for (Slot slot : allSlots) {
-            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"));
             if (localDateTime.toLocalDate().isEqual(bookingSlots.getDate())) {
                 if (localDateTime.toLocalTime().isAfter(slot.getSlottime())) {
                     slotToRemove.add(slot);
@@ -164,7 +160,6 @@ public class BookingService {
         }
         if (allBookingInDay.isEmpty()) {
             allSlots.removeAll(slotToRemove);
-            log.info("Response for available slots after removing expired slots: {}", allSlots);
             return allSlots;
         }
 
@@ -199,6 +194,7 @@ public class BookingService {
             int countTotalBookingCompleteInShift = bookingRepository.countTotalBookingCompleteInShift(
                     shift.getShiftId(), bookingSlots.getTherapistId(), bookingSlots.getDate());
             // nếu có đủ số lượng booking complete với limitBooking mà còn dư slot vẫn hiện
+            // ra
             if (countTotalBookingCompleteInShift == shift.getLimitBooking()) {
                 break;
             }
@@ -207,8 +203,6 @@ public class BookingService {
             slotToRemove.addAll(slots);
         }
         allSlots.removeAll(slotToRemove);
-
-        log.info("Final response for available slots after all checks: {}", allSlots); // Log final response
         return allSlots;
     }
 
