@@ -11,9 +11,9 @@ spring:
 #    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://g8mh6ge01lu2z3n1.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/ev9hzjcs9m6ax6mi?serverTimezone=Asia/Ho_Chi_Minh
-    username: nm066necwjcwr9gv
-    password: x7cbdhufy8sinugh
+    url: jdbc:mysql://08k2dy.stackhero-network.com:5824/serverTimezone=Asia/Ho_Chi_Minh
+    username: root
+    password: mBJse72nICYyt6xE8OqrV1xqJBLMX8ap
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
