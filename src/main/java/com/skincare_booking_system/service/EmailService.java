@@ -139,7 +139,7 @@ public class EmailService {
     @Transactional
     public void sendAutomatic() {
         LocalDate date = LocalDate.now();
-        LocalTime now = LocalTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
+        LocalTime now = LocalTime.now();
         List<Booking> bookings = bookingRepository.getBookingByDateAndStatusPending(date);
 
         for (Booking booking : bookings) {
