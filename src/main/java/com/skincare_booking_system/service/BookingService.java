@@ -174,9 +174,9 @@ public class BookingService {
             List<Slot> list = slotRepository.getSlotToRemove(slot.getSlottime(), TimeFinishBooking.minusSeconds(1));
             slotToRemove.addAll(list);
 
-            LocalTime minimunTimeToBooking = slot.getSlottime();
-//                                .minusHours(totalTimeServiceNewBooking.getHour())
-//                                .minusMinutes(totalTimeServiceNewBooking.getMinute());
+            LocalTime minimunTimeToBooking = slot.getSlottime()
+                                .minusHours(totalTimeServiceNewBooking.getHour())
+                                .minusMinutes(totalTimeServiceNewBooking.getMinute());
             System.out.println("MinimumTimeToBooking: " + minimunTimeToBooking);
             // tìm ra list chứa các slot ko thỏa và add vào list slotToRemove
             List<Slot> list1 = slotRepository.getSlotToRemove(minimunTimeToBooking, TimeFinishBooking);
