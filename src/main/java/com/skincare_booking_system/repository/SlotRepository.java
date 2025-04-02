@@ -27,7 +27,7 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     List<Slot> getAllSlotActive();
 
     @Query(
-            value = "select * from slot where slot.slottime >= ?1 and slot.slottime <= ?2 and slot.deleted = false\n"
+            value = "select * from slot where slot.slottime > ?1 and slot.slottime < ?2 and slot.deleted = false\n"
                     + "order by slottime asc ",
             nativeQuery = true)
     List<Slot> getSlotToRemove(LocalTime time, LocalTime timeFinishBooking);
