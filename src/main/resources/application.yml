@@ -11,7 +11,7 @@ spring:
 #    password: root
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 
-    url: jdbc:mysql://08k2dy.stackhero-network.com:5824/root?serverTimezone=Asia/Ho_Chi_Minh
+    url: jdbc:mysql://08k2dy.stackhero-network.com:5824/root?serverTimezone=Asia/Ho_Chi_Minh&trustServerCertificate=true
     username: root
     password: mBJse72nICYyt6xE8OqrV1xqJBLMX8ap
     driver-class-name: com.mysql.cj.jdbc.Driver
